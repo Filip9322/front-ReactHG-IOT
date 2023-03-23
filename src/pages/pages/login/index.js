@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 // ** Next Imports
 import Link from 'next/link'
@@ -15,12 +15,14 @@ import InputLabel from '@mui/material/InputLabel'
 import Typography from '@mui/material/Typography'
 import IconButton from '@mui/material/IconButton'
 import CardContent from '@mui/material/CardContent'
-import FormControl from '@mui/material/FormControl'
 import OutlinedInput from '@mui/material/OutlinedInput'
 import { styled, useTheme } from '@mui/material/styles'
 import MuiCard from '@mui/material/Card'
 import InputAdornment from '@mui/material/InputAdornment'
+import FormHelperText from '@mui/material/FormHelperText';
 import MuiFormControlLabel from '@mui/material/FormControlLabel'
+import FormControl, { useFormControl } from '@mui/material/FormControl';
+
 
 // ** Icons Imports
 import EyeOutline from 'mdi-material-ui/EyeOutline'
@@ -54,18 +56,35 @@ const FormControlLabel = styled(MuiFormControlLabel)(({ theme }) => ({
 }))
 
 const LoginPage = () => {
+
+  // ** Form handlers
+  const initialValue = {user_id: '', password: ''};
+  const [formValues, setFormValues] = useState(initialValue);
+  const [formErrors, setFormErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   // ** State
   const [values, setValues] = useState({
-    password: '',
-    showPassword: false
+    showPassword: false,
+    errors:{
+      user_id: '',
+      user_password: '',
+      user_id_hasError: false,
+      user_pw_hasError: false
+    }
   })
 
   // ** Hook
   const theme = useTheme()
   const router = useRouter()
 
+  const submitForm = () => {
+    console.log("HI");
+  };
+
   const handleChange = prop => event => {
-    setValues({ ...values, [prop]: event.target.value })
+    const { name, value } = event.target;
+    setFormValues({ ...formValues, [name]: value })
   }
 
   const handleClickShowPassword = () => {
@@ -75,6 +94,55 @@ const LoginPage = () => {
   const handleMouseDownPassword = event => {
     event.preventDefault()
   }
+  
+  const handleSubmit  =  function(event){
+    event.preventDefault();
+    try {
+      setFormErrors(() => {
+        let errors = validate(formValues);
+        values.errors = errors;
+        if (errors.user_pw_hasError || errors.user_id_hasError){
+          return true;
+        } else return false;
+      });
+      // setIsSubmitting(true);
+      console.log(values.errors);
+    } catch (error){
+      console.error(error);
+    }
+  }
+
+  const validate = (formValues) => {
+    let errors = {};
+    console.log("oh lala",formValues);
+
+    // 정규식 표현 - Regular expressions
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
+
+    // No ID value , 아이디 값이 없을시
+    if(!formValues.user_id){
+      errors.user_id = "User ID cold not be blank";
+      errors.user_id_hasError = true;
+    } else  errors.user_id_hasError = false;
+
+    // No Password valus, 비밀번호의 값이 없을시
+    if(!formValues.password){
+      errors.user_password = "Password could not be blank";
+      errors.user_pw_hasError = true;
+    } else if (formValues.password.length < 4){
+      errors.user_password = "Password must be longer than 4 characters"
+      errors.user_pw_hasError = true;
+    } else  errors.user_pw_hasError = false;
+
+    return errors;
+  }
+
+  useEffect(() => {
+    if (Object.keys(formErrors).length === 0 && isSubmitting){
+      submitForm();
+    }
+  }, [formErrors]);
+
 
   return (
     <Box className='content-center'>
@@ -102,15 +170,28 @@ const LoginPage = () => {
             <Typography variant='body2'>IOT 기반의 실시간 음향신호기 모니터링 시스템</Typography>
             <Typography variant='body2'>BLE 기반의 실시간 음성유도기 모니터링 시스템</Typography>
           </Box>
-          <form noValidate autoComplete='off' onSubmit={e => e.preventDefault()}>
-            <TextField autoFocus fullWidth id='email' label='아이디' sx={{ marginBottom: 4 }} />
-            <FormControl fullWidth>
-              <InputLabel htmlFor='auth-login-password'>비밀번호</InputLabel>
+          <form id='loginForm' noValidate autoComplete='off' onSubmit={handleSubmit}>
+            <TextField
+              id='user_id'
+              name='user_id'
+              label='아이디'
+              error={values.errors.user_id_hasError}
+              value={formValues.user_id}
+              helperText={values.errors.user_id}
+              onChange={handleChange('user_id')}
+              required
+              autoFocus fullWidth
+              sx={{ marginBottom: 4 }} 
+            />
+            <FormControl error={values.errors.user_pw_hasError} fullWidth>
+              <InputLabel htmlFor='user_password'>비밀번호</InputLabel>
               <OutlinedInput
+                id='password'
+                name='password'
                 label='Password'
-                value={values.password}
-                id='auth-login-password'
+                value={formValues.user_password}
                 onChange={handleChange('password')}
+                required
                 type={values.showPassword ? 'text' : 'password'}
                 endAdornment={
                   <InputAdornment position='end'>
@@ -125,6 +206,7 @@ const LoginPage = () => {
                   </InputAdornment>
                 }
               />
+              <FormHelperText>{values.errors.user_password}</FormHelperText>
             </FormControl>
             <Box
               sx={{ mb: 4, display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'space-between' }}
@@ -139,7 +221,7 @@ const LoginPage = () => {
               size='large'
               variant='contained'
               sx={{ marginBottom: 7 }}
-              onClick={() => router.push('/')}
+              type= 'submit'
             >
               로그인
             </Button>
