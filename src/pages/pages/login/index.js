@@ -78,13 +78,15 @@ const LoginPage = () => {
   const theme = useTheme()
   const router = useRouter()
 
-  const submitForm = () => {
+  const submitForm =  () => {
     console.log("HI");
     postLoginAuthentication(
         "http://localhost:3001/login", 
-        {user_ID: 'LAla_AdmIn', user_pw:"hgasfdjksdhfsajuki12" }    
-    ).then((data) => {
-      console.log(data);
+        {user_ID: formValues.user_id, user_pw:formValues.password }    
+    ).then((response) => {
+      console.log('omg do something');
+      setIsSubmitting(false);
+      console.log(response);
     });
   };
 
@@ -130,11 +132,12 @@ const LoginPage = () => {
           validateSubmit = false;
         } else validateSubmit = true;
 
+      console.log('validateSubmit: '+validateSubmit);
+
       setFormErrors(validateSubmit);
       setIsSubmitting(validateSubmit);
-      
     } catch (error){
-      console.error(error);
+      console.log(error);
     }
   }
 
@@ -167,7 +170,7 @@ const LoginPage = () => {
     if (isSubmitting){
       submitForm();
     }
-  }, [formErrors]);
+  }, [isSubmitting]);
 
 
   return (
