@@ -80,7 +80,29 @@ const LoginPage = () => {
 
   const submitForm = () => {
     console.log("HI");
+    postLoginAuthentication(
+        "http://localhost:3001/login", 
+        {user_ID: 'LAla_AdmIn', user_pw:"hgasfdjksdhfsajuki12" }    
+    ).then((data) => {
+      console.log(data);
+    });
   };
+
+  async function postLoginAuthentication(url = "", data = {}){
+    const response = await fetch(url, {
+      method: "POST",
+      mode:  "cors",
+      cache: "no-cache",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      redirect: "follow", // manual, *follow , error,
+      referrerPolicy: "no-referrer",
+      body: JSON.stringify(data)
+    });
+
+    return response.json();
+  }
 
   const handleChange = prop => event => {
     const { name, value } = event.target;
@@ -98,15 +120,19 @@ const LoginPage = () => {
   const handleSubmit  =  function(event){
     event.preventDefault();
     try {
-      setFormErrors(() => {
-        let errors = validate(formValues);
-        values.errors = errors;
-        if (errors.user_pw_hasError || errors.user_id_hasError){
-          return true;
-        } else return false;
-      });
-      // setIsSubmitting(true);
-      console.log(values.errors);
+      let validateSubmit = false;
+
+      // Check Errors
+      let errors = validate(formValues);
+      setValues({ ...values, errors: errors });
+
+      if (errors.user_pw_hasError || errors.user_id_hasError){
+          validateSubmit = false;
+        } else validateSubmit = true;
+
+      setFormErrors(validateSubmit);
+      setIsSubmitting(validateSubmit);
+      
     } catch (error){
       console.error(error);
     }
@@ -114,23 +140,22 @@ const LoginPage = () => {
 
   const validate = (formValues) => {
     let errors = {};
-    console.log("oh lala",formValues);
 
     // 정규식 표현 - Regular expressions
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
 
     // No ID value , 아이디 값이 없을시
     if(!formValues.user_id){
-      errors.user_id = "User ID cold not be blank";
+      errors.user_id = "아이디를 입력해 주세요";
       errors.user_id_hasError = true;
     } else  errors.user_id_hasError = false;
 
     // No Password valus, 비밀번호의 값이 없을시
     if(!formValues.password){
-      errors.user_password = "Password could not be blank";
+      errors.user_password = "비밀번호를 입력해 주세요";
       errors.user_pw_hasError = true;
     } else if (formValues.password.length < 4){
-      errors.user_password = "Password must be longer than 4 characters"
+      errors.user_password = "비밀번호의 길이가 4글자 이하"
       errors.user_pw_hasError = true;
     } else  errors.user_pw_hasError = false;
 
@@ -138,7 +163,8 @@ const LoginPage = () => {
   }
 
   useEffect(() => {
-    if (Object.keys(formErrors).length === 0 && isSubmitting){
+    console.log('TrueOrDare: '+Object.keys(formErrors));
+    if (isSubmitting){
       submitForm();
     }
   }, [formErrors]);
