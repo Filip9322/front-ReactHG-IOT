@@ -79,14 +79,18 @@ const LoginPage = () => {
   const router = useRouter()
 
   const submitForm =  () => {
-    console.log("HI");
     postLoginAuthentication(
-        "http://localhost:3001/login", 
+        `${process.env.REACT_APP_APIURL}/login`, 
         {user_ID: formValues.user_id, user_pw:formValues.password }    
     ).then((response) => {
-      console.log('omg do something');
       setIsSubmitting(false);
+      // Sucessful Authentication
+      localStorage.setItem("accessToken", response.access_token);
       console.log(response);
+    }).catch((error) =>{
+      var errors = {user_password: "아이디 혹은 비밀번호를 확인하십시오.", user_pw_hasError: true};
+      setValues({ ...values, errors: errors });
+      setIsSubmitting(false);
     });
   };
 
@@ -132,8 +136,6 @@ const LoginPage = () => {
           validateSubmit = false;
         } else validateSubmit = true;
 
-      console.log('validateSubmit: '+validateSubmit);
-
       setFormErrors(validateSubmit);
       setIsSubmitting(validateSubmit);
     } catch (error){
@@ -166,7 +168,6 @@ const LoginPage = () => {
   }
 
   useEffect(() => {
-    console.log('TrueOrDare: '+Object.keys(formErrors));
     if (isSubmitting){
       submitForm();
     }

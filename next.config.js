@@ -1,4 +1,5 @@
 const path = require('path')
+const Dotenv = require('dotenv-webpack')
 
 module.exports = {
   trailingSlash: true,
@@ -8,6 +9,7 @@ module.exports = {
     jsconfigPaths: true // enables it for both jsconfig.json and tsconfig.json
   },
   webpack: config => {
+    config.plugins.push(new Dotenv({ silent: true }));
     config.resolve.alias = {
       ...config.resolve.alias,
       apexcharts: path.resolve(__dirname, './node_modules/apexcharts-clevision')
