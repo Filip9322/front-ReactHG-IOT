@@ -26,6 +26,9 @@ import 'react-perfect-scrollbar/dist/css/styles.css'
 // ** Global css styles
 import '../../styles/globals.css'
 
+// ** React-JWT to validate token validity
+import { isExpired, decodeToken } from 'react-jwt';
+
 const clientSideEmotionCache = createEmotionCache()
 
 // ** Pace Loader
@@ -46,20 +49,28 @@ if (themeConfig.routingLoader) {
 const App = props => {
   // Verify User AccessToken
   const verifyAccessToken = () => {
-    // Checking if running asin client side
-    if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('accessToken');
-      if (token){
+    const token = localStorage.getItem('accessToken');
+    
+    if (token){
+      const myDecodeToken  = decodeToken(token);
+      const isTokenExpired = isExpired(token);
+      if(!isTokenExpired){
+        // Only if token exists and is not Expired
         return true;
-      } else{
-          if(window.location.href != `${process.env.REACT_APP_HOST_URL}/pages/login/`){
-            window.location.href = '/pages/login';
-          }
-          return false;
-      }
+      } else return false;
     }
   }
-  var authenticated = verifyAccessToken();
+  // Checking if running on client side
+  if (typeof window !== 'undefined') {
+    var authenticated = verifyAccessToken();
+
+    if(!authenticated) { 
+      if(window.location.href != `${process.env.REACT_APP_HOST_URL}/pages/login/`){
+        window.location.href = '/pages/login'; 
+      }
+    }
+
+  }
 
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props
 
