@@ -86,7 +86,10 @@ const LoginPage = () => {
       setIsSubmitting(false);
       // Sucessful Authentication
       localStorage.setItem("accessToken", response.access_token);
-      console.log(response);
+      
+      // Redirect to Home
+      window.location.href = '/';
+
     }).catch((error) =>{
       var errors = {user_password: "아이디 혹은 비밀번호를 확인하십시오.", user_pw_hasError: true};
       setValues({ ...values, errors: errors });

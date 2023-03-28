@@ -41,12 +41,30 @@ if (themeConfig.routingLoader) {
   })
 }
 
+
 // ** Configure JSS & ClassName
 const App = props => {
+  // Verify User AccessToken
+  const verifyAccessToken = () => {
+    // Checking if running asin client side
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('accessToken');
+      if (token){
+        return true;
+      } else{
+          if(window.location.href != `${process.env.REACT_APP_HOST_URL}/pages/login/`){
+            window.location.href = '/pages/login';
+          }
+          return false;
+      }
+    }
+  }
+  var authenticated = verifyAccessToken();
+
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props
 
   // Variables
-  const getLayout = Component.getLayout ?? (page => <UserLayout>{page}</UserLayout>)
+  const getLayout   = Component.getLayout ?? (page => <UserLayout>{page}</UserLayout>)
 
   return (
     <CacheProvider value={emotionCache}>
