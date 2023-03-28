@@ -30,28 +30,31 @@ const Page = () => {
   };
 
   const logout = () => {
-  	const token = localStorage.getItem('accessToken');
-    
-    if (token){
-      const myDecodeToken  = decodeToken(token);
-      const isTokenExpired = isExpired(token);
-      console.log('decodeToken: '+Object.keys(myDecodeToken));
-  	  postLogoutBreakAccessToken(
-        `${process.env.REACT_APP_APIURL}/logout`,
-        {user_ID: myDecodeToken.user_id, accessToken: token }
-      ).then((response) =>{
-
-        console.log(response);
-      }).catch((error) => {
-
-        console.log(error);
-      });
-    }
+  	if (typeof window !== 'undefined') {
+	  	const token = localStorage.getItem('accessToken');
+	    
+	    if (token){
+	      const myDecodeToken  = decodeToken(token);
+	      const isTokenExpired = isExpired(token);
+	      console.log('decodeToken: '+Object.keys(myDecodeToken));
+	  	  postLogoutBreakAccessToken(
+	        `${process.env.REACT_APP_APIURL}/logout`,
+	        {user_ID: myDecodeToken.user_ID, accessToken: token }
+	      ).then((response) =>{
+	      	localStorage.removeItem('accessToken');
+	      	window.location.href = '/pages/login';
+	        console.log(response);
+	      }).catch((error) => {
+	      	localStorage.removeItem('accessToken');
+	      	window.location.href = '/pages/login';
+	        console.log(error);
+	      });
+	    }
+	}
   }
 
   const handleLogout = async () => {
     await logout(); 
-    //window.location.href = '/pages/login';
   }
 
   handleLogout();
