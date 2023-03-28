@@ -66,8 +66,11 @@ const App = props => {
 
     if(!authenticated) { 
       if(window.location.href != `${process.env.REACT_APP_HOST_URL}/pages/login/`){
-        window.location.href = '/pages/login'; 
+        window.location.href = '/pages/login';
       }
+    }
+    if(authenticated && window.location.href == `${process.env.REACT_APP_HOST_URL}/pages/login/`){
+      window.location.href = '/';
     }
 
   }
@@ -80,12 +83,12 @@ const App = props => {
   return (
     <CacheProvider value={emotionCache}>
       <Head>
-        <title>{`${themeConfig.templateName} - Material Design React Admin Template`}</title>
+        <title>{`${themeConfig.templateName} - TODO: Change Dinamically`}</title>
         <meta
           name='description'
-          content={`${themeConfig.templateName} – Material Design React Admin Dashboard Template – is the most developer friendly & highly customizable Admin Dashboard Template based on MUI v5.`}
+          content={`${themeConfig.templateName} – TODO: Change Dinamically`}
         />
-        <meta name='keywords' content='Material Design, MUI, Admin Template, React Admin Template' />
+        <meta name='keywords' content='TODO: Change Dinamically' />
         <meta name='viewport' content='initial-scale=1, width=device-width' />
       </Head>
 
