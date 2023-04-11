@@ -38,6 +38,24 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 import FooterIllustrationsV1 from 'src/views/pages/auth/FooterIllustration'
 
 // ** Styled Components
+const now = new Date();
+
+function getWithExpiry(key) {
+  if (typeof window !== 'undefined') {
+    const itemStr = localStorage.getItem(key)
+    if (!itemStr) {
+      return null;
+    }
+    
+    const item = JSON.parse(itemStr);
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key);
+      return null;
+    }
+    return item.value;
+  } else { return null; }
+}
+
 const Card = styled(MuiCard)(({ theme }) => ({
   [theme.breakpoints.up('sm')]: { width: '28rem' }
 }))
@@ -58,6 +76,7 @@ const FormControlLabel = styled(MuiFormControlLabel)(({ theme }) => ({
 const LoginPage = () => {
 
   // ** Form handlers
+  const initialUser = getWithExpiry('user_ID');
   const initialValue = {user_id: '', password: ''};
   const [formValues, setFormValues] = useState(initialValue);
   const [formErrors, setFormErrors] = useState({});
@@ -66,6 +85,7 @@ const LoginPage = () => {
   // ** State
   const [values, setValues] = useState({
     showPassword: false,
+    saveUserID: true,
     errors:{
       user_id: '',
       user_password: '',
@@ -86,7 +106,14 @@ const LoginPage = () => {
       setIsSubmitting(false);
       // Sucessful Authentication
       localStorage.setItem("accessToken", response.access_token);
-      
+
+      // Store user_ID with ExpiredTime
+      const storedUser = {
+        value: formValues.user_id,
+        expiry: now.getTime() + 50000
+      };
+
+      localStorage.setItem("user_ID", JSON.stringify(storedUser) );
       // Redirect to Home
       window.location.href = '/';
 
@@ -170,11 +197,26 @@ const LoginPage = () => {
     return errors;
   }
 
+  const store_userID =(event) => {
+    //event.preventDefault();  
+    setValues({ ...values, saveUserID: !event.target.checked })
+    console.log(values.saveUserID);
+  }
+
   useEffect(() => {
     if (isSubmitting){
       submitForm();
     }
   }, [isSubmitting]);
+  
+  useEffect(() => {
+    // IF there is an user stored in localStorage
+    const stored_User  = getWithExpiry('user_ID');
+    if (stored_User){
+      setFormValues({ ...formValues, user_id: stored_User })
+      console.log(stored_User);
+    }
+  },[initialUser]);
 
 
   return (
@@ -201,7 +243,6 @@ const LoginPage = () => {
             </Typography>
             <img  src='/images/pages/hangil_logo.png'  style={{width: '100px'}} alt="한길 로고"/>
             <Typography variant='body2'>IOT 기반의 실시간 음향신호기 모니터링 시스템</Typography>
-            <Typography variant='body2'>BLE 기반의 실시간 음성유도기 모니터링 시스템</Typography>
           </Box>
           <form id='loginForm' noValidate autoComplete='off' onSubmit={handleSubmit}>
             <TextField
@@ -210,6 +251,7 @@ const LoginPage = () => {
               label='아이디'
               error={values.errors.user_id_hasError}
               value={formValues.user_id}
+              placeholder={formValues.user_id}
               helperText={values.errors.user_id}
               onChange={handleChange('user_id')}
               required
@@ -244,7 +286,7 @@ const LoginPage = () => {
             <Box
               sx={{ mb: 4, display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'space-between' }}
             >
-              <FormControlLabel control={<Checkbox />} label='로그인 상태 유지' />
+              <FormControlLabel  control={<Checkbox />} label='로그인 상태 유지' onChange={store_userID} />
               <Link passHref href='/'>
                 <LinkStyled onClick={e => e.preventDefault()}>비밀번호 찾기</LinkStyled>
               </Link>
