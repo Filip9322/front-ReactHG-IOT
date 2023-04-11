@@ -37,7 +37,7 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 // ** Demo Imports
 import FooterIllustrationsV1 from 'src/views/pages/auth/FooterIllustration'
 
-// ** Styled Components
+// ** Utils
 const now = new Date();
 
 function getWithExpiry(key) {
@@ -56,6 +56,7 @@ function getWithExpiry(key) {
   } else { return null; }
 }
 
+// ** Styled Components
 const Card = styled(MuiCard)(({ theme }) => ({
   [theme.breakpoints.up('sm')]: { width: '28rem' }
 }))
@@ -197,8 +198,7 @@ const LoginPage = () => {
     return errors;
   }
 
-  const store_userID =(event) => {
-    //event.preventDefault();  
+  const store_userID =(event) => {  
     setValues({ ...values, saveUserID: !event.target.checked })
     console.log(values.saveUserID);
   }
