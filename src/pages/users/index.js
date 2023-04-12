@@ -26,6 +26,7 @@ import TableContainer from '@mui/material/TableContainer'
 import DialogContentText from '@mui/material/DialogContentText'
 
 // ** Icons Imports
+import Close from 'mdi-material-ui/Close'
 import AccountOff from 'mdi-material-ui/AccountOff'
 import AccountEdit from 'mdi-material-ui/AccountEdit'
 import AccountArrowUp from 'mdi-material-ui/AccountArrowUp'
@@ -44,15 +45,57 @@ const UsersPage = () => {
 
     // ** Dialog Box
     const [open, setOpen] = useState(false);
+    const [dialogTitle, setDialogTitle] = useState(false);
+    const [dialogAction, setDialogAction] =useState(false);
+    const [dialogDescription, setDialogDescription] = useState(false);
+    const [btLeftDialog, setBtLeftDialog]   = useState(false);
+    const [btRightDialog, setBtRightDialog] = useState(false);
 
-    const handleClickOpen = () => {
+    const handleClickOpen = (action = '', user = 0) => {
+        var title, description, btLeft, btRight = '' ;
+        switch(action){
+            case 'edit': 
+                title = 'User Edition'
+                description = 'here the user information'
+                btLeft = 'Close'
+                btRight = 'Save'
+                break;
+            case 'activate':
+                title = 'User Activation'
+                description = 'Are you sure to activate the user?'
+                btLeft = 'Cancel'
+                btRight = 'Activate'
+                break;
+            case 'deactivate':
+                title = 'User Deactivation'
+                description = 'Are you sure to deactivate the user?'
+                btLeft = 'Cancel'
+                btRight = 'Deactivate'
+                break;
+            case 'delete':
+                title = 'Removing User'
+                description = 'Are you sure to delete the user?'
+                btLeft = 'Cancel'
+                btRight = 'Delete'
+                break;
+            default: break;
+        }
         setOpen(true);
+        setDialogAction(action);
+        setDialogTitle(title);
+        setDialogDescription(description);
+        setBtLeftDialog(btLeft);
+        setBtRightDialog(btRight);
     }
     const handleClose = () => {
         setOpen(false);
     }
+    const handleActionDialog = (event) => {
+        event.preventDefault()
+        console.log(event.currentTarget.getAttribute('data-action'))
+    }
 
-    // ** Create dafualt Data [{},{},...]
+    // ** Create defualt Data [{},{},...]
     const createData = (user_ID, user_name, user_email, user_active) => {
         return { user_ID, user_name, user_email, user_active }
     }
@@ -60,22 +103,44 @@ const UsersPage = () => {
     const [usersList, updateUserList] = useState(initialUser);
 
     const clickEditUser = event => {
-        setOpen(true);
+        handleClickOpen(
+            event.currentTarget.getAttribute('data-action'),
+            event.currentTarget.getAttribute('data-user')
+        );
     }
     
     const downEditUser = event => {
-        event.preventDefault();
+        handleClickOpen(
+            event.currentTarget.getAttribute('data-action'),
+            event.currentTarget.getAttribute('data-user')
+        );
     }
+
+    async function postFetchEditUser(url="",data = {}) {
+        const response = await fetch(url, {
+            method: 'POST',
+            mode: 'cors',
+            cache: 'no-cache',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            redirect: 'follow',
+            referrerPolicy: 'no-referrer',
+            body: data
+        })
+
+        return response.json();
+    }
+
+
     // ** Fetch
     const [access_token, user_id, userAuthenticated] = useState([]);
-
     const fetchUsers = () =>{
         getFetchUsers(
             `${process.env.REACT_APP_APIURL}/api/users`,
             {user_ID: user_id, access_token: access_token}
         ).then((response)=>{
             updateUserList(response)
-            console.log(response);
         }).catch((error) => {
             console.error(error);
         });
@@ -98,7 +163,7 @@ const UsersPage = () => {
         return response.json();
     }
     
-    // Check Authenticity of access token and user_Id 
+    // ** Check Authenticity of access token and user_Id 
     useEffect(() => {
         access_token = localStorage.getItem('accessToken');
         user_id = getWithExpiry('user_ID');
@@ -111,11 +176,10 @@ const UsersPage = () => {
         }
     },[]);
     
-    // IF Authenticated in order trigger Fetch
+    // ** IF Authenticated in order trigger Fetch
     useEffect(() => {
         if(userAuthenticated){
             fetchUsers();
-            console.log('User authenticated');
         }
     },[userAuthenticated]);
 
@@ -160,6 +224,8 @@ const UsersPage = () => {
                                             onMouseDown={downEditUser}
                                             title='설정'
                                             aria-label='button Modify User'
+                                            data-action='edit'
+                                            data-user={row.id}
                                         >
                                             <AccountEdit/> 
                                         </IconButton>
@@ -170,6 +236,8 @@ const UsersPage = () => {
                                             onMouseDown={clickEditUser}
                                             title='제공'
                                             aria-label='button Activate User'
+                                            data-action='activate'
+                                            data-user={row.id}
                                             >
                                                 <AccountArrowUp/>
                                             </IconButton>
@@ -181,6 +249,8 @@ const UsersPage = () => {
                                             onMouseDown={clickEditUser}
                                             title='중지'
                                             aria-label='button Inactivate User'
+                                            data-action='deactivate'
+                                            data-user={row.id}
                                             >
                                                 <AccountArrowDown/>
                                             </IconButton>
@@ -191,6 +261,8 @@ const UsersPage = () => {
                                             onMouseDown={downEditUser}
                                             title='삭제'
                                             aria-label='button Delete User'
+                                            data-action='delete'
+                                            data-user={row.id}
                                         >
                                             <AccountOff/> 
                                         </IconButton>
@@ -208,16 +280,34 @@ const UsersPage = () => {
                     aria-describedby='alert change on by bt description'
                 >
                     <DialogTitle id="dialog-user-actions">
-                         DialogTitle
+                        {dialogTitle}
+                        <IconButton
+                            aria-label='close'
+                            onClick={handleClose}
+                            sx = {{
+                                position: 'absolute',
+                                right: 8,
+                                top: 8,
+                                color: (theme) => theme.palette.grey[500]
+                            }}
+                        >
+                            <Close />
+                        </IconButton>
                     </DialogTitle>
                     <DialogContent>
                         <DialogContentText id="dialog-user-description">
-                            this is the general description
+                            {dialogDescription}
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={handleClose}>Disagree</Button>
-                        <Button onClick={handleClose} autoFocus>Agree</Button>
+                        <Button onClick={handleClose}>{btLeftDialog}</Button>
+                        <Button 
+                          onClick={handleActionDialog}
+                          data-action={dialogAction}
+                          autoFocus
+                        >
+                            {btRightDialog}
+                        </Button>
                     </DialogActions>
                 </Dialog>
             </Grid>
