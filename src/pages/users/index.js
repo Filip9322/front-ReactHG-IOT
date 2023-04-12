@@ -24,31 +24,85 @@ import AccountOff from 'mdi-material-ui/AccountOff'
 import AccountEdit from 'mdi-material-ui/AccountEdit'
 import AccountArrowUp from 'mdi-material-ui/AccountArrowUp'
 import AccountArrowDown from 'mdi-material-ui/AccountArrowDown'
-// ** Configs
 
-// ** Layout Import
-
-// ** Demo Imports
+// ** Utils
+import { getWithExpiry } from 'src/@core/layouts/utils'
+import { isExpired, decodeToken } from 'react-jwt'
 
 // ** Styled Components
-const createData = (user_id, user_name, user_email, user_active) => {
-    return { user_id, user_name, user_email, user_active }
-}
 
-const rows = [
-    createData('admin', '펠리페', 'admin@email.com', true),
-    createData('SuperAdmin', 'Root', 'rootn@email.com', false)
-]
 
-const clickEditUser = event => {
-    event.preventDefault();
-}
 
-const downEditUser = event => {
-    event.preventDefault();
-}
 
 const UsersPage = () => {
+    // ** Create dafualt Data [{},{},...]
+    const createData = (user_ID, user_name, user_email, user_active) => {
+        return { user_ID, user_name, user_email, user_active }
+    }
+    const initialUser = [createData(1,'SuperAdmin', 'Root', 'root@email.com', false)];
+    const [usersList, updateUserList] = useState(initialUser);
+
+    const clickEditUser = event => {
+        event.preventDefault();
+    }
+    
+    const downEditUser = event => {
+        event.preventDefault();
+    }
+    // ** Fetch
+    const [access_token, user_id, userAuthenticated] = useState([]);
+
+    const fetchUsers = () =>{
+        getFetchUsers(
+            `${process.env.REACT_APP_APIURL}/api/users`,
+            {user_ID: user_id, access_token: access_token}
+        ).then((response)=>{
+            updateUserList(response)
+            console.log(response);
+        }).catch((error) => {
+            console.error(error);
+        });
+    }
+
+    async function getFetchUsers(url="",data = {}) {
+        const response = await fetch(url, {
+            method: 'GET',
+            mode: 'cors',
+            cache: 'no-cache',
+            headers: {
+                'Content-Type': 'application/json',
+                'user_id': data.user_ID,
+                'access_token': data.access_token
+            },
+            redirect: 'follow',
+            referrerPolicy: 'no-referrer'
+        })
+
+        return response.json();
+    }
+    
+    // Check Authenticity of access token and user_Id 
+    useEffect(() => {
+        access_token = localStorage.getItem('accessToken');
+        user_id = getWithExpiry('user_ID');
+
+        const myDecodeToken = decodeToken(access_token);
+        if(myDecodeToken.user_ID == user_id){
+            userAuthenticated = true;
+        }else{
+            userAuthenticated = false;
+        }
+    },[]);
+    
+    // IF Authenticated in order trigger Fetch
+    useEffect(() => {
+        if(userAuthenticated){
+            fetchUsers();
+            console.log('User authenticated');
+        }
+    },[userAuthenticated]);
+
+
     return (
         <Box className='content-center'>
             <Grid item xs={12}>
@@ -58,6 +112,7 @@ const UsersPage = () => {
                         <Table sx= {{ minWidth: 650 }} aria-label='Users Table'>
                             <TableHead>
                                 <TableRow>
+                                    <TableCell> # </TableCell>
                                     <TableCell> User ID </TableCell>
                                     <TableCell> Name </TableCell>
                                     <TableCell> Email </TableCell>
@@ -66,7 +121,7 @@ const UsersPage = () => {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                            {rows.map(row => (
+                            {usersList.map(row => (
                                 <TableRow 
                                     key = {row.user_id}
                                     sx = {{'&:last-of-type, &:last-of-type th':{
@@ -74,7 +129,8 @@ const UsersPage = () => {
                                     }
                                 }}
                                 >
-                                    <TableCell component='th' scope='row'> {row.user_id} </TableCell>
+                                    <TableCell> {row.id} </TableCell>
+                                    <TableCell component='th' scope='row'> {row.user_ID} </TableCell>
                                     <TableCell> {row.user_name} </TableCell>
                                     <TableCell> {row.user_email} </TableCell>
                                     <TableCell 

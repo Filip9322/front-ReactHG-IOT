@@ -8,7 +8,6 @@ import { useRouter } from 'next/router'
 // ** MUI Components
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
-import Divider from '@mui/material/Divider'
 import Checkbox from '@mui/material/Checkbox'
 import TextField from '@mui/material/TextField'
 import InputLabel from '@mui/material/InputLabel'
@@ -38,23 +37,8 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 import FooterIllustrationsV1 from 'src/views/pages/auth/FooterIllustration'
 
 // ** Utils
+import { getWithExpiry } from 'src/@core/layouts/utils'
 const now = new Date();
-
-function getWithExpiry(key) {
-  if (typeof window !== 'undefined') {
-    const itemStr = localStorage.getItem(key)
-    if (!itemStr) {
-      return null;
-    }
-    
-    const item = JSON.parse(itemStr);
-    if (now.getTime() > item.expiry) {
-      localStorage.removeItem(key);
-      return null;
-    }
-    return item.value;
-  } else { return null; }
-}
 
 // ** Styled Components
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -111,7 +95,7 @@ const LoginPage = () => {
       // Store user_ID with ExpiredTime
       const storedUser = {
         value: formValues.user_id,
-        expiry: now.getTime() + 50000
+        expiry: now.getTime() + 5000000
       };
 
       localStorage.setItem("user_ID", JSON.stringify(storedUser) );
@@ -200,7 +184,6 @@ const LoginPage = () => {
 
   const store_userID =(event) => {  
     setValues({ ...values, saveUserID: !event.target.checked })
-    console.log(values.saveUserID);
   }
 
   useEffect(() => {
@@ -214,7 +197,6 @@ const LoginPage = () => {
     const stored_User  = getWithExpiry('user_ID');
     if (stored_User){
       setFormValues({ ...formValues, user_id: stored_User })
-      console.log(stored_User);
     }
   },[initialUser]);
 

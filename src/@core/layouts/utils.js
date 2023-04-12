@@ -5,6 +5,10 @@
  * @param item
  * @param activeItem
  */
+
+// ** Const
+const now = new Date();
+
 export const handleURLQueries = (router, path) => {
   if (Object.keys(router.query).length && path) {
     const arr = Object.keys(router.query)
@@ -13,4 +17,20 @@ export const handleURLQueries = (router, path) => {
   }
 
   return false
+}
+
+export const getWithExpiry = (key) => {
+  if (typeof window !== 'undefined') {
+    const itemStr = localStorage.getItem(key)
+    if (!itemStr) {
+      return null;
+    }
+    
+    const item = JSON.parse(itemStr);
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key);
+      return null;
+    }
+    return item.value;
+  } else { return null; }
 }
