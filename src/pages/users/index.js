@@ -11,13 +11,19 @@ import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
 import Table from '@mui/material/Table'
 import Paper from '@mui/material/Paper'
+import Button from '@mui/material/Button'
+import Dialog from '@mui/material/Dialog'
 import TableRow from '@mui/material/TableRow'
 import TableHead from '@mui/material/TableHead'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import IconButton from '@mui/material/IconButton'
 import CardHeader from '@mui/material/CardHeader'
+import DialogTitle from '@mui/material/DialogTitle'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
 import TableContainer from '@mui/material/TableContainer'
+import DialogContentText from '@mui/material/DialogContentText'
 
 // ** Icons Imports
 import AccountOff from 'mdi-material-ui/AccountOff'
@@ -35,6 +41,17 @@ import { isExpired, decodeToken } from 'react-jwt'
 
 
 const UsersPage = () => {
+
+    // ** Dialog Box
+    const [open, setOpen] = useState(false);
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    }
+    const handleClose = () => {
+        setOpen(false);
+    }
+
     // ** Create dafualt Data [{},{},...]
     const createData = (user_ID, user_name, user_email, user_active) => {
         return { user_ID, user_name, user_email, user_active }
@@ -43,7 +60,7 @@ const UsersPage = () => {
     const [usersList, updateUserList] = useState(initialUser);
 
     const clickEditUser = event => {
-        event.preventDefault();
+        setOpen(true);
     }
     
     const downEditUser = event => {
@@ -121,9 +138,9 @@ const UsersPage = () => {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                            {usersList.map(row => (
+                            {usersList.map((row,listID) => (
                                 <TableRow 
-                                    key = {row.user_id}
+                                    key = {listID}
                                     sx = {{'&:last-of-type, &:last-of-type th':{
                                         border: 0
                                     }
@@ -134,7 +151,7 @@ const UsersPage = () => {
                                     <TableCell> {row.user_name} </TableCell>
                                     <TableCell> {row.user_email} </TableCell>
                                     <TableCell 
-                                        style={{color: (row.user_active)? '#21c521': '#ff4343'}}
+                                        style={{color: (row.user_active)? '#21c521': '#ff7321'}}
                                     > {(row.user_active)? 'Active': 'Inactive'} </TableCell>
                                     <TableCell>
                                         <IconButton
@@ -146,24 +163,28 @@ const UsersPage = () => {
                                         >
                                             <AccountEdit/> 
                                         </IconButton>
-                                        <IconButton style={{color: '#21c521' }}
+                                        {!row.user_active &&
+                                            <IconButton style={{color: '#21c521' }}
                                             edge='end'
                                             onClick={clickEditUser}
                                             onMouseDown={clickEditUser}
                                             title='제공'
                                             aria-label='button Activate User'
-                                        >
-                                            <AccountArrowUp/>
-                                        </IconButton>
-                                        <IconButton style={{color: '#ffe421' }}
+                                            >
+                                                <AccountArrowUp/>
+                                            </IconButton>
+                                        }
+                                        {row.user_active &&
+                                            <IconButton style={{color: '#ff7321' }}
                                             edge='end'
                                             onClick={clickEditUser}
                                             onMouseDown={clickEditUser}
                                             title='중지'
                                             aria-label='button Inactivate User'
-                                        >
-                                            <AccountArrowDown/>
-                                        </IconButton>
+                                            >
+                                                <AccountArrowDown/>
+                                            </IconButton>
+                                        }
                                         <IconButton style={{color: '#ff4343' }}
                                             edge='end'
                                             onClick={clickEditUser}
@@ -180,6 +201,25 @@ const UsersPage = () => {
                         </Table>
                     </TableContainer>
                 </Card>
+                <Dialog
+                    open={open}
+                    onClose={handleClose}
+                    aria-labelledby='alert change on by bt title'
+                    aria-describedby='alert change on by bt description'
+                >
+                    <DialogTitle id="dialog-user-actions">
+                         DialogTitle
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="dialog-user-description">
+                            this is the general description
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleClose}>Disagree</Button>
+                        <Button onClick={handleClose} autoFocus>Agree</Button>
+                    </DialogActions>
+                </Dialog>
             </Grid>
         </Box>
     );
