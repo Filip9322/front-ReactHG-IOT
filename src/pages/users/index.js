@@ -45,10 +45,12 @@ const UsersPage = () => {
 
     // ** Dialog Box
     const [open, setOpen] = useState(false);
+    const [dialogUser, setDialogUser] = useState(false);
     const [dialogTitle, setDialogTitle] = useState(false);
     const [dialogAction, setDialogAction] =useState(false);
     const [dialogDescription, setDialogDescription] = useState(false);
     const [btLeftDialog, setBtLeftDialog]   = useState(false);
+    const [isSubmitting, setIsSubmitting]   = useState(false);
     const [btRightDialog, setBtRightDialog] = useState(false);
 
     const handleClickOpen = (action = '', user = 0) => {
@@ -81,18 +83,62 @@ const UsersPage = () => {
             default: break;
         }
         setOpen(true);
-        setDialogAction(action);
+        setDialogUser(user);
         setDialogTitle(title);
-        setDialogDescription(description);
+        setDialogAction(action);
         setBtLeftDialog(btLeft);
         setBtRightDialog(btRight);
+        setDialogDescription(description);
     }
     const handleClose = () => {
         setOpen(false);
     }
     const handleActionDialog = (event) => {
         event.preventDefault()
-        console.log(event.currentTarget.getAttribute('data-action'))
+        var action = event.currentTarget.getAttribute('data-action');
+        var url =  `${process.env.REACT_APP_APIURL}/api/users/${dialogUser}`
+        var data = {}
+
+        switch(action){
+            case 'edit':
+                data = {
+                    "id": parseInt(dialogUser),
+                    "user_mod": user_id
+                }
+                //postFetchEditUser(url="",data = {});
+                break;
+            case 'activate':
+                data = {
+                    "id": parseInt(dialogUser),
+                    "user_active": true,
+                    "user_mod": user_id
+                }
+                break;
+            case 'deactivate':
+                data = {
+                    "id": parseInt(dialogUser),
+                    "user_active": false,
+                    "user_mod": user_id
+                }
+                break;
+            case 'delete':
+                data = {
+                    "id": parseInt(dialogUser),
+                    "is_deleted": true,
+                    "user_mod": user_id
+                }
+                break;
+        }
+        postFetchEditUser(url,data)
+        .then((response) => {
+            setOpen(false);
+            console.log(JSON.parse(response))
+        })
+        .catch((error) => {
+            if(error.code) console.error(error)
+            handleClose(false);
+            setIsSubmitting(false)
+        });
     }
 
     // ** Create defualt Data [{},{},...]
@@ -117,8 +163,9 @@ const UsersPage = () => {
     }
 
     async function postFetchEditUser(url="",data = {}) {
+        setIsSubmitting(true);
         const response = await fetch(url, {
-            method: 'POST',
+            method: 'PUT',
             mode: 'cors',
             cache: 'no-cache',
             headers: {
@@ -126,7 +173,7 @@ const UsersPage = () => {
             },
             redirect: 'follow',
             referrerPolicy: 'no-referrer',
-            body: data
+            body: JSON.stringify(data)
         })
 
         return response.json();
@@ -142,7 +189,7 @@ const UsersPage = () => {
         ).then((response)=>{
             updateUserList(response)
         }).catch((error) => {
-            console.error(error);
+            console.error('error: '+error);
         });
     }
 
@@ -182,6 +229,11 @@ const UsersPage = () => {
             fetchUsers();
         }
     },[userAuthenticated]);
+
+    // ** Update after Action Submission
+    useEffect(() => {
+        fetchUsers();
+    },[isSubmitting])
 
 
     return (
