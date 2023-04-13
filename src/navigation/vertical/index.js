@@ -39,6 +39,12 @@ const navigation = () => {
       openInNewTab: false
     },
     {
+      title: 'wide-areas',
+      icon: AccountPlusOutline,
+      path: '/wide-areas',
+      openInNewTab: false
+    },
+    {
       title: 'Register',
       icon: AccountPlusOutline,
       path: '/pages/register',
