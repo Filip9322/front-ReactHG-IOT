@@ -3,19 +3,22 @@ import { useState,  useEffect } from "react";
 
 //** Next Imports */
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/router'
 
 //** MUI Components */
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import Card from '@mui/material/Card'
-import Button from "@mui/material/Button";
+import Button from "@mui/material/Button"
 import CardMedia from '@mui/material/CardMedia'
-import Typography from "@mui/material/Typography";
+import Typography from "@mui/material/Typography"
 import CardActions from '@mui/material/CardActions'
 import CardContent from '@mui/material/CardContent'
 
 //** Icons Imports */
+import VoiceTrafficLight from 'public/images/misc/hangil-signal-border.svg'
+import VoiceTrafficLight_1 from 'public/images/misc/hangil-signal.svg'
 
 
 //** Utils  */
@@ -62,6 +65,9 @@ const WideAreasPage = () => {
                             </Box>
                             <Box sx={{ display: 'flex', justifyContent: 'space-between'}}>
                                 <Box sx={{ display: 'flex', flex: '70'}}>
+                                    <Box sx={{ position: 'relative'}}>    
+                                        <VoiceTrafficLight height={50} width={50} color="red"/>
+                                    </Box>
                                     음성유도기: 1200 / 900 / 200 / 100
                                     음향신호기: 1200 / 900 / 200 / 100
                                 </Box>
