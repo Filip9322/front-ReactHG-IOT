@@ -17,7 +17,7 @@ import CardActions from '@mui/material/CardActions'
 import CardContent from '@mui/material/CardContent'
 
 //** Icons Imports */
-import VoiceTrafficLight from 'public/images/misc/hangil-signal-border.svg'
+import VoiceTrafficLight from 'public/images/misc/hangil-voice-guidance.svg'
 import VoiceTrafficLight_1 from 'public/images/misc/hangil-signal.svg'
 
 
