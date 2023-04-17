@@ -30,6 +30,16 @@ const UserLayout = ({ children }) => {
    */
   const hidden = useMediaQuery(theme => theme.breakpoints.down('lg'))
 
+  const LogoTemp = () => {
+    var wide_area_logo = '1-서울특별시'
+    return (
+      <Box>
+        <a target='_blank' rel='noreferrer' href=''>
+          <img width={230} alt='test' src={`/images/wide-areas/${wide_area_logo}.png`} />
+        </a>
+      </Box>
+    )
+  }
   const UpgradeToProImg = () => {
     return (
       <Box sx={{ mx: 'auto' }}>
@@ -50,7 +60,7 @@ const UserLayout = ({ children }) => {
       settings={settings}
       saveSettings={saveSettings}
       verticalNavItems={VerticalNavItems()} // Navigation Items
-      afterVerticalNavMenuContent={UpgradeToProImg}
+      afterVerticalNavMenuContent={LogoTemp}
       verticalAppBarContent={(
         props // AppBar Content
       ) => (
