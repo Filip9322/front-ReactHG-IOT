@@ -6,4 +6,4 @@ All notable changes to this template will be documented in this file.
 
 ### Added
 
-- Initial Release
+- 2023/04/18 Initial Release

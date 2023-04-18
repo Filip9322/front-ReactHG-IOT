@@ -20,6 +20,7 @@ import CardContent from '@mui/material/CardContent'
 import VoiceTrafficLight from 'public/images/misc/hangil-signal-border.svg'
 import VoiceTrafficLight_1 from 'public/images/misc/hangil-signal.svg'
 import VoiceGuidance from 'public/images/misc/hangil-voice-guidance.svg'
+import KoreaMap from 'public/images/wide_areas/korea_subdivision.svg'
 
 //** Utils  */
 import { getWithExpiry } from "src/@core/layouts/utils"
@@ -35,7 +36,12 @@ const WideAreasPage = () => {
     const initialWideArea = [];
     const [wideAreasList, updateWideAreasList] = useState(initialWideArea);
 
-    var wide_area_logo = '1-서울특별시';
+    // ** Capture ewvent Click Wide Area
+    const clickWideArea = event => {
+        event.preventDefault();
+        console.log('hola '+ event.currentTarget.getAttribute('data-warea'))
+    }
+    
 
     // ** Fetch API
     async function fetchWide_Areas(){
@@ -90,12 +96,36 @@ const WideAreasPage = () => {
   return (
     <Box className='content-center'>
         <Grid container rowSpacing={1} columnSpacing={{xs: 1, sm: 2, md: 3 }}>
+            <Grid item xs={6} >
+                <Card>
+                    <Box sx={{width: '500px'}}>
+                        <KoreaMap  
+                        sx ={{
+                            'path': {
+                                fill: '#1da1f2',
+                                ':hover': {
+                                    fill: red,
+                                    stroke: red,
+                                    strokeWidth: '3px',
+                                    transition: 'fill 0.4s'
+                                }
+                            }
+                        }}
+                        width={'500'}  
+                        arial-label="대한민국 지도"/>
+                    </Box>
+                </Card>
+            </Grid>
+
+
             {wideAreasList.map((row, listID) => (
             <Grid item xs={6} key = {listID}>
                 <Card>
                     <CardContent sx={{ minWidth: 275, display: 'flex' }} >
                         <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column', flex: 20, cursor: 'pointer' }}>
                             <CardMedia
+                                onClick={clickWideArea}
+                                data-warea = {row.id}
                                 component='img'
                                 sx={{ width: 100 }}
                                 image= {`${row.wa_logo}`}
@@ -106,9 +136,14 @@ const WideAreasPage = () => {
                                 fontWeight: '500',
                                 ':hover':{
                                     textDecoration: 'underline'
-                                }}}
+                                },
+                                '& a':{
+                                    color: 'primary',
+                                    textDecoration: 'none'
+                                }
+                            }}
                                 variant='h6' gutterBottom>
-                                <Link href="#" style={{ color: red, textDecoration: 'none' }}>
+                                <Link href='#' onClick={clickWideArea} data-warea = {row.id}>
                                     {row.wa_name}
                                 </Link>
                             </Typography>
@@ -125,17 +160,22 @@ const WideAreasPage = () => {
                                         : 1200 / 900 / 200 / 100
                                     </Box>
                                     <Box sx={{ position: 'relative'}}>
-                                        <VoiceGuidance     height={50} width={50} color={red['800']} arial-label="음성유도기"/>
+                                        <VoiceGuidance     height={50} width={50} color={lightGreen['800']} arial-label="음성유도기"/>
                                         : 1200 / 900 / 200 / 100
                                     </Box>
                                 </Box>
                                 <Box sx={{ display: 'flex', flex: '30', flexDirection: 'column', justifyContent: 'space-between'} }>
                                     <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column'}}>
-                                        <Typography sx={{ fontSize: 24 }}>17시</Typography>
+                                        <Typography sx={{ fontSize: 24 }}>17시/구</Typography>
                                     </Box>
                                     <Box>
                                         <CardActions>
-                                            <Button variant="outlined" sx={{ fontSize: 14 }}>자세히</Button>
+                                            <Button 
+                                                variant="outlined" 
+                                                onClick={clickWideArea}
+                                                data-warea = {row.id}
+                                                sx={{ fontSize: 14 }}
+                                            >자세히</Button>
                                         </CardActions>
                                     </Box>
                                 </Box>
