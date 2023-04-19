@@ -16,7 +16,7 @@
       }
 
       .cls-1:hover, .cls-2:hover {
-        fill: #ff0000;
+        fill: currentColor;
       }
     </style>
   </defs>

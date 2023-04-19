@@ -16,18 +16,22 @@ import Typography from "@mui/material/Typography"
 import CardActions from '@mui/material/CardActions'
 import CardContent from '@mui/material/CardContent'
 
-//** Icons Imports */
+//** SVG Imports */
 import VoiceTrafficLight from 'public/images/misc/hangil-signal-border.svg'
 import VoiceTrafficLight_1 from 'public/images/misc/hangil-signal.svg'
 import VoiceGuidance from 'public/images/misc/hangil-voice-guidance.svg'
-import KoreaMap from 'public/images/wide_areas/korea_subdivision.svg'
 
 //** Utils  */
 import { getWithExpiry } from "src/@core/layouts/utils"
 import { decodeToken } from "react-jwt"
 
+// ** Custom Components Imports
+import KoreaMapComponent from 'src/@core/components/maps/korea_division'
+
 //** Styles */
 import { lightGreen, red } from '@mui/material/colors';
+
+
 
 const WideAreasPage = () => {
 
@@ -99,20 +103,7 @@ const WideAreasPage = () => {
             <Grid item xs={6} >
                 <Card>
                     <Box sx={{width: '500px'}}>
-                        <KoreaMap  
-                        sx ={{
-                            'path': {
-                                fill: '#1da1f2',
-                                ':hover': {
-                                    fill: red,
-                                    stroke: red,
-                                    strokeWidth: '3px',
-                                    transition: 'fill 0.4s'
-                                }
-                            }
-                        }}
-                        width={'500'}  
-                        arial-label="대한민국 지도"/>
+                        <KoreaMapComponent color1={lightGreen['200']} color2={lightGreen['200']} Hcolor={lightGreen['200']}/>
                     </Box>
                 </Card>
             </Grid>
