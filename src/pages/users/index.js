@@ -39,8 +39,6 @@ import { isExpired, decodeToken } from 'react-jwt'
 // ** Styled Components
 
 
-
-
 const UsersPage = () => {
 
     // ** Dialog Box
@@ -145,7 +143,7 @@ const UsersPage = () => {
     const createData = (user_ID, user_name, user_email, user_active) => {
         return { user_ID, user_name, user_email, user_active }
     }
-    const initialUser = [createData(1,'SuperAdmin', 'Root', 'root@email.com', false)];
+    const initialUser = [createData(1,'SuperAdmin', 'Fake', 'root@email.com', false)];
     const [usersList, updateUserList] = useState(initialUser);
 
     const clickEditUser = event => {

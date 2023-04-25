@@ -36,16 +36,24 @@ import { lightGreen, red } from '@mui/material/colors';
 const WideAreasPage = () => {
 
     // ** Check Authenticity of access token and user_Id
+    const initialWideArea = [{id:1, wa_name: 'test', wa_logo: ''}];
+    const initialMapSelected = {id: 1, wa_name: '서울'};
+    const [searchMatchArea, updateSearchMatchArea] = useState({});
+    const [showCardWidearea, setShowCardWidearea] = useState(false)
     const [access_token, user_id, userAuthenticated] = useState([]);
-    const initialWideArea = [];
     const [wideAreasList, updateWideAreasList] = useState(initialWideArea);
+    const [mapSelectedArea, updateMapSelectedArea] = useState(initialMapSelected);
 
     // ** Capture ewvent Click Wide Area
     const clickWideArea = event => {
         event.preventDefault();
-        console.log('hola '+ event.currentTarget.getAttribute('data-warea'))
+        var warea = event.currentTarget;
+        console.log(warea.getAttribute('data-title')+' '+warea.getAttribute('data-warea'))
     }
-    
+
+    const clickMapWideArea = (area_name, area_id) => {
+        updateMapSelectedArea({id: area_id, name: area_name});
+    };
 
     // ** Fetch API
     async function fetchWide_Areas(){
@@ -75,11 +83,13 @@ const WideAreasPage = () => {
 
         return response.json();
     }
+    
+
 
     useEffect(() => {
         access_token = localStorage.getItem('accessToken');
         user_id = getWithExpiry('user_ID');
-    
+        
         const myDecodeToken = decodeToken(access_token);
         if(myDecodeToken.user_ID == user_id){
             userAuthenticated = true;
@@ -93,89 +103,129 @@ const WideAreasPage = () => {
     useEffect(() => {
         if(userAuthenticated){
             fetchWide_Areas();
-        }
+        }else {console.error('Error Authentication')}
     }, [userAuthenticated]);
 
+    // ** Updated base on Area selected in the map
+    useEffect(() => {
+        console.log('Area: '+mapSelectedArea.id+' '+mapSelectedArea.name);
+
+        let searchArea = wideAreasList.find(warea => warea.id === mapSelectedArea.id);
+        if(searchArea) updateSearchMatchArea(searchArea);
+    },[mapSelectedArea])
+    
+    useEffect(() => {
+        if(searchMatchArea.wa_logo) {console.log(searchMatchArea); setShowCardWidearea(true)}
+    },[searchMatchArea])
 
   return (
     <Box className='content-center'>
-        <Grid container rowSpacing={1} columnSpacing={{xs: 1, sm: 2, md: 3 }}>
-            <Grid item xs={6} >
-                <Card>
-                    <Box sx={{width: '500px'}}>
-                        <KoreaMapComponent color1={lightGreen['200']} color2={lightGreen['200']} Hcolor={lightGreen['200']}/>
-                    </Box>
-                </Card>
+        <Grid container rowSpacing={2} columnSpacing={{xs: 1, sm: 1, md: 1}}>
+            <Grid container xs={6} spacing={1}>
+                <Grid item xs={12} >
+                    <Card>
+                        <Box sx={{width: '500px'}}>
+                            <KoreaMapComponent chooseArea={clickMapWideArea} color1='#a09f9f' color2='#434343' Hcolor={lightGreen['800']}/>
+                        </Box>
+                    </Card>
+                </Grid>
             </Grid>
-
-
-            {wideAreasList.map((row, listID) => (
-            <Grid item xs={6} key = {listID}>
-                <Card>
-                    <CardContent sx={{ minWidth: 275, display: 'flex' }} >
-                        <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column', flex: 20, cursor: 'pointer' }}>
-                            <CardMedia
-                                onClick={clickWideArea}
-                                data-warea = {row.id}
-                                component='img'
-                                sx={{ width: 100 }}
-                                image= {`${row.wa_logo}`}
-                                alt='image test'
-                            />
-                            <Typography sx={{
-                                fontSize: '16px',
-                                fontWeight: '500',
-                                ':hover':{
-                                    textDecoration: 'underline'
-                                },
-                                '& a':{
-                                    color: 'primary',
-                                    textDecoration: 'none'
-                                }
-                            }}
-                                variant='h6' gutterBottom>
-                                <Link href='#' onClick={clickWideArea} data-warea = {row.id}>
-                                    {row.wa_name}
-                                </Link>
+            <Grid container xs={6}  >         
+                { showCardWidearea === true  ? (
+                <Grid item xs={12} key = {searchMatchArea.id}>
+                    <Card>
+                        <CardContent sx={{ minWidth: 275, display: 'flex' }} >
+                            <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column', flex: 20, cursor: 'pointer' }}>
+                                <CardMedia
+                                    onClick={clickWideArea}
+                                    data-warea = {searchMatchArea.id}
+                                    component='img'
+                                    sx={{ width: 100 }}
+                                    image= {`${searchMatchArea.wa_logo}`}
+                                    alt={`${searchMatchArea.wa_name} logo`}
+                                />
+                                <Typography sx={{
+                                    fontSize: '16px',
+                                    fontWeight: '500',
+                                    ':hover':{
+                                        textDecoration: 'underline'
+                                    },
+                                    '& a':{
+                                        color: 'primary',
+                                        textDecoration: 'none'
+                                    }
+                                }}
+                                    variant='h6' gutterBottom
+                                >
+                                    <Link href='#' onClick={clickWideArea} data-warea = {searchMatchArea.id}>
+                                        {searchMatchArea.wa_name}
+                                    </Link>
+                                </Typography>
+                            </Box>
+                            <Box sx={{ display: 'flex', flexDirection: 'column', flex: 80}}>
+                                <Box sx={{ display: 'flex',  justifyContent: 'space-between'}}>
+                                    <Typography sx={{ fontSize: 14 }} variant='h7' >{searchMatchArea.wa_long_name}</Typography>
+                                    <Typography sx={{ fontSize: 14 }} variant='h7' >{searchMatchArea.country_wa_term}</Typography>
+                                </Box>
+                                <Box sx={{ display: 'flex', justifyContent: 'space-between'}}>
+                                    <Box sx={{ display: 'flex', flexDirection: 'column', flex: '70'}}>
+                                        <Box sx={{ position: 'relative'}}>
+                                            <VoiceTrafficLight height={50} width={50} color={lightGreen['800']} arial-label="음향신호기"/>
+                                            : 1200 / 900 / 200 / 100
+                                        </Box>
+                                        <Box sx={{ position: 'relative'}}>
+                                            <VoiceGuidance     height={50} width={50} color={lightGreen['800']} arial-label="음성유도기"/>
+                                            : 1200 / 900 / 200 / 100
+                                        </Box>
+                                    </Box>
+                                    <Box sx={{ display: 'flex', flex: '30', flexDirection: 'column', justifyContent: 'space-between'} }>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column'}}>
+                                            <Typography sx={{ fontSize: 24 }}>17시/구</Typography>
+                                        </Box>
+                                        <Box>
+                                            <CardActions>
+                                                <Button 
+                                                    variant="outlined" 
+                                                    onClick={clickWideArea}
+                                                    data-warea = {searchMatchArea.id}
+                                                    sx={{ fontSize: 14 }}
+                                                >자세히</Button>
+                                            </CardActions>
+                                        </Box>
+                                    </Box>
+                                </Box>
+                            </Box>
+                        </CardContent>
+                    </Card>
+                </Grid>
+                ) : (<span />)}
+                <Grid container columns={12} spacing={1}>
+                {
+                wideAreasList.map((row, listID) => {
+                return(
+                    <Grid item xs={2} key={listID} >
+                        <Card>
+                        <CardContent sx={{ minWidth: 50, display: 'flex', flexDirection:'column'}} >
+                            <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column', flex: 20, cursor: 'pointer' }}>
+                                <CardMedia
+                                    onClick={clickWideArea}
+                                    data-warea = {row.id}
+                                    component='img'
+                                    sx={{ width: 100 }}
+                                    image= {`${row.wa_logo}`}
+                                    alt={`${row.wa_name} logo`}
+                                />
+                            </Box>
+                            <Typography sx={{textAlign:'center'}}>
+                            {row.wa_name}
                             </Typography>
-                        </Box>
-                        <Box sx={{ display: 'flex', flexDirection: 'column', flex: 80}}>
-                            <Box sx={{ display: 'flex',  justifyContent: 'space-between'}}>
-                                <Typography sx={{ fontSize: 14 }} variant='h7' >{row.wa_long_name}</Typography>
-                                <Typography sx={{ fontSize: 14 }} variant='h7' >{row.country_wa_term}</Typography>
-                            </Box>
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between'}}>
-                                <Box sx={{ display: 'flex', flexDirection: 'column', flex: '70'}}>
-                                    <Box sx={{ position: 'relative'}}>
-                                        <VoiceTrafficLight height={50} width={50} color={lightGreen['800']} arial-label="음향신호기"/>
-                                        : 1200 / 900 / 200 / 100
-                                    </Box>
-                                    <Box sx={{ position: 'relative'}}>
-                                        <VoiceGuidance     height={50} width={50} color={lightGreen['800']} arial-label="음성유도기"/>
-                                        : 1200 / 900 / 200 / 100
-                                    </Box>
-                                </Box>
-                                <Box sx={{ display: 'flex', flex: '30', flexDirection: 'column', justifyContent: 'space-between'} }>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column'}}>
-                                        <Typography sx={{ fontSize: 24 }}>17시/구</Typography>
-                                    </Box>
-                                    <Box>
-                                        <CardActions>
-                                            <Button 
-                                                variant="outlined" 
-                                                onClick={clickWideArea}
-                                                data-warea = {row.id}
-                                                sx={{ fontSize: 14 }}
-                                            >자세히</Button>
-                                        </CardActions>
-                                    </Box>
-                                </Box>
-                            </Box>
-                        </Box>
-                    </CardContent>
-                </Card>
+                        </CardContent>
+                        </Card>
+                    </Grid>
+                );})
+                }
+                </Grid>
             </Grid>
-             ))}
         </Grid>
     </Box>
   );
