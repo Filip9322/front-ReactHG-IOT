@@ -47,12 +47,16 @@ const WideAreasPage = () => {
     // ** Capture ewvent Click Wide Area
     const clickWideArea = event => {
         event.preventDefault();
-        var warea = event.currentTarget;
-        console.log(warea.getAttribute('data-title')+' '+warea.getAttribute('data-warea'))
+        let warea = event.currentTarget;
+        let id = warea.getAttribute('data-warea');
+        let title = warea.getAttribute('data-title');
+        console.log(title+' '+id)
+        
+        updateMapSelectedArea({id: parseInt(id), name: title});
     }
 
     const clickMapWideArea = (area_name, area_id) => {
-        updateMapSelectedArea({id: area_id, name: area_name});
+        updateMapSelectedArea({id: parseInt(area_id), name: area_name});
     };
 
     // ** Fetch API
@@ -108,10 +112,10 @@ const WideAreasPage = () => {
 
     // ** Updated base on Area selected in the map
     useEffect(() => {
-        console.log('Area: '+mapSelectedArea.id+' '+mapSelectedArea.name);
+        console.log('Area: '+typeof(mapSelectedArea.id)+' '+mapSelectedArea.name);
 
         let searchArea = wideAreasList.find(warea => warea.id === mapSelectedArea.id);
-        if(searchArea) updateSearchMatchArea(searchArea);
+        if(searchArea) {console.log('update'); updateSearchMatchArea(searchArea);}
     },[mapSelectedArea])
     
     useEffect(() => {
@@ -121,7 +125,7 @@ const WideAreasPage = () => {
   return (
     <Box className='content-center'>
         <Grid container rowSpacing={2} columnSpacing={{xs: 1, sm: 1, md: 1}}>
-            <Grid container xs={6} spacing={1}>
+            <Grid item xs={6}>
                 <Grid item xs={12} >
                     <Card>
                         <Box sx={{width: '500px'}}>
@@ -130,10 +134,10 @@ const WideAreasPage = () => {
                     </Card>
                 </Grid>
             </Grid>
-            <Grid container xs={6}  >         
+            <Grid item xs={6}  >         
                 { showCardWidearea === true  ? (
                 <Grid item xs={12} key = {searchMatchArea.id}>
-                    <Card>
+                    <Card >
                         <CardContent sx={{ minWidth: 275, display: 'flex' }} >
                             <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column', flex: 20, cursor: 'pointer' }}>
                                 <CardMedia
@@ -203,23 +207,26 @@ const WideAreasPage = () => {
                 {
                 wideAreasList.map((row, listID) => {
                 return(
-                    <Grid item xs={2} key={listID} >
-                        <Card>
-                        <CardContent sx={{ minWidth: 50, display: 'flex', flexDirection:'column'}} >
-                            <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column', flex: 20, cursor: 'pointer' }}>
-                                <CardMedia
-                                    onClick={clickWideArea}
-                                    data-warea = {row.id}
-                                    component='img'
-                                    sx={{ width: 100 }}
-                                    image= {`${row.wa_logo}`}
-                                    alt={`${row.wa_name} logo`}
-                                />
-                            </Box>
-                            <Typography sx={{textAlign:'center'}}>
-                            {row.wa_name}
-                            </Typography>
-                        </CardContent>
+                    <Grid item xs={2} key={listID}>
+                        <Card 
+                          onClick={clickWideArea}
+                          data-warea = {row.id}
+                          data-title = {row.wa_name}
+                          sx={{"&:hover":{ backgroundColor: '#96d3e433', color: 'blue', cursor: 'pointer' }}}
+                        >
+                            <CardContent sx={{ minWidth: 50, display: 'flex', flexDirection:'column'}} >
+                                <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column', flex: 20 }}>
+                                    <CardMedia
+                                        component='img'
+                                        sx={{ width: 100 }}
+                                        image= {`${row.wa_logo}`}
+                                        alt={`${row.wa_name} logo`}
+                                    />
+                                </Box>
+                                <Typography sx={{textAlign:'center'}}>
+                                {row.wa_name}
+                                </Typography>
+                            </CardContent>
                         </Card>
                     </Grid>
                 );})
