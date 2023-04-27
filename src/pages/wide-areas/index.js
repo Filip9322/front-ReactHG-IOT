@@ -38,8 +38,9 @@ const WideAreasPage = () => {
     // ** Check Authenticity of access token and user_Id
     const initialWideArea = [{id:1, wa_name: 'test', wa_logo: ''}];
     const initialMapSelected = {id: 1, wa_name: '서울'};
+    const [highLightCard, updateHighLightCard] = useState(0);
     const [searchMatchArea, updateSearchMatchArea] = useState({});
-    const [showCardWidearea, setShowCardWidearea] = useState(false)
+    const [showCardWidearea, setShowCardWidearea] = useState(false);
     const [access_token, user_id, userAuthenticated] = useState([]);
     const [wideAreasList, updateWideAreasList] = useState(initialWideArea);
     const [mapSelectedArea, updateMapSelectedArea] = useState(initialMapSelected);
@@ -50,6 +51,11 @@ const WideAreasPage = () => {
         let warea = event.currentTarget;
         let id = warea.getAttribute('data-warea');
         let title = warea.getAttribute('data-title');
+
+        // Toggle'selected' class
+        updateHighLightCard(id);
+        //warea.classList.toggle("selected");
+        
         console.log(title+' '+id)
         
         updateMapSelectedArea({id: parseInt(id), name: title});
@@ -112,24 +118,24 @@ const WideAreasPage = () => {
 
     // ** Updated base on Area selected in the map
     useEffect(() => {
-        console.log('Area: '+typeof(mapSelectedArea.id)+' '+mapSelectedArea.name);
-
+        
+        //console.log('Area: '+mapSelectedArea.id+' '+mapSelectedArea.name);
         let searchArea = wideAreasList.find(warea => warea.id === mapSelectedArea.id);
-        if(searchArea) {console.log('update'); updateSearchMatchArea(searchArea);}
+        if(searchArea) {updateSearchMatchArea(searchArea);}
     },[mapSelectedArea])
     
     useEffect(() => {
-        if(searchMatchArea.wa_logo) {console.log(searchMatchArea); setShowCardWidearea(true)}
+        if(searchMatchArea.wa_logo) {setShowCardWidearea(true)} //console.log(searchMatchArea);
     },[searchMatchArea])
 
   return (
     <Box className='content-center'>
         <Grid container rowSpacing={2} columnSpacing={{xs: 1, sm: 1, md: 1}}>
-            <Grid item xs={6}>
+            <Grid item xs={5} >
                 <Grid item xs={12} >
                     <Card>
                         <Box sx={{width: '500px'}}>
-                            <KoreaMapComponent chooseArea={clickMapWideArea} color1='#a09f9f' color2='#434343' Hcolor={lightGreen['800']}/>
+                            <KoreaMapComponent chooseArea={clickMapWideArea} color1='#a09f9f' color2='#434343' Hcolor='#fded7c8c' w_selected={highLightCard}/>
                         </Box>
                     </Card>
                 </Grid>
@@ -207,11 +213,13 @@ const WideAreasPage = () => {
                 {
                 wideAreasList.map((row, listID) => {
                 return(
-                    <Grid item xs={2} key={listID}>
+                    <Grid item xs={2} key={listID} sx={{'& .selected':{backgroundColor:'#feea5945'}}}>
                         <Card 
                           onClick={clickWideArea}
+                          className={row.id == highLightCard ? "selected": ""}
                           data-warea = {row.id}
                           data-title = {row.wa_name}
+                          highlightcard = {highLightCard}
                           sx={{"&:hover":{ backgroundColor: '#96d3e433', color: 'blue', cursor: 'pointer' }}}
                         >
                             <CardContent sx={{ minWidth: 50, display: 'flex', flexDirection:'column'}} >
