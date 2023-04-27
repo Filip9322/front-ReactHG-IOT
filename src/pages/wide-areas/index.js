@@ -63,6 +63,7 @@ const WideAreasPage = () => {
 
     const clickMapWideArea = (area_name, area_id) => {
         updateMapSelectedArea({id: parseInt(area_id), name: area_name});
+        updateHighLightCard(parseInt(area_id));
     };
 
     // ** Fetch API
@@ -216,7 +217,7 @@ const WideAreasPage = () => {
                     <Grid item xs={2} key={listID} sx={{'& .selected':{backgroundColor:'#feea5945'}}}>
                         <Card 
                           onClick={clickWideArea}
-                          className={row.id == highLightCard ? "selected": ""}
+                          className={row.id == highLightCard  ? "selected": ""}
                           data-warea = {row.id}
                           data-title = {row.wa_name}
                           highlightcard = {highLightCard}
