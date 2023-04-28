@@ -34,7 +34,6 @@ import { lightGreen, red } from '@mui/material/colors';
 
 
 const WideAreasPage = () => {
-
     // ** Check Authenticity of access token and user_Id
     const initialWideArea = [{id:1, wa_name: 'test', wa_logo: ''}];
     const initialMapSelected = {id: 1, wa_name: '서울'};
@@ -44,7 +43,13 @@ const WideAreasPage = () => {
     const [access_token, user_id, userAuthenticated] = useState([]);
     const [wideAreasList, updateWideAreasList] = useState(initialWideArea);
     const [mapSelectedArea, updateMapSelectedArea] = useState(initialMapSelected);
-
+    
+    // ** MiniMap Colors
+    const color1  = '#a09f9f';
+    const color2  = '#434343';
+    const Hcolor  = '#008593';
+    const HoColor = '#fded7ca6';
+    
     // ** Capture ewvent Click Wide Area
     const clickWideArea = event => {
         event.preventDefault();
@@ -54,10 +59,6 @@ const WideAreasPage = () => {
 
         // Toggle'selected' class
         updateHighLightCard(id);
-        //warea.classList.toggle("selected");
-        
-        console.log(title+' '+id)
-        
         updateMapSelectedArea({id: parseInt(id), name: title});
     }
 
@@ -94,9 +95,8 @@ const WideAreasPage = () => {
 
         return response.json();
     }
-    
 
-
+    // ** Start Initialization
     useEffect(() => {
         access_token = localStorage.getItem('accessToken');
         user_id = getWithExpiry('user_ID');
@@ -109,7 +109,6 @@ const WideAreasPage = () => {
         }
     },[]);
 
-
     // ** IF Authenticated in order trigger Fetch
     useEffect(() => {
         if(userAuthenticated){
@@ -119,14 +118,13 @@ const WideAreasPage = () => {
 
     // ** Updated base on Area selected in the map
     useEffect(() => {
-        
-        //console.log('Area: '+mapSelectedArea.id+' '+mapSelectedArea.name);
         let searchArea = wideAreasList.find(warea => warea.id === mapSelectedArea.id);
         if(searchArea) {updateSearchMatchArea(searchArea);}
     },[mapSelectedArea])
     
+    // ** Search the matching selected in the Map into all wide area list
     useEffect(() => {
-        if(searchMatchArea.wa_logo) {setShowCardWidearea(true)} //console.log(searchMatchArea);
+        if(searchMatchArea.wa_logo) {setShowCardWidearea(true)}
     },[searchMatchArea])
 
   return (
@@ -136,7 +134,13 @@ const WideAreasPage = () => {
                 <Grid item xs={12} >
                     <Card>
                         <Box sx={{width: '500px'}}>
-                            <KoreaMapComponent highLightArea={highLightCard} chooseArea={clickMapWideArea} color1='#a09f9f' color2='#434343' HoColor='#008593' Hcolor='#fded7ca6' w_selected={highLightCard}/>
+                            <KoreaMapComponent 
+                                highLightArea={highLightCard} 
+                                chooseArea={clickMapWideArea} 
+                                color1={color1} color2={color2} 
+                                HoColor={HoColor} Hcolor={Hcolor} 
+                                w_selected={highLightCard}
+                            />
                         </Box>
                     </Card>
                 </Grid>
