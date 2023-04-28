@@ -136,7 +136,7 @@ const WideAreasPage = () => {
                 <Grid item xs={12} >
                     <Card>
                         <Box sx={{width: '500px'}}>
-                            <KoreaMapComponent chooseArea={clickMapWideArea} color1='#a09f9f' color2='#434343' Hcolor='#fded7c8c' w_selected={highLightCard}/>
+                            <KoreaMapComponent highLightArea={highLightCard} chooseArea={clickMapWideArea} color1='#a09f9f' color2='#434343' HoColor='#008593' Hcolor='#fded7ca6' w_selected={highLightCard}/>
                         </Box>
                     </Card>
                 </Grid>
