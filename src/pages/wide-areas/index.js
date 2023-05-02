@@ -128,27 +128,32 @@ const WideAreasPage = () => {
     },[searchMatchArea])
 
   return (
-    <Box className='content-center'>
-        <Grid container rowSpacing={2} columnSpacing={{xs: 1, sm: 1, md: 1}}>
-            <Grid item xs={5} >
-                <Grid item xs={12} >
-                    <Card>
-                        <Box sx={{width: '500px'}}>
-                            <KoreaMapComponent 
-                                highLightArea={highLightCard} 
-                                chooseArea={clickMapWideArea} 
-                                color1={color1} color2={color2} 
-                                HoColor={HoColor} Hcolor={Hcolor} 
-                                w_selected={highLightCard}
-                            />
-                        </Box>
-                    </Card>
-                </Grid>
+    <Box className='content-center' 
+      sx={{
+        display: 'flex', 
+        alignItems: 'center',
+        flexDirection: {xs: 'column', sm:'row'}}}
+    >
+        <Grid container>
+            <Grid item xs={12} >
+                <Card>
+                    <KoreaMapComponent
+                        className="copm_Map"
+                        highLightArea={highLightCard} 
+                        chooseArea={clickMapWideArea} 
+                        color1={color1} color2={color2} 
+                        HoColor={HoColor} Hcolor={Hcolor} 
+                        w_selected={highLightCard}
+                        sx={{width: 'auto', height: 'auto', padding:'5px 14px'}}
+                    />
+                </Card>
             </Grid>
-            <Grid item xs={6}  >         
+        </Grid>
+        <Grid container>
+            <Grid item xs={12}>         
                 { showCardWidearea === true  ? (
-                <Grid item xs={12} key = {searchMatchArea.id}>
-                    <Card >
+                <Grid item  key = {searchMatchArea.id}>
+                    <Card  >
                         <CardContent sx={{ minWidth: 275, display: 'flex' }} >
                             <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column', flex: 20, cursor: 'pointer' }}>
                                 <CardMedia
@@ -214,27 +219,42 @@ const WideAreasPage = () => {
                     </Card>
                 </Grid>
                 ) : (<span />)}
-                <Grid container columns={12} spacing={1}>
+                <Grid container
+                  columns={{xs:12, sm: 8, md:12}} 
+                  spacing={{xs: 0, sm: 2}}
+                  sx={{
+                    flexWrap:{xs:'nowrap', sm:'wrap'},
+                    overflow:'hidden',
+                    overflowX: {xs:'auto', sm:'hidden'},
+                    scrollBehavior: 'smooth',
+                    scrollSnapType: 'x mandatory'
+                  }}
+               >
                 {
                 wideAreasList.map((row, listID) => {
                 return(
-                    <Grid item xs={2} key={listID} sx={{'& .selected':{backgroundColor:'#feea5945'}}}>
-                        <Card 
+                    <Grid item key={listID} sx={{minWidth: '5rem', boxSizing: 'content-box', '& .selected':{backgroundColor:'#feea5945'}}}>
+                        <Card
                           onClick={clickWideArea}
                           className={row.id == highLightCard  ? "selected": ""}
                           data-warea = {row.id}
                           data-title = {row.wa_name}
                           highlightcard = {highLightCard}
-                          sx={{"&:hover":{ backgroundColor: '#96d3e433', color: 'blue', cursor: 'pointer' }}}
-                        >
-                            <CardContent sx={{ minWidth: 50, display: 'flex', flexDirection:'column'}} >
+                          sx={{width: 'fit-content', height: 'auto' ,"&:hover":{ backgroundColor: '#96d3e433', color: 'blue', cursor: 'pointer' }}}
+                          >
+                            <CardContent sx={{ minWidth: 50, display: 'flex', flexDirection:'column', padding: 0}} >
                                 <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column', flex: 20 }}>
                                     <CardMedia
-                                        component='img'
-                                        sx={{ width: 100 }}
-                                        image= {`${row.wa_logo}`}
-                                        alt={`${row.wa_name} logo`}
-                                    />
+                                      component='picture'
+                                      sx={{ display: 'flex', alignItems: 'center' }}
+                                      alt={`${row.wa_name} logo`}
+                                    >
+                                        <source 
+                                          srcSet={`${row.wa_logo.replace('_','-')} 300w, ${row.wa_logo.replace('_','-')} 768w,  ${row.wa_logo} 1280w`} 
+                                          sizes ='(max-width: 300px) 300px, (max-width: 768px) 768px, 1280px'
+                                        />
+                                        <img  src ={`${row.wa_logo}`}/>
+                                    </CardMedia>
                                 </Box>
                                 <Typography sx={{textAlign:'center'}}>
                                 {row.wa_name}
