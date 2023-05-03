@@ -43,14 +43,24 @@ const WideAreasPage = () => {
     const [access_token, user_id, userAuthenticated] = useState([]);
     const [wideAreasList, updateWideAreasList] = useState(initialWideArea);
     const [mapSelectedArea, updateMapSelectedArea] = useState(initialMapSelected);
+    const [showHighLightCard, updateShowHighLightCard] = useState(false);
     
     // ** MiniMap Colors
     const color1  = '#a09f9f';
     const color2  = '#434343';
     const Hcolor  = '#008593';
     const HoColor = '#fded7ca6';
+
+    // ** Captures event when click Gray Bg
+    const clickGrayBg = event => {
+        event.preventDefault();
+
+        updateShowHighLightCard(false);
+        setShowCardWidearea(false);
+    }
+
     
-    // ** Capture ewvent Click Wide Area
+    // ** Capture event Click Wide Area
     const clickWideArea = event => {
         event.preventDefault();
         let warea = event.currentTarget;
@@ -60,11 +70,13 @@ const WideAreasPage = () => {
         // Toggle'selected' class
         updateHighLightCard(id);
         updateMapSelectedArea({id: parseInt(id), name: title});
+        updateShowHighLightCard(true);
     }
 
     const clickMapWideArea = (area_name, area_id) => {
         updateMapSelectedArea({id: parseInt(area_id), name: area_name});
         updateHighLightCard(parseInt(area_id));
+        updateShowHighLightCard(true);
     };
 
     // ** Fetch API
@@ -134,6 +146,7 @@ const WideAreasPage = () => {
         alignItems: 'center',
         flexDirection: {xs: 'column', sm:'row'}}}
     >
+        {/** Korean Map Divider */}
         <Grid container>
             <Grid item xs={12} >
                 <Card>
@@ -149,18 +162,30 @@ const WideAreasPage = () => {
                 </Card>
             </Grid>
         </Grid>
-        <Grid container>
-            <Grid item xs={12}>         
+        {/** Highlight and mini Cards Divider */}
+        <Grid container
+            sx={{
+                backgroundColor: '#f5f5f3',
+                zIndex: 2,
+                bottom: 0,
+                position:{xs:'absolute', sm:'initial'},
+                padding: {xs: '10px 0 10px 5px', sm: 0}
+            }}
+        >
+            <Grid item xs={12} sx={{display: 'flex', alignItems: 'center', flexDirection:'column'}}>         
                 { showCardWidearea === true  ? (
-                <Grid item  key = {searchMatchArea.id}>
-                    <Card  >
+                <Grid item  key = {searchMatchArea.id} 
+                  sx={{width:{xs: '98%', sm: '100%'}, fontSize: {xs: '0.3rem',sm:'1rem'}, boxSizing:'border-box', paddingBottom:'0.4rem'}}
+                >
+                    {/** Highlight Card Divider */}
+                    <Card >
                         <CardContent sx={{ minWidth: 275, display: 'flex' }} >
                             <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column', flex: 20, cursor: 'pointer' }}>
                                 <CardMedia
                                     onClick={clickWideArea}
                                     data-warea = {searchMatchArea.id}
                                     component='img'
-                                    sx={{ width: 100 }}
+                                    sx={{ width: {xs:80,sm:100} }}
                                     image= {`${searchMatchArea.wa_logo}`}
                                     alt={`${searchMatchArea.wa_name} logo`}
                                 />
@@ -182,21 +207,21 @@ const WideAreasPage = () => {
                                     </Link>
                                 </Typography>
                             </Box>
-                            <Box sx={{ display: 'flex', flexDirection: 'column', flex: 80}}>
+                            <Box sx={{ display: 'flex', flexDirection: 'column', flex: 100}}>
                                 <Box sx={{ display: 'flex',  justifyContent: 'space-between'}}>
-                                    <Typography sx={{ fontSize: 14 }} variant='h7' >{searchMatchArea.wa_long_name}</Typography>
-                                    <Typography sx={{ fontSize: 14 }} variant='h7' >{searchMatchArea.country_wa_term}</Typography>
+                                    <Typography sx={{ fontSize: {xs: '18px' ,sm:14} }} variant='h7' >{searchMatchArea.wa_long_name}</Typography>
+                                    <Typography sx={{ fontSize: {xs: '18px' ,sm:14} }} variant='h7' >{searchMatchArea.country_wa_term}</Typography>
                                 </Box>
                                 <Box sx={{ display: 'flex', justifyContent: 'space-between'}}>
                                     <Box sx={{ display: 'flex', flexDirection: 'column', flex: '70'}}>
-                                        <Box sx={{ position: 'relative'}}>
-                                            <VoiceTrafficLight height={50} width={50} color={lightGreen['800']} arial-label="음향신호기"/>
-                                            : 1200 / 900 / 200 / 100
+                                        <Box sx={{ position: 'relative',  width:{xs:'25px', sm :'50px'}}}>
+                                            <VoiceTrafficLight max-height={100} max-width={100} color={lightGreen['800']} arial-label="음향신호기"/>
                                         </Box>
-                                        <Box sx={{ position: 'relative'}}>
-                                            <VoiceGuidance     height={50} width={50} color={lightGreen['800']} arial-label="음성유도기"/>
                                             : 1200 / 900 / 200 / 100
+                                        <Box sx={{ position: 'relative', width:{xs:'25px', sm :'50px'}}}>
+                                            <VoiceGuidance     max-height={100} max-width={100} color={lightGreen['800']} arial-label="음성유도기"/>
                                         </Box>
+                                            : 1200 / 900 / 200 / 100
                                     </Box>
                                     <Box sx={{ display: 'flex', flex: '30', flexDirection: 'column', justifyContent: 'space-between'} }>
                                         <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column'}}>
@@ -208,7 +233,10 @@ const WideAreasPage = () => {
                                                     variant="outlined" 
                                                     onClick={clickWideArea}
                                                     data-warea = {searchMatchArea.id}
-                                                    sx={{ fontSize: 14 }}
+                                                    sx={{ 
+                                                      fontSize: {xs: '0.4rem',sm:14},
+                                                      padding:{xs:0}
+                                                    }}
                                                 >자세히</Button>
                                             </CardActions>
                                         </Box>
@@ -234,6 +262,7 @@ const WideAreasPage = () => {
                 wideAreasList.map((row, listID) => {
                 return(
                     <Grid item key={listID} sx={{minWidth: '5rem', boxSizing: 'content-box', '& .selected':{backgroundColor:'#feea5945'}}}>
+                    { /** Mini Cards Divider */ }
                         <Card
                           onClick={clickWideArea}
                           className={row.id == highLightCard  ? "selected": ""}
@@ -267,6 +296,23 @@ const WideAreasPage = () => {
                 </Grid>
             </Grid>
         </Grid>
+        { /** Degrade Divider */ 
+          showHighLightCard === true ? (
+        <Box 
+            sx={{
+              display: {xs:'block', sm:'none'},
+              position: 'absolute',
+              zIndex: 1,
+              width:'100%', height: '100%',
+              background: 'rgb(100,100,100)',
+              background: 'linear-gradient(0deg, rgba(100,100,100,1) 0%, rgba(136,136,136,1) 35%, rgba(186,186,186,0) 100%)'
+            }}
+            onClick={clickGrayBg}
+            >
+        </Box>
+        ):(
+            <span/>
+        )}
     </Box>
   );
 }

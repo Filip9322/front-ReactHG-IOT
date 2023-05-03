@@ -21,7 +21,7 @@ const Footer = props => {
       className='layout-footer'
       sx={{
         zIndex: 10,
-        display: 'flex',
+        display: {xs:'none',sm:'flex'},
         alignItems: 'center',
         justifyContent: 'center'
       }}
