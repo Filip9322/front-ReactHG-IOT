@@ -11,6 +11,7 @@ import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import Card from '@mui/material/Card'
 import Button from "@mui/material/Button"
+import Divider from '@mui/material/Divider'
 import CardMedia from '@mui/material/CardMedia'
 import Typography from "@mui/material/Typography"
 import CardActions from '@mui/material/CardActions'
@@ -44,6 +45,7 @@ const WideAreasPage = () => {
     const [wideAreasList, updateWideAreasList] = useState(initialWideArea);
     const [mapSelectedArea, updateMapSelectedArea] = useState(initialMapSelected);
     const [showHighLightCard, updateShowHighLightCard] = useState(false);
+    const [textButtonDetails, setTextButtonDetails] = useState('자세히');
     
     // ** MiniMap Colors
     const color1  = '#a09f9f';
@@ -57,10 +59,18 @@ const WideAreasPage = () => {
 
         updateShowHighLightCard(false);
         setShowCardWidearea(false);
+        setTextButtonDetails('자세히');
     }
 
-    
-    // ** Capture event Click Wide Area
+    // ** Captures event when click Gray Bg
+    const clickButtonDetails = event => {
+        event.preventDefault();
+
+        setTextButtonDetails('닫기');
+        console.log('click')
+    }
+
+    // ** Capture event Click Wide Area Card
     const clickWideArea = event => {
         event.preventDefault();
         let warea = event.currentTarget;
@@ -73,6 +83,7 @@ const WideAreasPage = () => {
         updateShowHighLightCard(true);
     }
 
+    // ** Captures event when click on Map
     const clickMapWideArea = (area_name, area_id) => {
         updateMapSelectedArea({id: parseInt(area_id), name: area_name});
         updateHighLightCard(parseInt(area_id));
@@ -146,7 +157,7 @@ const WideAreasPage = () => {
         alignItems: 'center',
         flexDirection: {xs: 'column', sm:'row'}}}
     >
-        {/** Korean Map Divider */}
+        {/** Korean Map Container */}
         <Grid container>
             <Grid item xs={12} >
                 <Card>
@@ -162,7 +173,7 @@ const WideAreasPage = () => {
                 </Card>
             </Grid>
         </Grid>
-        {/** Highlight and mini Cards Divider */}
+        {/** Highlight and mini Cards Container */}
         <Grid container
             sx={{
                 backgroundColor: '#f5f5f3',
@@ -172,15 +183,22 @@ const WideAreasPage = () => {
                 padding: {xs: '10px 0 10px 5px', sm: 0}
             }}
         >
-            <Grid item xs={12} sx={{display: 'flex', alignItems: 'center', flexDirection:'column'}}>         
+            <Grid item xs={12} sx={{display: 'flex', alignItems: 'center', flexDirection:'column', position: 'relative'}}>         
+                <Box sx={{position:'absolute', backgroundColor:'#F8EEDC', right: 0, top: 0, padding: '7px 12px', borderRadius: '0 7px 0 0'}}>
+                    <Typography sx={{ fontSize: {xs: '18px' ,sm:14} }} variant='h7' >{searchMatchArea.country_wa_term}</Typography>
+                </Box>
                 { showCardWidearea === true  ? (
                 <Grid item  key = {searchMatchArea.id} 
                   sx={{width:{xs: '98%', sm: '100%'}, fontSize: {xs: '0.3rem',sm:'1rem'}, boxSizing:'border-box', paddingBottom:'0.4rem'}}
                 >
-                    {/** Highlight Card Divider */}
+                    {/** Highlight Card  */}
                     <Card >
                         <CardContent sx={{ minWidth: 275, display: 'flex' }} >
-                            <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column', flex: 20, cursor: 'pointer' }}>
+                            <Box 
+                              sx={{ 
+                                display: 'flex', justifyContent: 'center', alignItems: 'center', 
+                                margin: '0px 11px 0px -8px', flexDirection: 'column', cursor: 'pointer' 
+                            }}>
                                 <CardMedia
                                     onClick={clickWideArea}
                                     data-warea = {searchMatchArea.id}
@@ -210,36 +228,54 @@ const WideAreasPage = () => {
                             <Box sx={{ display: 'flex', flexDirection: 'column', flex: 100}}>
                                 <Box sx={{ display: 'flex',  justifyContent: 'space-between'}}>
                                     <Typography sx={{ fontSize: {xs: '18px' ,sm:14} }} variant='h7' >{searchMatchArea.wa_long_name}</Typography>
-                                    <Typography sx={{ fontSize: {xs: '18px' ,sm:14} }} variant='h7' >{searchMatchArea.country_wa_term}</Typography>
-                                </Box>
-                                <Box sx={{ display: 'flex', justifyContent: 'space-between'}}>
-                                    <Box sx={{ display: 'flex', flexDirection: 'column', flex: '70'}}>
-                                        <Box sx={{ position: 'relative',  width:{xs:'25px', sm :'50px'}}}>
-                                            <VoiceTrafficLight max-height={100} max-width={100} color={lightGreen['800']} arial-label="음향신호기"/>
-                                        </Box>
-                                            : 1200 / 900 / 200 / 100
-                                        <Box sx={{ position: 'relative', width:{xs:'25px', sm :'50px'}}}>
-                                            <VoiceGuidance     max-height={100} max-width={100} color={lightGreen['800']} arial-label="음성유도기"/>
-                                        </Box>
-                                            : 1200 / 900 / 200 / 100
                                     </Box>
-                                    <Box sx={{ display: 'flex', flex: '30', flexDirection: 'column', justifyContent: 'space-between'} }>
-                                        <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column'}}>
-                                            <Typography sx={{ fontSize: 24 }}>17시/구</Typography>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column'}}>
+                                        <Typography sx={{ fontSize: 15 }}>17시/구</Typography>
+                                </Box>
+                                <Divider light />
+                                {/** Content 음향신호기 음성유도기  */}
+                                <Box sx={{ display: 'flex', justifyContent: 'space-between'}}>
+                                    <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent:'center', alignItems: 'center', flex: '70'}}>
+                                        <Typography sx={{ fontSize: {xs: '18px' ,sm:14} }} >음향신호기</Typography>
+                                        <Box sx={{ position: 'relative', width:{xs:'25px', sm :'30px'}}}>
+                                            <VoiceGuidance     max-height={100} max-width={100} color={'#686868'} arial-label="음향신호기"/>
                                         </Box>
                                         <Box>
-                                            <CardActions>
-                                                <Button 
-                                                    variant="outlined" 
-                                                    onClick={clickWideArea}
-                                                    data-warea = {searchMatchArea.id}
-                                                    sx={{ 
-                                                      fontSize: {xs: '0.4rem',sm:14},
-                                                      padding:{xs:0}
-                                                    }}
-                                                >자세히</Button>
-                                            </CardActions>
+                                            <span>1200대</span><span>14건</span><span>1스쿨</span>
                                         </Box>
+                                        <CardActions>
+                                            <Button 
+                                                variant="outlined" 
+                                                onClick={clickButtonDetails}
+                                                data-warea = {searchMatchArea.id}
+                                                sx={{ 
+                                                  fontSize: {xs: '0.4rem',sm:14},
+                                                  padding:{xs:0, sm:'10px 9px' , xl:'6.5px 21px'}
+                                                }}
+                                            >
+                                                {textButtonDetails}
+                                            </Button>
+                                        </CardActions>
+                                    </Box>
+                                    <Box sx={{ display: 'flex', flex: '30', flexDirection: 'column', justifyContent:'center', alignItems: 'center'} }>
+                                        <Typography sx={{ fontSize: {xs: '18px' ,sm:14} }} >음성유도기</Typography>
+                                        <Box sx={{ position: 'relative',  width:{xs:'25px', sm :'30px'}}}>
+                                            <VoiceTrafficLight max-height={100} max-width={100} color={'#686868'} arial-label="음향신호기"/>
+                                        </Box>
+                                        <Box>
+                                            <span>1200대</span><span>14건</span><span>1스쿨</span>
+                                        </Box>
+                                        <CardActions>
+                                            <Button 
+                                                variant="outlined" 
+                                                onClick={clickButtonDetails}
+                                                data-warea = {searchMatchArea.id}
+                                                sx={{ 
+                                                  fontSize: {xs: '0.4rem',sm:14},
+                                                  padding:{xs:0, sm:'10px 9px' , xl:'6.5px 21px'}
+                                                }}
+                                            >{textButtonDetails}</Button>
+                                        </CardActions>                                
                                     </Box>
                                 </Box>
                             </Box>
@@ -247,6 +283,7 @@ const WideAreasPage = () => {
                     </Card>
                 </Grid>
                 ) : (<span />)}
+                { /** Mini Cards Divider */ }
                 <Grid container
                   columns={{xs:12, sm: 8, md:12}} 
                   spacing={{xs: 0, sm: 2}}
@@ -262,7 +299,6 @@ const WideAreasPage = () => {
                 wideAreasList.map((row, listID) => {
                 return(
                     <Grid item key={listID} sx={{minWidth: '5rem', boxSizing: 'content-box', '& .selected':{backgroundColor:'#feea5945'}}}>
-                    { /** Mini Cards Divider */ }
                         <Card
                           onClick={clickWideArea}
                           className={row.id == highLightCard  ? "selected": ""}
@@ -296,7 +332,7 @@ const WideAreasPage = () => {
                 </Grid>
             </Grid>
         </Grid>
-        { /** Degrade Divider */ 
+        { /** Degrade Background */ 
           showHighLightCard === true ? (
         <Box 
             sx={{
