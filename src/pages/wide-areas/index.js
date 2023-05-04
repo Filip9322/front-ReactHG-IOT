@@ -60,6 +60,7 @@ const WideAreasPage = () => {
         updateShowHighLightCard(false);
         setShowCardWidearea(false);
         setTextButtonDetails('자세히');
+        console.log('click')
     }
 
     // ** Captures event when click Gray Bg
@@ -67,7 +68,6 @@ const WideAreasPage = () => {
         event.preventDefault();
 
         setTextButtonDetails('닫기');
-        console.log('click')
     }
 
     // ** Capture event Click Wide Area Card
@@ -81,12 +81,14 @@ const WideAreasPage = () => {
         updateHighLightCard(id);
         updateMapSelectedArea({id: parseInt(id), name: title});
         updateShowHighLightCard(true);
+        setShowCardWidearea(true);
     }
 
     // ** Captures event when click on Map
     const clickMapWideArea = (area_name, area_id) => {
         updateMapSelectedArea({id: parseInt(area_id), name: area_name});
         updateHighLightCard(parseInt(area_id));
+        setShowCardWidearea(true);
         updateShowHighLightCard(true);
     };
 
@@ -184,9 +186,11 @@ const WideAreasPage = () => {
             }}
         >
             <Grid item xs={12} sx={{display: 'flex', alignItems: 'center', flexDirection:'column', position: 'relative'}}>         
+                {showHighLightCard === true ? (
                 <Box sx={{position:'absolute', backgroundColor:'#F8EEDC', right: 0, top: 0, padding: '7px 12px', borderRadius: '0 7px 0 0'}}>
-                    <Typography sx={{ fontSize: {xs: '18px' ,sm:14} }} variant='h7' >{searchMatchArea.country_wa_term}</Typography>
+                    <Typography sx={{ fontSize: {xs: '14px' ,sm:'1rem'} }} variant='h7' >{searchMatchArea.country_wa_term}</Typography>
                 </Box>
+                ) : (<span></span>)}
                 { showCardWidearea === true  ? (
                 <Grid item  key = {searchMatchArea.id} 
                   sx={{width:{xs: '98%', sm: '100%'}, fontSize: {xs: '0.3rem',sm:'1rem'}, boxSizing:'border-box', paddingBottom:'0.4rem'}}
@@ -226,53 +230,88 @@ const WideAreasPage = () => {
                                 </Typography>
                             </Box>
                             <Box sx={{ display: 'flex', flexDirection: 'column', flex: 100}}>
-                                <Box sx={{ display: 'flex',  justifyContent: 'space-between'}}>
+                                <Box sx={{ display: 'flex',  justifyContent: 'space-between', width:{xs:'75%', md:'84%', lg:'87%'}}}>
                                     <Typography sx={{ fontSize: {xs: '18px' ,sm:14} }} variant='h7' >{searchMatchArea.wa_long_name}</Typography>
-                                    </Box>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column'}}>
-                                        <Typography sx={{ fontSize: 15 }}>17시/구</Typography>
+                                    <Typography sx={{ fontSize: 15 }}>17시/구</Typography>
                                 </Box>
                                 <Divider light />
-                                {/** Content 음향신호기 음성유도기  */}
-                                <Box sx={{ display: 'flex', justifyContent: 'space-between'}}>
-                                    <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent:'center', alignItems: 'center', flex: '70'}}>
+                                {/** Content 음향신호기 ----- */}
+                                <Box sx={{ display: 'flex', justifyContent: 'space-evenly'}}>
+                                    <Box 
+                                      onClick={clickButtonDetails}
+                                      sx={{ 
+                                        display: 'flex', flexDirection: 'column', padding: '5px 12px', 
+                                        justifyContent:'space-around', alignItems: 'center',
+                                        ':hover':{
+                                            border: 'dashed 1px #70707075',
+                                            borderRadius: '6px',
+                                            padding: '4px 11px'
+                                        },
+                                        ':selected':{
+                                            border: 'dashed 1px #70707075',
+                                            borderRadius: '6px'
+                                        }
+                                      }}>
                                         <Typography sx={{ fontSize: {xs: '18px' ,sm:14} }} >음향신호기</Typography>
                                         <Box sx={{ position: 'relative', width:{xs:'25px', sm :'30px'}}}>
                                             <VoiceGuidance     max-height={100} max-width={100} color={'#686868'} arial-label="음향신호기"/>
                                         </Box>
-                                        <Box>
-                                            <span>1200대</span><span>14건</span><span>1스쿨</span>
+                                        <Box sx={{
+                                            '& :nth-of-type(1)':{ color: '#2F9F49'},
+                                            '& :nth-of-type(2)':{ color: '#DE3030'},
+                                            '& :nth-of-type(3)':{ color: '#E3AA24'}
+                                            }}>
+                                            <span>1200 대</span> <span>14 건</span> <span>1 스쿨</span>
                                         </Box>
-                                        <CardActions>
+                                        <CardActions sx={{padding: '0.2rem 1.25rem'}}>
                                             <Button 
                                                 variant="outlined" 
                                                 onClick={clickButtonDetails}
                                                 data-warea = {searchMatchArea.id}
                                                 sx={{ 
                                                   fontSize: {xs: '0.4rem',sm:14},
-                                                  padding:{xs:0, sm:'10px 9px' , xl:'6.5px 21px'}
+                                                  padding:{xs:'0.3rem 0', sm:'10px 9px' , xl:'6.5px 21px'}
                                                 }}
                                             >
                                                 {textButtonDetails}
                                             </Button>
                                         </CardActions>
                                     </Box>
-                                    <Box sx={{ display: 'flex', flex: '30', flexDirection: 'column', justifyContent:'center', alignItems: 'center'} }>
+                                    {/** Content 음성유도기 ----- */}
+                                    <Box  
+                                      onClick={clickButtonDetails} 
+                                      sx={{ 
+                                        display: 'flex', flexDirection: 'column', padding: '5px 12px', 
+                                        justifyContent:'space-around', alignItems: 'center',
+                                        ':hover':{
+                                            border: 'dashed 1px #70707075',
+                                            borderRadius: '6px',
+                                            padding: '4px 11px'
+                                        },
+                                        ':selected':{
+                                            border: 'dashed 1px #70707075',
+                                            borderRadius: '6px'
+                                        }
+                                      }}>
                                         <Typography sx={{ fontSize: {xs: '18px' ,sm:14} }} >음성유도기</Typography>
                                         <Box sx={{ position: 'relative',  width:{xs:'25px', sm :'30px'}}}>
                                             <VoiceTrafficLight max-height={100} max-width={100} color={'#686868'} arial-label="음향신호기"/>
                                         </Box>
-                                        <Box>
-                                            <span>1200대</span><span>14건</span><span>1스쿨</span>
+                                        <Box sx={{
+                                            '& :nth-of-type(1)':{ color: '#2F9F49'},
+                                            '& :nth-of-type(2)':{ color: '#DE3030'},
+                                            '& :nth-of-type(3)':{ color: '#E3AA24'}
+                                            }}>
+                                            <span>1200 대</span> <span>14 건</span> <span>1 스쿨</span>
                                         </Box>
-                                        <CardActions>
+                                        <CardActions sx={{padding: '0.2rem 1.25rem'}}>
                                             <Button 
                                                 variant="outlined" 
                                                 onClick={clickButtonDetails}
                                                 data-warea = {searchMatchArea.id}
                                                 sx={{ 
                                                   fontSize: {xs: '0.4rem',sm:14},
-                                                  padding:{xs:0, sm:'10px 9px' , xl:'6.5px 21px'}
+                                                  padding:{xs:'0.3rem 0', sm:'10px 9px' , xl:'6.5px 21px'}
                                                 }}
                                             >{textButtonDetails}</Button>
                                         </CardActions>                                
