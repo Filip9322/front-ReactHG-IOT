@@ -29,23 +29,30 @@ import { decodeToken } from "react-jwt"
 // ** Custom Components Imports
 import KoreaMapComponent from 'src/@core/components/maps/korea_division'
 
-//** Styles */
-import { lightGreen, red } from '@mui/material/colors';
+//** Class Manager */
+import classNames from "classnames"
 
 
 
 const WideAreasPage = () => {
     // ** Check Authenticity of access token and user_Id
-    const initialWideArea = [{id:1, wa_name: 'test', wa_logo: ''}];
+    // -- Fetch Status
+    const [access_token, user_id, userAuthenticated] = useState([]);
+    // -- Map Status
     const initialMapSelected = {id: 1, wa_name: '서울'};
+    const [mapSelectedArea, updateMapSelectedArea] = useState(initialMapSelected);
+    // -- Highlight Card status
     const [highLightCard, updateHighLightCard] = useState(0);
     const [searchMatchArea, updateSearchMatchArea] = useState({});
-    const [showCardWidearea, setShowCardWidearea] = useState(false);
-    const [access_token, user_id, userAuthenticated] = useState([]);
-    const [wideAreasList, updateWideAreasList] = useState(initialWideArea);
-    const [mapSelectedArea, updateMapSelectedArea] = useState(initialMapSelected);
-    const [showHighLightCard, updateShowHighLightCard] = useState(false);
     const [textButtonDetails, setTextButtonDetails] = useState('자세히');
+    const [showHighLightCard, updateShowHighLightCard] = useState(false);
+    // -- Wide Area List status
+    const initialWideArea = [{id:1, wa_name: 'test', wa_logo: ''}];
+    const [showCardWidearea, setShowCardWidearea] = useState(false);
+    const [wideAreasList, updateWideAreasList] = useState(initialWideArea);
+    const [typeDeviceSelected, setTypeDeviceSelected]= useState(0);
+    // -- Local areas list Status
+    const [showLocalAreasCard, setShowLocalAreaCard] = useState(false);
     
     // ** MiniMap Colors
     const color1  = '#a09f9f';
@@ -66,8 +73,20 @@ const WideAreasPage = () => {
     // ** Captures event when click Gray Bg
     const clickButtonDetails = event => {
         event.preventDefault();
+        let device = event.currentTarget;
+        let type = device.getAttribute('data-type');
 
-        setTextButtonDetails('닫기');
+        console.log(type);
+
+        setTypeDeviceSelected(parseInt(type));
+        if (showLocalAreasCard && typeDeviceSelected != 3){
+            setTextButtonDetails('자세히');
+            setShowLocalAreaCard(false);
+            setTypeDeviceSelected(3);
+        }else{
+            setTextButtonDetails('닫기');
+            setShowLocalAreaCard(true);
+        }
     }
 
     // ** Capture event Click Wide Area Card
@@ -152,6 +171,21 @@ const WideAreasPage = () => {
         if(searchMatchArea.wa_logo) {setShowCardWidearea(true)}
     },[searchMatchArea])
 
+    // ** Custom component Local Area Card */
+    const LAreaCard = (props) => {
+    
+        return (
+            <Box {...props} className="lareaCard" m={0} p={'1rem !important'}
+              sx={{
+                display: 'flex', justifyContent: 'space-between',
+                '.counter span:nth-of-type(1)':{ color: '#2E80DF'},
+                '.counter span:nth-of-type(2)':{ color: '#DE3030'}
+              }}
+            >
+                <p>{props.city}</p><p className="counter"><span>20 대</span> <span>2건</span></p>
+            </Box>
+        )
+    }
   return (
     <Box className='content-center' 
       sx={{
@@ -236,9 +270,25 @@ const WideAreasPage = () => {
                                 </Box>
                                 <Divider light />
                                 {/** Content 음향신호기 ----- */}
-                                <Box sx={{ display: 'flex', justifyContent: 'space-evenly'}}>
-                                    <Box 
+                                <Box 
+                                  sx={{ display: 'flex', justifyContent: 'space-evenly',
+                                    '& .selected':{
+                                        flexDirection: 'row',
+                                        justifyContent: 'space-around',
+                                        width: '100%'
+                                    },
+                                    '& .hidden':{
+                                        display: 'none'
+                                    }
+                                  }}
+                                >
+                                    <Box
+                                      className={classNames({
+                                        'selected': typeDeviceSelected == 1,
+                                        'hidden':   typeDeviceSelected == 2
+                                      })}
                                       onClick={clickButtonDetails}
+                                      data-type="1"
                                       sx={{ 
                                         display: 'flex', flexDirection: 'column', padding: '5px 12px', 
                                         justifyContent:'space-around', alignItems: 'center',
@@ -252,7 +302,10 @@ const WideAreasPage = () => {
                                             borderRadius: '6px'
                                         }
                                       }}>
-                                        <Typography sx={{ fontSize: {xs: '18px' ,sm:14} }} >음향신호기</Typography>
+                                        <Typography 
+                                          className={typeDeviceSelected == 1 ? 'hidden': ''}
+                                          sx={{ fontSize: {xs: '18px' ,sm:14} }} 
+                                        >음향신호기</Typography>
                                         <Box sx={{ position: 'relative', width:{xs:'25px', sm :'30px'}}}>
                                             <VoiceGuidance     max-height={100} max-width={100} color={'#686868'} arial-label="음향신호기"/>
                                         </Box>
@@ -268,6 +321,7 @@ const WideAreasPage = () => {
                                                 variant="outlined" 
                                                 onClick={clickButtonDetails}
                                                 data-warea = {searchMatchArea.id}
+                                                data-type="1"
                                                 sx={{ 
                                                   fontSize: {xs: '0.4rem',sm:14},
                                                   padding:{xs:'0.3rem 0', sm:'10px 9px' , xl:'6.5px 21px'}
@@ -278,9 +332,14 @@ const WideAreasPage = () => {
                                         </CardActions>
                                     </Box>
                                     {/** Content 음성유도기 ----- */}
-                                    <Box  
-                                      onClick={clickButtonDetails} 
-                                      sx={{ 
+                                    <Box 
+                                      className={classNames({
+                                        'selected': typeDeviceSelected == 2,
+                                        'hidden':   typeDeviceSelected == 1
+                                      })}
+                                      onClick={clickButtonDetails}
+                                      data-type="2"
+                                      sx={{
                                         display: 'flex', flexDirection: 'column', padding: '5px 12px', 
                                         justifyContent:'space-around', alignItems: 'center',
                                         ':hover':{
@@ -293,7 +352,10 @@ const WideAreasPage = () => {
                                             borderRadius: '6px'
                                         }
                                       }}>
-                                        <Typography sx={{ fontSize: {xs: '18px' ,sm:14} }} >음성유도기</Typography>
+                                        <Typography 
+                                          className={typeDeviceSelected == 2 ? 'hidden': ''}
+                                          sx={{ fontSize: {xs: '18px' ,sm:14} }} 
+                                        >음성유도기</Typography>
                                         <Box sx={{ position: 'relative',  width:{xs:'25px', sm :'30px'}}}>
                                             <VoiceTrafficLight max-height={100} max-width={100} color={'#686868'} arial-label="음향신호기"/>
                                         </Box>
@@ -309,6 +371,7 @@ const WideAreasPage = () => {
                                                 variant="outlined" 
                                                 onClick={clickButtonDetails}
                                                 data-warea = {searchMatchArea.id}
+                                                data-type="2"
                                                 sx={{ 
                                                   fontSize: {xs: '0.4rem',sm:14},
                                                   padding:{xs:'0.3rem 0', sm:'10px 9px' , xl:'6.5px 21px'}
@@ -320,6 +383,27 @@ const WideAreasPage = () => {
                             </Box>
                         </CardContent>
                     </Card>
+                    {showLocalAreasCard ===true ?(
+                    <Card sx={{backgroundColor: '#EFF2FF'}}>
+                        <CardContent 
+                          sx={{
+                            display: 'flex', flexWrap: 'wrap', justifyContent: 'space-evenly',
+                            '& .lareaCard':{
+                                margin: '0.1rem 0',
+                                width: '40%',
+                                backgroundColor: '#fff', borderRadius: '5px', padding:'2rem'
+                            }
+                          }}>
+                            <LAreaCard city={'고양시'}/>
+                            <LAreaCard city={'남양주시'}/>
+                            <LAreaCard city={'안산시'}/>
+                            <LAreaCard city={'안성시'}/>
+                            <LAreaCard city={'안양시'}/>
+                            <LAreaCard city={'구리시'}/>
+                            <LAreaCard city={'수원시'}/>
+                        </CardContent>
+                    </Card>
+                    ) : (<span></span>)}
                 </Grid>
                 ) : (<span />)}
                 { /** Mini Cards Divider */ }
