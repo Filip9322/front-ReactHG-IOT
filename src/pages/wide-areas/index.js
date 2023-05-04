@@ -67,7 +67,6 @@ const WideAreasPage = () => {
         updateShowHighLightCard(false);
         setShowCardWidearea(false);
         setTextButtonDetails('자세히');
-        console.log('click')
     }
 
     // ** Captures event when click Gray Bg
@@ -75,8 +74,6 @@ const WideAreasPage = () => {
         event.preventDefault();
         let device = event.currentTarget;
         let type = device.getAttribute('data-type');
-
-        console.log(type);
 
         setTypeDeviceSelected(parseInt(type));
         if (showLocalAreasCard && typeDeviceSelected != 3){
@@ -462,7 +459,7 @@ const WideAreasPage = () => {
               display: {xs:'block', sm:'none'},
               position: 'absolute',
               zIndex: 1,
-              width:'100%', height: '100%',
+              width:'100%', height: '90%',
               background: 'rgb(100,100,100)',
               background: 'linear-gradient(0deg, rgba(100,100,100,1) 0%, rgba(136,136,136,1) 35%, rgba(186,186,186,0) 100%)'
             }}
