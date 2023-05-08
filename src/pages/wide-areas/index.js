@@ -3,8 +3,6 @@ import { useState,  useEffect } from "react";
 
 //** Next Imports */
 import Link from 'next/link'
-import Image from 'next/image'
-import { useRouter } from 'next/router'
 
 //** MUI Components */
 import Box from '@mui/material/Box'
@@ -31,6 +29,7 @@ import KoreaMapComponent from 'src/@core/components/maps/korea_division'
 
 //** Class Manager */
 import classNames from "classnames"
+import { urlObjectKeys } from "next/dist/shared/lib/utils";
 
 
 
@@ -53,6 +52,9 @@ const WideAreasPage = () => {
     const [typeDeviceSelected, setTypeDeviceSelected]= useState(0);
     // -- Local areas list Status
     const [showLocalAreasCard, setShowLocalAreaCard] = useState(false);
+    // -- Fetch User Access
+    const [wideAreasAccessList, setWideAreasAccessList] = useState([]);
+    const [localAreasAccessList, setLocalAreasAccessList] = useState([]);
     
     // ** MiniMap Colors
     const color1  = '#a09f9f';
@@ -110,19 +112,34 @@ const WideAreasPage = () => {
 
     // ** Fetch API
     async function fetchWide_Areas(){
-        getFetchWide_Areas(
+        getFetchURL(
              `${process.env.REACT_APP_APIURL}/api/wide_areas`,
+             'GET',
              {user_ID: user_id, access_token: access_token}
         ).then ((response) => {
             updateWideAreasList(response);
         }).catch((error) => {
-            console.error('error: '+error);
+            console.error('error: ' + error);
         });
     }
 
-    async function getFetchWide_Areas ( url = '', data = {}){
+    async function fetchMap_User_Access(){
+        getFetchURL(
+            `${process.env.REACT_APP_APIURL}/map_list`,
+            'GET',
+            {user_ID: user_id, access_token: access_token}
+        ).then((response) => {
+            setWideAreasAccessList(response.wide_areas);
+            setLocalAreasAccessList(response.local_areas);
+        }).catch((error) =>{
+            console.error('error: '+ error);
+        });
+    }
+
+
+    async function getFetchURL ( url = '', tpRequest = 'GET',  data = {}){
         const response = await fetch( url, {
-            method: 'GET',
+            method: tpRequest,
             mode: 'cors',
             cache: 'no-cache',
             headers: {
@@ -154,6 +171,7 @@ const WideAreasPage = () => {
     useEffect(() => {
         if(userAuthenticated){
             fetchWide_Areas();
+            fetchMap_User_Access();
         }else {console.error('Error Authentication')}
     }, [userAuthenticated]);
 
@@ -161,12 +179,20 @@ const WideAreasPage = () => {
     useEffect(() => {
         let searchArea = wideAreasList.find(warea => warea.id === mapSelectedArea.id);
         if(searchArea) {updateSearchMatchArea(searchArea);}
-    },[mapSelectedArea])
+    },[mapSelectedArea]);
     
     // ** Search the matching selected in the Map into all wide area list
     useEffect(() => {
         if(searchMatchArea.wa_logo) {setShowCardWidearea(true)}
-    },[searchMatchArea])
+    },[searchMatchArea]);
+
+    // ** Update Wide Areas to show based on the user access wide areas
+    useEffect(() => {
+    //console.log(wideAreasList.some(area => area.id === response.wide_areas[0].id)); wideAreasAccessList
+        updateWideAreasList(wideAreasAccessList);
+        console.log(Object.keys(localAreasAccessList));
+    },[wideAreasAccessList]);
+
 
     // ** Custom component Local Area Card */
     const LAreaCard = (props) => {
@@ -391,13 +417,11 @@ const WideAreasPage = () => {
                                 backgroundColor: '#fff', borderRadius: '5px', padding:'2rem'
                             }
                           }}>
-                            <LAreaCard city={'고양시'}/>
-                            <LAreaCard city={'남양주시'}/>
-                            <LAreaCard city={'안산시'}/>
-                            <LAreaCard city={'안성시'}/>
-                            <LAreaCard city={'안양시'}/>
-                            <LAreaCard city={'구리시'}/>
-                            <LAreaCard city={'수원시'}/>
+                            { localAreasAccessList.map((row, listID) => {
+                                return(
+                                    <LAreaCard key={row.id} city={row.local_name}/>
+                                );
+                            }) }
                         </CardContent>
                     </Card>
                     ) : (<span></span>)}
@@ -409,6 +433,7 @@ const WideAreasPage = () => {
                   spacing={{xs: 0, sm: 2}}
                   sx={{
                     flexWrap:{xs:'nowrap', sm:'wrap'},
+                    justifyContent: 'center',
                     overflow:'hidden',
                     overflowX: {xs:'auto', sm:'hidden'},
                     scrollBehavior: 'smooth',
