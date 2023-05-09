@@ -55,6 +55,7 @@ const WideAreasPage = () => {
     // -- Fetch User Access
     const [wideAreasAccessList, setWideAreasAccessList] = useState([]);
     const [localAreasAccessList, setLocalAreasAccessList] = useState([]);
+    const [localAreasPerWA, updateLocalAreasPerWA] = useState([]);
     
     // ** MiniMap Colors
     const color1  = '#a09f9f';
@@ -68,6 +69,8 @@ const WideAreasPage = () => {
 
         updateShowHighLightCard(false);
         setShowCardWidearea(false);
+        setShowLocalAreaCard(false);
+        setTypeDeviceSelected(3);
         setTextButtonDetails('자세히');
     }
 
@@ -100,15 +103,33 @@ const WideAreasPage = () => {
         updateMapSelectedArea({id: parseInt(id), name: title});
         updateShowHighLightCard(true);
         setShowCardWidearea(true);
+        // Update Local Areas 
+        updateLocalAreas(parseInt(id));
     }
 
     // ** Captures event when click on Map
     const clickMapWideArea = (area_name, area_id) => {
-        updateMapSelectedArea({id: parseInt(area_id), name: area_name});
-        updateHighLightCard(parseInt(area_id));
-        setShowCardWidearea(true);
-        updateShowHighLightCard(true);
+        wideAreasAccessList.some(warea => {
+            if(warea.id === area_id){
+                updateMapSelectedArea({id: parseInt(area_id), name: area_name});
+                updateHighLightCard(parseInt(area_id));
+                setShowCardWidearea(true);
+                updateShowHighLightCard(true);
+                // Update Local Areas 
+                updateLocalAreas(area_id);
+            }
+        })
     };
+
+    //** Update the listed local areas based on the wide area selected
+    const updateLocalAreas = (area_id) => {
+        let wideLocalAreas = [];
+        localAreasAccessList.some(area => {
+            if(area.wide_area_id === area_id) wideLocalAreas.push(area);
+        });
+        console.log(searchMatchArea.id+' '+area_id);
+        updateLocalAreasPerWA(wideLocalAreas);
+    }
 
     // ** Fetch API
     async function fetchWide_Areas(){
@@ -178,7 +199,9 @@ const WideAreasPage = () => {
     // ** Updated base on Area selected in the map
     useEffect(() => {
         let searchArea = wideAreasList.find(warea => warea.id === mapSelectedArea.id);
-        if(searchArea) {updateSearchMatchArea(searchArea);}
+        if(searchArea) {
+            updateSearchMatchArea(searchArea);
+        }
     },[mapSelectedArea]);
     
     // ** Search the matching selected in the Map into all wide area list
@@ -188,9 +211,7 @@ const WideAreasPage = () => {
 
     // ** Update Wide Areas to show based on the user access wide areas
     useEffect(() => {
-    //console.log(wideAreasList.some(area => area.id === response.wide_areas[0].id)); wideAreasAccessList
         updateWideAreasList(wideAreasAccessList);
-        console.log(Object.keys(localAreasAccessList));
     },[wideAreasAccessList]);
 
 
@@ -252,7 +273,7 @@ const WideAreasPage = () => {
                 <Grid item  key = {searchMatchArea.id} 
                   sx={{width:{xs: '98%', sm: '100%'}, fontSize: {xs: '0.3rem',sm:'1rem'}, boxSizing:'border-box', paddingBottom:'0.4rem'}}
                 >
-                    {/** Highlight Card  */}
+                    {/** Highlight Card ---------- */}
                     <Card >
                         <CardContent sx={{ minWidth: 275, display: 'flex' }} >
                             <Box 
@@ -417,7 +438,8 @@ const WideAreasPage = () => {
                                 backgroundColor: '#fff', borderRadius: '5px', padding:'2rem'
                             }
                           }}>
-                            { localAreasAccessList.map((row, listID) => {
+                            { /** LIST of local Areas -------------------- */}
+                            { localAreasPerWA.map((row, listID) => {
                                 return(
                                     <LAreaCard key={row.id} city={row.local_name}/>
                                 );
@@ -427,7 +449,7 @@ const WideAreasPage = () => {
                     ) : (<span></span>)}
                 </Grid>
                 ) : (<span />)}
-                { /** Mini Cards Divider */ }
+                { /** Mini Cards Divider ----------------- */ }
                 <Grid container
                   columns={{xs:12, sm: 8, md:12}} 
                   spacing={{xs: 0, sm: 2}}
