@@ -39,6 +39,12 @@ const navigation = () => {
       openInNewTab: false
     },
     {
+      title: 'map',
+      icon: AccountPlusOutline,
+      path: '/map',
+      openInNewTab: false
+    },
+    {
       title: 'wide-areas',
       icon: AccountPlusOutline,
       path: '/wide-areas',

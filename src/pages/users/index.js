@@ -1,10 +1,6 @@
 // ** React Imports
 import { useState, useEffect } from "react";
 
-// ** Next Imports
-import Link from 'next/link'
-import { useRouter } from 'next/router'
-
 // ** MUI Components
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
@@ -236,19 +232,19 @@ const UsersPage = () => {
 
     return (
         <Box className='content-center'>
-            <Grid item xs={12}>
+            <Grid item xs={12} sm={9}>
                 <Card>
-                    <CardHeader title='Users' />
+                    <CardHeader title='사용자' />
                     <TableContainer component={ Paper }>
                         <Table sx= {{ minWidth: 650 }} aria-label='Users Table'>
                             <TableHead>
                                 <TableRow>
-                                    <TableCell> # </TableCell>
-                                    <TableCell> User ID </TableCell>
-                                    <TableCell> Name </TableCell>
-                                    <TableCell> Email </TableCell>
-                                    <TableCell> Active </TableCell>
-                                    <TableCell> Update/Delete </TableCell>
+                                    <TableCell>#</TableCell>
+                                    <TableCell>사용자 ID</TableCell>
+                                    <TableCell>이름</TableCell>
+                                    <TableCell>이메일</TableCell>
+                                    <TableCell>제공</TableCell>
+                                    <TableCell>설정/삭제</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -260,10 +256,10 @@ const UsersPage = () => {
                                     }
                                 }}
                                 >
-                                    <TableCell> {row.id} </TableCell>
-                                    <TableCell component='th' scope='row'> {row.user_ID} </TableCell>
-                                    <TableCell> {row.user_name} </TableCell>
-                                    <TableCell> {row.user_email} </TableCell>
+                                    <TableCell>{row.id}</TableCell>
+                                    <TableCell component='th' scope='row'>{row.user_ID}</TableCell>
+                                    <TableCell>{row.user_name}</TableCell>
+                                    <TableCell>{row.user_email}</TableCell>
                                     <TableCell 
                                         style={{color: (row.user_active)? '#21c521': '#ff7321'}}
                                     > {(row.user_active)? 'Active': 'Inactive'} </TableCell>
