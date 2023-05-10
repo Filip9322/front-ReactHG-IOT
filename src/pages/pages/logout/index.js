@@ -11,23 +11,10 @@ import { isExpired, decodeToken } from 'react-jwt';
 // ** Layout Import
 import BlankLayout from 'src/@core/layouts/BlankLayout'
 
-const Page = () => {
-  
-  async function postLogoutBreakAccessToken (url = "", data = {}){
-  	const response = await fetch(url, {
-      method: "POST",
-      mode:  "cors",
-      cache: "no-cache",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      redirect: "follow", // manual, *follow , error,
-      referrerPolicy: "no-referrer",
-      body: JSON.stringify(data)
-    });
+// ** Helpers
+import { postFetchURL } from 'src/@core/utils/fetchHelper'
 
-    return response.json();
-  };
+const Page = () => {
 
   const logout = () => {
   	if (typeof window !== 'undefined') {
@@ -37,7 +24,7 @@ const Page = () => {
 	      const myDecodeToken  = decodeToken(token);
 	      const isTokenExpired = isExpired(token);
 	      console.log('decodeToken: '+Object.keys(myDecodeToken));
-	  	  postLogoutBreakAccessToken(
+	  	  postFetchURL(
 	        `${process.env.REACT_APP_APIURL}/logout`,
 	        {user_ID: myDecodeToken.user_ID, accessToken: token }
 	      ).then((response) =>{

@@ -24,6 +24,8 @@ import MapMarkerMultipleOutline from 'mdi-material-ui/MapMarkerMultipleOutline'
 import MapMarkerMinusOutline from 'mdi-material-ui/MapMarkerMinusOutline'
 
 const WAreasPage = () => {
+  let tempInput = '서울';
+  var seoul = tempInput.match(/[\u1100-\u11FF\u3130-\u318F\uA960-\uA97F\uAC00-\uD7AF\uD7B0-\uD7FF]/g)
     return (
       <Box classname="content-center">
         <Grid item xs={12} sm={9}>
@@ -58,7 +60,7 @@ const WAreasPage = () => {
                     </Box>
                   </TableCell>
                   <TableCell>1</TableCell>
-                  <TableCell>서울</TableCell>
+                  <TableCell>{seoul[0]}</TableCell>
                   <TableCell sx={{display:{xs:'none',sm:'table-cell'}}}>특별시</TableCell>
                   <TableCell sx={{display:{xs:'none',sm:'table-cell'}}}>
                     <Link sx={{':hover':{cursor: 'pointer'}}}>12: Areas</Link>

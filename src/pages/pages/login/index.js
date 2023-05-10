@@ -38,6 +38,8 @@ import FooterIllustrationsV1 from 'src/views/pages/auth/FooterIllustration'
 
 // ** Utils
 import { getWithExpiry } from 'src/@core/layouts/utils'
+import { postFetchURL } from 'src/@core/utils/fetchHelper'
+
 const now = new Date();
 
 // ** Styled Components
@@ -84,7 +86,7 @@ const LoginPage = () => {
   const router = useRouter()
 
   const submitForm =  () => {
-    postLoginAuthentication(
+    postFetchURL(
         `${process.env.REACT_APP_APIURL}/login`, 
         {user_ID: formValues.user_id, user_pw:formValues.password }    
     ).then((response) => {
@@ -108,22 +110,6 @@ const LoginPage = () => {
       setIsSubmitting(false);
     });
   };
-
-  async function postLoginAuthentication(url = "", data = {}){
-    const response = await fetch(url, {
-      method: "POST",
-      mode:  "cors",
-      cache: "no-cache",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      redirect: "follow", // manual, *follow , error,
-      referrerPolicy: "no-referrer",
-      body: JSON.stringify(data)
-    });
-
-    return response.json();
-  }
 
   const handleChange = prop => event => {
     const { name, value } = event.target;

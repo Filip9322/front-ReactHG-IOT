@@ -27,11 +27,9 @@ import { decodeToken } from "react-jwt"
 // ** Custom Components Imports
 import KoreaMapComponent from 'src/@core/components/maps/korea_division'
 
-//** Class Manager */
+//** Class Manager & Helpers*/
 import classNames from "classnames"
-import { urlObjectKeys } from "next/dist/shared/lib/utils";
-
-
+import { getFetchURL } from 'src/@core/utils/fetchHelper'
 
 const WideAreasPage = () => {
     // ** Check Authenticity of access token and user_Id
@@ -135,7 +133,6 @@ const WideAreasPage = () => {
     async function fetchWide_Areas(){
         getFetchURL(
              `${process.env.REACT_APP_APIURL}/api/wide_areas`,
-             'GET',
              {user_ID: user_id, access_token: access_token}
         ).then ((response) => {
             updateWideAreasList(response);
@@ -147,7 +144,6 @@ const WideAreasPage = () => {
     async function fetchMap_User_Access(){
         getFetchURL(
             `${process.env.REACT_APP_APIURL}/map_list`,
-            'GET',
             {user_ID: user_id, access_token: access_token}
         ).then((response) => {
             setWideAreasAccessList(response.wide_areas);
@@ -155,24 +151,6 @@ const WideAreasPage = () => {
         }).catch((error) =>{
             console.error('error: '+ error);
         });
-    }
-
-
-    async function getFetchURL ( url = '', tpRequest = 'GET',  data = {}){
-        const response = await fetch( url, {
-            method: tpRequest,
-            mode: 'cors',
-            cache: 'no-cache',
-            headers: {
-                'Content-Type': 'application/json',
-                'user_id': data.user_ID,
-                'access_token': data.access_token
-            },
-            redirect: 'follow',
-            referrerPolicy: 'no-referrer'
-        })
-
-        return response.json();
     }
 
     // ** Start Initialization
