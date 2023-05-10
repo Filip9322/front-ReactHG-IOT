@@ -171,7 +171,7 @@ const WideAreasPage = () => {
         if(userAuthenticated){
             fetchWide_Areas();
             fetchMap_User_Access();
-        }else {console.error('Error Authentication')}
+        }else {console.error('Authentication Error')}
     }, [userAuthenticated]);
 
     // ** Updated base on Area selected in the map

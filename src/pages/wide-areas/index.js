@@ -23,11 +23,52 @@ import MapMarkerRadiusOutline from 'mdi-material-ui/MapMarkerRadiusOutline'
 import MapMarkerMultipleOutline from 'mdi-material-ui/MapMarkerMultipleOutline'
 import MapMarkerMinusOutline from 'mdi-material-ui/MapMarkerMinusOutline'
 
+// ** Helpers
+import { getFetchURL } from 'src/@core/utils/fetchHelper'
+import { getWithExpiry } from 'src/@core/layouts/utils';
+import { decodeToken } from 'react-jwt';
+
 const WAreasPage = () => {
+  // ** User Authentication
+  const [access_token, user_id, userAuthenticated] = useState([])
+
+  // ** API Responses
+  const [wideAreaList, updateWideAreasList] = useState([]);
+
+  // ** Fetch API
+  async function fetchWide_Areas(){
+    getFetchURL(
+      `${process.env.REACT_APP_APIURL}/api/wide_areas`,
+      {userID: user_id, access_token: access_token}
+    ).then((response) => {
+      updateWideAreasList(response);
+      console.log(response.length);
+    }).catch((error) => console.error('error: ' + error));
+  }
+
+  // ** Initial Load -> Authenticate
+  // TODO! ONLY admin should be able to get here
+  useEffect(() => {
+    access_token = localStorage.getItem('accessToken');
+    user_id = getWithExpiry('user_ID');
+
+    const myDecodeToken = decodeToken(access_token);
+    if(myDecodeToken.user_ID == user_id){
+      userAuthenticated = true;
+    } else userAuthenticated = false;
+  },[]);
+
+  // ** User Authentication
+  useEffect(() => {
+    if(userAuthenticated){
+      fetchWide_Areas();
+    }else console.error('Authentication Error')
+  },[userAuthenticated])
+
   let tempInput = '서울';
   var seoul = tempInput.match(/[\u1100-\u11FF\u3130-\u318F\uA960-\uA97F\uAC00-\uD7AF\uD7B0-\uD7FF]/g)
     return (
-      <Box classname="content-center">
+      <Box className="content-center">
         <Grid item xs={12} sm={9}>
           <Card>
             <CardHeader title='구역'>
@@ -47,53 +88,58 @@ const WAreasPage = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  <TableCell sx={{display:{xs:'none',sm:'table-cell', position:'relative'}}}>
-                    <Box 
-                    sx={{
-                      minWidth: 38, display:'flex', justifyContent: 'center', 
-                      position: 'absolute', borderRadius:'50%', top:'10px',
-                      flexShrink: 0, overflow:'hidden', userSelect:'none', width:'65px', height:'52px'
-                    }}>
-                      <img src='/images/wide-areas/1-서울특별시.png' alt='image' width='100%' height='100%'  
-                        sx={{objectFit:'cover', textAlign:'center', color:'transparent', textIndent:'10000px'}}
-                      />
-                    </Box>
-                  </TableCell>
-                  <TableCell>1</TableCell>
-                  <TableCell>{seoul[0]}</TableCell>
-                  <TableCell sx={{display:{xs:'none',sm:'table-cell'}}}>특별시</TableCell>
-                  <TableCell sx={{display:{xs:'none',sm:'table-cell'}}}>
-                    <Link sx={{':hover':{cursor: 'pointer'}}}>12: Areas</Link>
-                  </TableCell>
-                  <TableCell sx={{display:'flex', justifyContent:'space-around', alignItems:'center'}}>
-                    <IconButton
-                      edge='end'
-                      title='전체 구역'
-                      arial-label='button list all local areas'
-                      data-action='list-lareas'
-                      data-user='1'
-                    >
-                      <MapMarkerMultipleOutline />
-                    </IconButton>
-                    <IconButton
-                      edge='end'
-                      title='전체 구역'
-                      arial-label='button list all local areas'
-                      data-action='list-lareas'
-                      data-user='1'
-                    >
-                      <MapMarkerRadiusOutline />
-                    </IconButton>
-                    <IconButton
-                      edge='end'
-                      title='전체 구역'
-                      arial-label='button list all local areas'
-                      data-action='list-lareas'
-                      data-user='1'
-                    >
-                      <MapMarkerMinusOutline />
-                    </IconButton>
-                  </TableCell>
+                {/* Listing all Wide Areas ---------- */}
+                {wideAreaList.map((row,listID) =>  (
+                  <TableRow key={listID}>
+                    <TableCell sx={{display:{xs:'none',sm:'table-cell', position:'relative'}}}>
+                      <Box 
+                      sx={{
+                        minWidth: 38, display:'flex', justifyContent: 'center', 
+                        position: 'absolute', borderRadius:'50%', top:'10px',
+                        flexShrink: 0, overflow:'hidden', userSelect:'none', width:'65px', height:'52px'
+                      }}>
+                        <img src={`${row.wa_logo.replace('_','-')}`} alt={row.wa_name} width='100%' height='100%'  
+                          sx={{objectFit:'cover', textAlign:'center', color:'transparent', textIndent:'10000px'}}
+                        />
+                      </Box>
+                    </TableCell>
+                    <TableCell>{listID+1}</TableCell>
+                    <TableCell>{row.wa_name}</TableCell>
+                    <TableCell sx={{display:{xs:'none',sm:'table-cell'}}}>{row.country_wa_term}</TableCell>
+                    <TableCell sx={{display:{xs:'none',sm:'table-cell'}}}>
+                      <Link sx={{':hover':{cursor: 'pointer'}}}>12: Areas</Link>
+                    </TableCell>
+                    <TableCell sx={{display:'flex', justifyContent:'space-around', alignItems:'center'}}>
+                      <IconButton
+                        edge='end'
+                        title='전체 구역'
+                        arial-label='button list all local areas'
+                        data-action='list-lareas'
+                        data-warea={row.id}
+                      >
+                        <MapMarkerMultipleOutline />
+                      </IconButton>
+                      <IconButton
+                        edge='end'
+                        title='전체 구역'
+                        arial-label='button list all local areas'
+                        data-action='list-lareas'
+                        data-warea={row.id}
+                      >
+                        <MapMarkerRadiusOutline />
+                      </IconButton>
+                      <IconButton
+                        edge='end'
+                        title='전체 구역'
+                        arial-label='button list all local areas'
+                        data-action='list-lareas'
+                        data-warea={row.id}
+                      >
+                        <MapMarkerMinusOutline />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
                 </TableBody>
               </Table>
             </TableContainer>
