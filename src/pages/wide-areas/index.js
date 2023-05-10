@@ -30,24 +30,49 @@ import { decodeToken } from 'react-jwt';
 
 const WAreasPage = () => {
   // ** User Authentication
-  const [access_token, user_id, userAuthenticated] = useState([])
+  const [access_token, user_id, userAuthenticated] = useState(false)
 
   // ** API Responses
   const [wideAreaList, updateWideAreasList] = useState([]);
+  const [localAreaList, updateLocalAreaList] = useState([]);
+  const [wideAreasPerUser, updateWideAreasPerUser] = useState([]);
 
   // ** Fetch API
+  async function fetchWide_AreasUser(){
+    console.log(user_id)
+    getFetchURL(
+      `${process.env.REACT_APP_APIURL}/map_list`,
+      {user_ID: user_id, access_token: access_token}
+    ).then((response) => {
+      updateWideAreasPerUser(response.wide_areas);
+      updateLocalAreaList(response.local_areas);
+    }).catch((error) => console.error('error: ' + error));
+  }
+
   async function fetchWide_Areas(){
+    console.log(user_id)
     getFetchURL(
       `${process.env.REACT_APP_APIURL}/api/wide_areas`,
-      {userID: user_id, access_token: access_token}
+      {user_ID: user_id, access_token: access_token}
     ).then((response) => {
-      updateWideAreasList(response);
-      console.log(response.length);
+      updateWideAreasList(response.wide_areas);
+      updateLocalAreaList(response.local_areas);
+    }).catch((error) => console.error('error: ' + error));
+  }
+
+  async function fetchLocal_Areas(){
+    console.log(user_id)
+    getFetchURL(
+      `${process.env.REACT_APP_APIURL}/api/wide_areas`,
+      {user_ID: user_id, access_token: access_token}
+    ).then((response) => {
+      updateWideAreasList(response.wide_areas);
+      updateLocalAreaList(response.local_areas);
     }).catch((error) => console.error('error: ' + error));
   }
 
   // ** Initial Load -> Authenticate
-  // TODO! ONLY admin should be able to get here
+  // TODO! ONLY admins should be able to get here
   useEffect(() => {
     access_token = localStorage.getItem('accessToken');
     user_id = getWithExpiry('user_ID');
@@ -57,11 +82,14 @@ const WAreasPage = () => {
       userAuthenticated = true;
     } else userAuthenticated = false;
   },[]);
-
+  
   // ** User Authentication
   useEffect(() => {
     if(userAuthenticated){
-      fetchWide_Areas();
+      fetchWide_AreasUser();
+      if(user_id === 'admin'){
+        fetchWide_Areas();
+      }
     }else console.error('Authentication Error')
   },[userAuthenticated])
 
@@ -77,7 +105,7 @@ const WAreasPage = () => {
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableCell sx={{display:{xs:'none',sm:'table-cell'}}}>Logo</TableCell>
+                    <TableCell sx={{display:{xs:'none',sm:'table-cell'}}}>로고</TableCell>
                     <TableCell>#</TableCell>
                     <TableCell>구역</TableCell>
                     <TableCell sx={{display:{xs:'none',sm:'table-cell'}}}>type</TableCell>
@@ -107,7 +135,7 @@ const WAreasPage = () => {
                     <TableCell>{row.wa_name}</TableCell>
                     <TableCell sx={{display:{xs:'none',sm:'table-cell'}}}>{row.country_wa_term}</TableCell>
                     <TableCell sx={{display:{xs:'none',sm:'table-cell'}}}>
-                      <Link sx={{':hover':{cursor: 'pointer'}}}>12: Areas</Link>
+                      <Link sx={{':hover':{cursor: 'pointer'}}}>{row.locals.length}: Areas</Link>
                     </TableCell>
                     <TableCell sx={{display:'flex', justifyContent:'space-around', alignItems:'center'}}>
                       <IconButton

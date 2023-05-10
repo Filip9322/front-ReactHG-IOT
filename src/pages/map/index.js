@@ -146,6 +146,7 @@ const WideAreasPage = () => {
             `${process.env.REACT_APP_APIURL}/map_list`,
             {user_ID: user_id, access_token: access_token}
         ).then((response) => {
+            console.log(response.wide_areas);
             setWideAreasAccessList(response.wide_areas);
             setLocalAreasAccessList(response.local_areas);
         }).catch((error) =>{
