@@ -1,9 +1,3 @@
-//** React Imports */
-import { useState,  useEffect } from "react";
-
-//** SVG Imports */
-import KoreaMap from 'public/images/wide_areas/korea_subdivision.svg'
-
 //** Styles */
 import { lightGreen, red } from '@mui/material/colors';
 

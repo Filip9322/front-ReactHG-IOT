@@ -5,25 +5,11 @@ import { useState, useEffect } from 'react';
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
-import Link from '@mui/material/Link'
-import Paper from '@mui/material/Paper'
-import Select from '@mui/material/Select'
-import MenuItem from '@mui/material/MenuItem'
-import Table from '@mui/material/Table'
-import TableRow from '@mui/material/TableRow'
-import TableHead from '@mui/material/TableHead'
-import TableBody from '@mui/material/TableBody'
-import TableCell from '@mui/material/TableCell'
-import InputLabel from '@mui/material/InputLabel'
-import IconButton from '@mui/material/IconButton'
 import CardHeader from '@mui/material/CardHeader'
-import TableContainer from '@mui/material/TableContainer'
+import CardContent from '@mui/material/CardContent'
 
-// ** Icons Imports
-import Close from 'mdi-material-ui/Close'
-import MapMarkerRadiusOutline from 'mdi-material-ui/MapMarkerRadiusOutline'
-import MapMarkerMultipleOutline from 'mdi-material-ui/MapMarkerMultipleOutline'
-import MapMarkerMinusOutline from 'mdi-material-ui/MapMarkerMinusOutline'
+// ** Custom Components
+import TableWideAreas from 'src/pages/wide-areas/table'
 
 // ** Helpers
 import { getFetchURL } from 'src/@core/utils/fetchHelper'
@@ -37,19 +23,8 @@ const WAreasPage = () => {
   // ** API Responses
   const [wideAreaList, updateWideAreasList] = useState([]);
   const [localAreaList, updateLocalAreaList] = useState([]);
-  const [wideAreasPerUser, updateWideAreasPerUser] = useState([]);
 
   // ** Fetch API
-  async function fetchWide_AreasUser(){
-    getFetchURL(
-      `${process.env.REACT_APP_APIURL}/map_list`,
-      {user_ID: user_id, access_token: access_token}
-    ).then((response) => {
-      updateWideAreasPerUser(response.wide_areas);
-      updateLocalAreaList(response.local_areas);
-    }).catch((error) => console.error('error: ' + error));
-  }
-
   async function fetchWide_Areas(){
     getFetchURL(
       `${process.env.REACT_APP_APIURL}/api/wide_areas`,
@@ -83,12 +58,12 @@ const WAreasPage = () => {
   // ** User Authentication
   useEffect(() => {
     if(userAuthenticated){
-      fetchWide_AreasUser();
+      //fetchWide_AreasUser();
 
-      /*if(user_id === 'admin'){
+      if(user_id === 'admin'){
         fetchWide_Areas();
         fetchLocal_Areas();
-      }*/
+      }
     }else console.error('Authentication Error')
   },[userAuthenticated])
 
@@ -100,76 +75,9 @@ const WAreasPage = () => {
           <Card>
             <CardHeader title='구역'>
             </CardHeader>
-            <TableContainer component={ Paper }>
-              <Table  aria-label='List all Provincies'>
-                <TableHead>
-                  <TableRow>
-                    <TableCell sx={{display:{xs:'none',sm:'table-cell'}}}>로고</TableCell>
-                    <TableCell>#</TableCell>
-                    <TableCell>구역</TableCell>
-                    <TableCell sx={{display:{xs:'none',sm:'table-cell'}}}>종료</TableCell>
-                    <TableCell sx={{display:{xs:'none',sm:'table-cell'}}}>Total Areas</TableCell>
-                    <TableCell sx={{display:'flex', justifyContent:'space-around'}}
-                    ><span>설정</span> / <span>제공</span>
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                {/* Listing all Wide Areas ---------- */}
-                {wideAreasPerUser.map((row,listID) =>  (
-                  <TableRow key={listID}>
-                    <TableCell sx={{display:{xs:'none',sm:'table-cell', position:'relative'}}}>
-                      <Box 
-                      sx={{
-                        minWidth: 38, display:'flex', justifyContent: 'center', 
-                        position: 'absolute', borderRadius:'50%', top:'10px',
-                        flexShrink: 0, overflow:'hidden', userSelect:'none', width:'65px', height:'52px'
-                      }}>
-                        <img src={`${row.wa_logo.replace('_','-')}`} alt={row.wa_name} width='100%' height='100%'  
-                          sx={{objectFit:'cover', textAlign:'center', color:'transparent', textIndent:'10000px'}}
-                        />
-                      </Box>
-                    </TableCell>
-                    <TableCell>{listID+1}</TableCell>
-                    <TableCell>{row.wa_name}</TableCell>
-                    <TableCell sx={{display:{xs:'none',sm:'table-cell'}}}>{row.country_wa_term}</TableCell>
-                    <TableCell sx={{display:{xs:'none',sm:'table-cell'}}}>
-                      <Link sx={{':hover':{cursor: 'pointer'}}}>{row.locals.length}: Areas</Link>
-                    </TableCell>
-                    <TableCell sx={{display:'flex', justifyContent:'space-around', alignItems:'center'}}>
-                      <IconButton
-                        edge='end'
-                        title='전체 구역'
-                        arial-label='button list all local areas'
-                        data-action='list-lareas'
-                        data-warea={row.id}
-                      >
-                        <MapMarkerMultipleOutline />
-                      </IconButton>
-                      <IconButton
-                        edge='end'
-                        title='전체 구역'
-                        arial-label='button list all local areas'
-                        data-action='list-lareas'
-                        data-warea={row.id}
-                      >
-                        <MapMarkerRadiusOutline />
-                      </IconButton>
-                      <IconButton
-                        edge='end'
-                        title='전체 구역'
-                        arial-label='button list all local areas'
-                        data-action='list-lareas'
-                        data-warea={row.id}
-                      >
-                        <MapMarkerMinusOutline />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
+            <CardContent>
+              <TableWideAreas wareas={wideAreaList} lareas={localAreaList}/>
+            </CardContent>
           </Card>
         </Grid>
       </Box>

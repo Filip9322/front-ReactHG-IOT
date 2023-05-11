@@ -105,7 +105,7 @@ const WideAreasPage = () => {
     updateShowHighLightCard(true);
     setShowCardWidearea(true);
     // Update Local Areas 
-    updateLocalAreas(parseInt(id));
+    updateLocalAreasPerWA(searchMatchArea.locals);
   }
 
   // ** Captures event when click on Map
@@ -117,20 +117,10 @@ const WideAreasPage = () => {
         setShowCardWidearea(true);
         updateShowHighLightCard(true);
         // Update Local Areas 
-        updateLocalAreas(area_id);
+        updateLocalAreasPerWA(searchMatchArea.locals);
       }
     })
   };
-
-  //** Update the listed local areas based on the wide area selected
-  const updateLocalAreas = (area_id) => {
-    let wideLocalAreas = [];
-    localAreasAccessList.some(area => {
-      if(area.wide_area_id === area_id) wideLocalAreas.push(area);
-    });  
-      
-    updateLocalAreasPerWA(wideLocalAreas);
-  }
 
   // ** Fetch API
   async function fetchWide_Areas(){
@@ -440,7 +430,7 @@ const WideAreasPage = () => {
               }}
             >
             { /** LIST of local Areas -------------------- */}
-            { localAreasPerWA.map((row, listID) => {
+            { searchMatchArea.locals.map((row, listID) => {
               return(
                 <LAreaCard key={row.id} city={row.local_name}/>
               );
@@ -484,7 +474,8 @@ const WideAreasPage = () => {
                     alt={`${row.wa_name} logo`}
                   >
                     <source 
-                      srcSet={`${row.wa_logo.replace('_','-')} 300w, ${row.wa_logo.replace('_','-')} 768w,  ${row.wa_logo} 1280w`} 
+                    type=''
+                      srcSet={`${row.wa_logo.replace('_','-')}w 300w, ${row.wa_logo.replace('_','-')}w 768w,  ${row.wa_logo} 1280w`} 
                       sizes ='(max-width: 300px) 300px, (max-width: 768px) 768px, 1280px'
                     />
                     <img  src ={`${row.wa_logo}`}/>
