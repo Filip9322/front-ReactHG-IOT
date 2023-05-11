@@ -7,12 +7,14 @@ import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
 import Link from '@mui/material/Link'
 import Paper from '@mui/material/Paper'
+import Select from '@mui/material/Select'
+import MenuItem from '@mui/material/MenuItem'
 import Table from '@mui/material/Table'
 import TableRow from '@mui/material/TableRow'
 import TableHead from '@mui/material/TableHead'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
-import Button from '@mui/material/Button'
+import InputLabel from '@mui/material/InputLabel'
 import IconButton from '@mui/material/IconButton'
 import CardHeader from '@mui/material/CardHeader'
 import TableContainer from '@mui/material/TableContainer'
@@ -39,7 +41,6 @@ const WAreasPage = () => {
 
   // ** Fetch API
   async function fetchWide_AreasUser(){
-    console.log(user_id)
     getFetchURL(
       `${process.env.REACT_APP_APIURL}/map_list`,
       {user_ID: user_id, access_token: access_token}
@@ -50,24 +51,20 @@ const WAreasPage = () => {
   }
 
   async function fetchWide_Areas(){
-    console.log(user_id)
     getFetchURL(
       `${process.env.REACT_APP_APIURL}/api/wide_areas`,
       {user_ID: user_id, access_token: access_token}
     ).then((response) => {
-      updateWideAreasList(response.wide_areas);
-      updateLocalAreaList(response.local_areas);
+      updateWideAreasList(response);
     }).catch((error) => console.error('error: ' + error));
   }
 
   async function fetchLocal_Areas(){
-    console.log(user_id)
     getFetchURL(
       `${process.env.REACT_APP_APIURL}/api/wide_areas`,
       {user_ID: user_id, access_token: access_token}
     ).then((response) => {
-      updateWideAreasList(response.wide_areas);
-      updateLocalAreaList(response.local_areas);
+      updateLocalAreaList(response);
     }).catch((error) => console.error('error: ' + error));
   }
 
@@ -87,9 +84,11 @@ const WAreasPage = () => {
   useEffect(() => {
     if(userAuthenticated){
       fetchWide_AreasUser();
-      if(user_id === 'admin'){
+
+      /*if(user_id === 'admin'){
         fetchWide_Areas();
-      }
+        fetchLocal_Areas();
+      }*/
     }else console.error('Authentication Error')
   },[userAuthenticated])
 
@@ -102,13 +101,13 @@ const WAreasPage = () => {
             <CardHeader title='구역'>
             </CardHeader>
             <TableContainer component={ Paper }>
-              <Table>
+              <Table  aria-label='List all Provincies'>
                 <TableHead>
                   <TableRow>
                     <TableCell sx={{display:{xs:'none',sm:'table-cell'}}}>로고</TableCell>
                     <TableCell>#</TableCell>
                     <TableCell>구역</TableCell>
-                    <TableCell sx={{display:{xs:'none',sm:'table-cell'}}}>type</TableCell>
+                    <TableCell sx={{display:{xs:'none',sm:'table-cell'}}}>종료</TableCell>
                     <TableCell sx={{display:{xs:'none',sm:'table-cell'}}}>Total Areas</TableCell>
                     <TableCell sx={{display:'flex', justifyContent:'space-around'}}
                     ><span>설정</span> / <span>제공</span>
@@ -117,7 +116,7 @@ const WAreasPage = () => {
                 </TableHead>
                 <TableBody>
                 {/* Listing all Wide Areas ---------- */}
-                {wideAreaList.map((row,listID) =>  (
+                {wideAreasPerUser.map((row,listID) =>  (
                   <TableRow key={listID}>
                     <TableCell sx={{display:{xs:'none',sm:'table-cell', position:'relative'}}}>
                       <Box 
