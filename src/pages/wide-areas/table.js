@@ -24,6 +24,12 @@ const TableWideAreas =  props => {
   // ** Props *
   const {wareas, lareas} = props;
 
+  useEffect(() => {
+    /*if(typeof(wareas)) console.log('type: '+typeof(wareas))
+    typeof(wareas) == 'object'? console.log(wareas.length): console.log(wareas.length)
+    //if(wareas.length > 0) console.log(Object.keys(wareas[0]))*/
+  },[props])
+
   return(
   <TableContainer component={ Paper }>
     <Table  aria-label='List all Provincies'>
