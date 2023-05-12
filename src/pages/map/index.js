@@ -12,11 +12,8 @@ import Grid from '@mui/material/Grid'
 import Card from '@mui/material/Card'
 import Fade from '@mui/material/Fade'
 import Button from "@mui/material/Button"
-import Select from '@mui/material/Select'
 import Divider from '@mui/material/Divider'
-import MenuItem from '@mui/material/MenuItem'
 import CardMedia from '@mui/material/CardMedia'
-import InputLabel from '@mui/material/InputLabel'
 import Typography from "@mui/material/Typography"
 import CardActions from '@mui/material/CardActions'
 import CardContent from '@mui/material/CardContent'
@@ -181,7 +178,7 @@ const WideAreasPage = () => {
     if(userAuthenticated){
       fetchWide_Areas();
       fetchMap_User_Access();
-    }else {console.error('Authentication Error')}
+    }else {console.error('Authentication Error');}
   }, [userAuthenticated]);
 
   // ** Updated base on Area selected in the map
@@ -225,14 +222,15 @@ const WideAreasPage = () => {
     sx={{
       display: 'flex', 
       alignItems: 'center',
-      flexDirection: {xs: 'column', sm:'row'}
+      flexDirection: 'column'
     }}
   >
-    <Tabs value={valueTab} onChange={handleChangeTab} aria-label="Tabs">
+    <Tabs value={valueTab} onChange={handleChangeTab} aria-label="Tabs" sx={{paddingBottom:'1rem'}}>
       <Tab label={'지도'} data-value={0} value='0'/>
       <Tab label={'목록'} data-value={1} value='1' />
     </Tabs>
-    <Fade in={valueTab == '0'? true : false} unmountOnExit><Box sx={{display: valueTab == '0'?'contents':'none'}}>
+    <Fade in={valueTab == '0'? true : false} unmountOnExit sx={{display: valueTab == '0'?{xs:'contents',sm:'flex'}:'none'}}>
+      <Box sx={{flexDirection: {xs: 'column', sm:'row'}, display:'flex}'}} className='hola'>
       {/** Korean Map Container */}
       <Grid container>
         <Grid item xs={12} >

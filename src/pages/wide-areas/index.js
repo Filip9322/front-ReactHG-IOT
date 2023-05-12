@@ -30,17 +30,33 @@ const WAreasPage = () => {
       `${process.env.REACT_APP_APIURL}/api/wide_areas`,
       {user_ID: user_id, access_token: access_token}
     ).then((response) => {
-      updateWideAreasList(response);
+      updateWideAreasList(groupLocals(response));
     }).catch((error) => console.error('error: ' + error));
   }
 
   async function fetchLocal_Areas(){
     getFetchURL(
-      `${process.env.REACT_APP_APIURL}/api/wide_areas`,
+      `${process.env.REACT_APP_APIURL}/api/local_areas`,
       {user_ID: user_id, access_token: access_token}
     ).then((response) => {
       updateLocalAreaList(response);
     }).catch((error) => console.error('error: ' + error));
+  }
+
+  // ** Groups locals by wide A
+  const groupLocals = (wareas) => {
+    wareas.map(warea => {
+      let localAreas = [];
+      localAreaList.map(larea => {
+        if(larea.wide_area_id == warea.id){
+          localAreas.push(larea);
+        }
+        Object.assign(warea,{locals: localAreas})
+        console.log(larea)
+      })
+      console.log(localAreas.length);
+    })
+    return wareas;
   }
 
   // ** Initial Load -> Authenticate

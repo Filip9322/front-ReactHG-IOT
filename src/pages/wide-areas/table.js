@@ -25,9 +25,9 @@ const TableWideAreas =  props => {
   const {wareas, lareas} = props;
 
   useEffect(() => {
-    /*if(typeof(wareas)) console.log('type: '+typeof(wareas))
-    typeof(wareas) == 'object'? console.log(wareas.length): console.log(wareas.length)
-    //if(wareas.length > 0) console.log(Object.keys(wareas[0]))*/
+    //if(typeof(wareas)) console.log('type: '+typeof(wareas))
+    //typeof(wareas) == 'object'? console.log(wareas): console.log(wareas.length)
+    //if(wareas.length > 0) console.log(Object.keys(wareas[0]))
   },[props])
 
   return(
@@ -65,7 +65,7 @@ const TableWideAreas =  props => {
           <TableCell>{row.wa_name}</TableCell>
           <TableCell sx={{display:{xs:'none',sm:'table-cell'}}}>{row.country_wa_term}</TableCell>
           <TableCell sx={{display:{xs:'none',sm:'table-cell'}}}>
-            <Link sx={{':hover':{cursor: 'pointer'}}}>{lareas.length}: Areas</Link>
+            <Link sx={{':hover':{cursor: 'pointer'}}}>{row.locals ? row.locals.length : lareas.length}: Areas</Link>
           </TableCell>
           <TableCell sx={{display:'flex', justifyContent:'space-around', alignItems:'center'}}>
             <IconButton

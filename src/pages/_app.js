@@ -48,14 +48,14 @@ if (themeConfig.routingLoader) {
 // ** Configure JSS & ClassName
 const App = props => {
   // Verify User AccessToken
-  const verifyAccessToken = () => {
+  const verifyAccessToken = async () => {
     const token = localStorage.getItem('accessToken');
     
     if (token){
       const myDecodeToken  = decodeToken(token);
       const isTokenExpired = isExpired(token);
-      if(!isTokenExpired){
-        // Only if token exists and is not Expired
+      if(isTokenExpired){
+        // Token exists and is Expired
         return true;
       } else return false;
     }
@@ -64,7 +64,9 @@ const App = props => {
   if (typeof window !== 'undefined') {
     var authenticated = verifyAccessToken();
 
+    console.log(authenticated+'lol');
     if(!authenticated) { 
+      localStorage.removeItem('accessToken');
       if(window.location.href != `${process.env.REACT_APP_HOST_URL}/pages/login/`){
         window.location.href = '/pages/login';
       }
