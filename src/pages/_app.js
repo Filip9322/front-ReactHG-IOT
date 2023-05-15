@@ -71,7 +71,7 @@ const App = props => {
   // Checking if running on client side
   if (typeof window !== 'undefined') {
     var authenticated = verifyAccessToken().then((result) => {
-      console.log(result);
+
       if(result) { 
         localStorage.removeItem('accessToken');
         if(window.location.href != `${process.env.REACT_APP_HOST_URL}/pages/login/`){

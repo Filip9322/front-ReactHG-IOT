@@ -30,7 +30,7 @@ const WAreasPage = () => {
       `${process.env.REACT_APP_APIURL}/api/wide_areas`,
       {user_ID: user_id, access_token: access_token}
     ).then((response) => {
-      updateWideAreasList(groupLocals(response));
+      updateWideAreasList(response);
     }).catch((error) => console.error('error: ' + error));
   }
 
@@ -51,10 +51,8 @@ const WAreasPage = () => {
         if(larea.wide_area_id == warea.id){
           localAreas.push(larea);
         }
-        Object.assign(warea,{locals: localAreas})
-        console.log(larea)
       })
-      console.log(localAreas.length);
+      Object.assign(warea,{locals: localAreas})
     })
     return wareas;
   }
@@ -82,6 +80,11 @@ const WAreasPage = () => {
       }
     }else console.error('Authentication Error')
   },[userAuthenticated])
+
+  // ** Group locals in wide area
+  useEffect(() => {
+    updateWideAreasList(groupLocals(wideAreaList));
+  },[localAreaList])
 
   let tempInput = '서울';
   var seoul = tempInput.match(/[\u1100-\u11FF\u3130-\u318F\uA960-\uA97F\uAC00-\uD7AF\uD7B0-\uD7FF]/g)

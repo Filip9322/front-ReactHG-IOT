@@ -23,12 +23,12 @@ const TableWideAreas =  props => {
 
   // ** Props *
   const {wareas, lareas} = props;
+  const [wareasList,updateWareasList] = useState([])
 
+  // As takes times to arragne warea.locals, trigger adittional uopdate after updating locals NOT wareas
   useEffect(() => {
-    //if(typeof(wareas)) console.log('type: '+typeof(wareas))
-    //typeof(wareas) == 'object'? console.log(wareas): console.log(wareas.length)
-    //if(wareas.length > 0) console.log(Object.keys(wareas[0]))
-  },[props])
+    updateWareasList(wareas);
+  },[lareas])
 
   return(
   <TableContainer component={ Paper }>
@@ -47,7 +47,7 @@ const TableWideAreas =  props => {
       </TableHead>
       <TableBody>
       {/* Listing all Wide Areas ---------- */}
-      {wareas.map((row,listID) =>  (
+      {wareasList.map((row,listID) =>  (
         <TableRow key={listID}>
           <TableCell sx={{display:{xs:'none',sm:'table-cell', position:'relative'}}}>
             <Box 
