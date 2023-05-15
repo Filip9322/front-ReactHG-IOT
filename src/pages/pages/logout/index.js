@@ -23,20 +23,19 @@ const Page = () => {
 	    if (token){
 	      const myDecodeToken  = decodeToken(token);
 	      const isTokenExpired = isExpired(token);
-	      console.log('decodeToken: '+Object.keys(myDecodeToken));
+
 	  	  postFetchURL(
 	        `${process.env.REACT_APP_APIURL}/logout`,
 	        {user_ID: myDecodeToken.user_ID, accessToken: token }
 	      ).then((response) =>{
 	      	localStorage.removeItem('accessToken');
-	      	window.location.href = '/pages/login';
-	        console.log(response);
-	      }).catch((error) => {
-	      	localStorage.removeItem('accessToken');
-	      	window.location.href = '/pages/login';
-	        console.log(error);
-	      });
+			  console.log(response);
+			}).catch((error) => {
+				localStorage.removeItem('accessToken');
+				console.log(error);
+			});
 	    }
+		window.location.href = '/pages/login';
 	}
   }
 

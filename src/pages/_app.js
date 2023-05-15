@@ -19,6 +19,7 @@ import { SettingsConsumer, SettingsProvider } from 'src/@core/context/settingsCo
 
 // ** Utils Imports
 import { createEmotionCache } from 'src/@core/utils/create-emotion-cache'
+import { getWithExpiry } from 'src/@core/layouts/utils';
 
 // ** React Perfect Scrollbar Style
 import 'react-perfect-scrollbar/dist/css/styles.css'
@@ -50,6 +51,7 @@ const App = props => {
   // Verify User AccessToken
   const verifyAccessToken = async () => {
     const token = localStorage.getItem('accessToken');
+    const user_ID = getWithExpiry('user_ID');
     
     if (token){
       const myDecodeToken  = decodeToken(token);
@@ -57,24 +59,29 @@ const App = props => {
       if(isTokenExpired){
         // Token exists and is Expired
         return true;
-      } else return false;
-    }
+      } else {
+        if(myDecodeToken.user_ID !== user_ID) {
+          return true;
+        } else  return false;
+      }
+
+
+    }else return true;
   }
   // Checking if running on client side
   if (typeof window !== 'undefined') {
-    var authenticated = verifyAccessToken();
-
-    console.log(authenticated+'lol');
-    if(!authenticated) { 
-      localStorage.removeItem('accessToken');
-      if(window.location.href != `${process.env.REACT_APP_HOST_URL}/pages/login/`){
-        window.location.href = '/pages/login';
+    var authenticated = verifyAccessToken().then((result) => {
+      console.log(result);
+      if(result) { 
+        localStorage.removeItem('accessToken');
+        if(window.location.href != `${process.env.REACT_APP_HOST_URL}/pages/login/`){
+          window.location.href = '/pages/login';
+        }
       }
-    }
-    if(authenticated && window.location.href == `${process.env.REACT_APP_HOST_URL}/pages/login/`){
-      window.location.href = '/';
-    }
-
+      if(!result && window.location.href == `${process.env.REACT_APP_HOST_URL}/pages/login/`){
+        window.location.href = '/';
+      }
+    });
   }
 
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props
