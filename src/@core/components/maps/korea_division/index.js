@@ -12,6 +12,7 @@ const KoreaMapComponent = props => {
             data-name="KoreaInteractiveMap" 
             xmlns="http://www.w3.org/2000/svg" 
             viewBox="0 0 501 794.34"
+            style={{backgroundColor: "#f5f5f3"}}
         >
         <defs>
           <style>{`

@@ -234,7 +234,7 @@ const WideAreasPage = () => {
       {/** Korean Map Container */}
       <Grid container>
         <Grid item xs={12} >
-          <Card>
+          <Card sx={{backgroundColor: "#f5f5f3"}}>
             <KoreaMapComponent
               className="copm_Map"
               highLightArea={highLightCard} 

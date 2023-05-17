@@ -1,4 +1,4 @@
-// ** Reactr Imports
+// ** React Imports
 import { useState, useEffect } from 'react'
 
 // ** MUI Components
@@ -15,7 +15,8 @@ import Typography from '@mui/material/Typography'
 import IconButton from '@mui/material/IconButton'
 import TableContainer from '@mui/material/TableContainer'
 
-import { DataGrid, GridPreProcessEditCellProps, GridColumnHeader } from '@mui/x-data-grid'
+// ** Custom Components Import
+import TableLocals from './local-table'
 
 // ** Icons Imports
 import AccountSupervisor from 'mdi-material-ui/AccountSupervisor'
@@ -225,6 +226,7 @@ const TableWideAreas =  props => {
 
   return(
   <TableContainer component={ Paper }>
+    <TableLocals />
     <Table  aria-label='List all Provincies'>
       <TableHead>
         <TableRow>
