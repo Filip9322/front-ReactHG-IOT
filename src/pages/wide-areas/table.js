@@ -15,13 +15,20 @@ import Typography from '@mui/material/Typography'
 import IconButton from '@mui/material/IconButton'
 import TableContainer from '@mui/material/TableContainer'
 
+import { DataGrid, GridPreProcessEditCellProps, GridColumnHeader } from '@mui/x-data-grid'
+
 // ** Icons Imports
-import Close from 'mdi-material-ui/Close'
+import AccountSupervisor from 'mdi-material-ui/AccountSupervisor'
+import FormatListChecks from 'mdi-material-ui/FormatListChecks'
 import MapMarkerRadiusOutline from 'mdi-material-ui/MapMarkerRadiusOutline'
 import MapMarkerMinusOutline  from 'mdi-material-ui/MapMarkerMinusOutline'
 import MapMarkerMultipleOutline from 'mdi-material-ui/MapMarkerMultipleOutline'
 import ChevronUp   from 'mdi-material-ui/ChevronUp'
 import ChevronDown from 'mdi-material-ui/ChevronDown'
+
+//** SVG Imports */
+import VoiceTrafficLight from 'public/images/misc/hangil-signal-border.svg'
+import VoiceGuidance from 'public/images/misc/hangil-voice-guidance.svg'
 
 const TableWideAreas =  props => {
 
@@ -30,17 +37,19 @@ const TableWideAreas =  props => {
   const [wareasList,updateWareasList] = useState([])
 
   const clickListLocals = event =>{
-    let action = event.currentTarget.getAttribute('data-action');
+    let action = event.currentTarget.getAttribute('data-action')
     let warea  = event.currentTarget.getAttribute('data-warea')
+    let device = event.currentTarget.getAttribute('data-device')
     
-    console.log(action+' '+warea);
+    console.log(action+' '+warea+ ' '+device);
   }
 
   const downListLocals = event =>{
-    let action = event.currentTarget.getAttribute('data-action');
+    let action = event.currentTarget.getAttribute('data-action')
     let warea  = event.currentTarget.getAttribute('data-warea')
+    let device = event.currentTarget.getAttribute('data-device')
     
-    console.log(action+' '+warea);
+    console.log(action+' '+warea+ ' '+device);
   }
 
   const Row = props => {
@@ -49,6 +58,7 @@ const TableWideAreas =  props => {
 
     return (
       <>
+        {/* WIDE TABLE Body BEGIN ---------------------------------------------------------*/}
         <TableRow key={listID} sx={{boxSizing:'content-box'}}>
           <TableCell>
             <IconButton
@@ -74,14 +84,32 @@ const TableWideAreas =  props => {
           <TableCell>{listID+1}</TableCell>
           <TableCell>{row.wa_name}</TableCell>
           <TableCell sx={{display:{xs:'none',sm:'table-cell'}}}>{row.country_wa_term}</TableCell>
-          <TableCell sx={{display:{xs:'none',sm:'table-cell'}}} onClick={()=> setOpen(!open)}>
-            <Link 
-              sx={{':hover':{cursor: 'pointer'}}}
-              data-action='list-lareas'
-              data-warea={row.id}
-              onMouseDown={downListLocals}
-            >
-              {row.locals ? row.locals.length : lareas.length}: Areas
+          <TableCell sx={{display:{xs:'none',sm:'none', md:'table-cell'}}} onClick={()=> setOpen(!open)}>
+            <Link sx={{display:'flex', alignItems:'center', justifyContent:'space-evenly'}}>
+              <Box sx={{display:'flex', alignItems:'center',':hover':{cursor: 'pointer'}}}
+                onMouseDown={downListLocals}
+                onClick={downListLocals}
+                data-action='list-lareas'
+                data-warea={row.id}
+                data-device={'acustic-traffic-light'}
+              >
+                <Box sx={{ display: 'inline-block', position: 'relative',  width:{xs:'16px', sm :'16px'}, paddingRight:'1rem'}}>
+                  <VoiceTrafficLight max-height={100} max-width={100} color={'#686868'} arial-label="음향신호기"/>
+                </Box>
+                5522: {row.locals ? row.locals.length : lareas.length} 구역
+              </Box>
+              <Box sx={{display:'flex', alignItems:'center',':hover':{cursor: 'pointer'}}}
+                onMouseDown={downListLocals}
+                onClick={downListLocals}
+                data-action='list-lareas'
+                data-warea={row.id}
+                data-device={'voice-inductor'}
+              >
+                <Box sx={{ display: 'inline-block', position: 'relative',  width:{xs:'16px', sm :'16px'}, paddingRight:'1rem'}}>
+                  <VoiceGuidance max-height={100} max-width={100} color={'#686868'} arial-label="음향신호기"/>
+                </Box>
+                8200: {row.locals ? row.locals.length : lareas.length} 시/구
+              </Box>
             </Link>
           </TableCell>
           <TableCell sx={{display:'flex', justifyContent:'space-around', alignItems:'center', marginBottom:'-1px'}}>
@@ -127,6 +155,7 @@ const TableWideAreas =  props => {
             {!row.locals.length > 0? (
               <Typography sx={{textAlign: 'center', fontSize:'1.2rem', padding:'1rem 0'}} >No local Areas</Typography>
             ):(
+              /* LOCAL TABLE BEGIN ---------------------------------------------------------*/
               <Table aria-label='list locals'>
                 <TableHead>
                   <TableRow>
@@ -135,24 +164,55 @@ const TableWideAreas =  props => {
                     <TableCell>Type</TableCell>
                     <TableCell>Address</TableCell>
                     <TableCell># Users</TableCell>
+                    <TableCell>Equipment</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                 {!row.locals? 'No local Areas': row.locals.map((larea, localID) =>(
-                  <TableRow sx={{backgroundColor: larea.is_IOT ? '#fffeef':'white'}} key={localID}>
-                    <TableCell sx={{'& span':{color:'red'}}}>{localID+1}<span>{larea.is_IOT ?'  IOT':''}</span></TableCell>
+                  <TableRow sx={{backgroundColor: larea.is_IOT ? '#fffeef':'white', position:'relative',}} key={localID}>
+                    <TableCell 
+                      sx={{
+                        '& span':{ color:'red', position:'absolute', top: 0, right: 0 }
+                      }}
+                    >{localID+1}<span>{larea.is_IOT ?'  IOT':''}</span></TableCell>
                     <TableCell>{larea.local_name}</TableCell>
                     <TableCell>{larea.local_type}</TableCell>
                     <TableCell>{larea.local_address}</TableCell>
-                    <TableCell>{10}</TableCell>
+                    <TableCell>
+                      {10}
+                      <IconButton
+                        edge='end'
+                        title='user with access'
+                        arial-label='list users with Access'
+                        data-action='list-users'
+                        data-larea={larea.id}
+                      >
+                        <AccountSupervisor />
+                      </IconButton>
+                    </TableCell>
+                    <TableCell>
+                    <IconButton
+                      edge='end'
+                      title='전체 구역'
+                      arial-label='button list all local areas'
+                      data-action='Inactive-Warea'
+                      onClick={clickListLocals}
+                      onMouseDown={downListLocals}
+                      data-larea={larea.id}
+                    >
+                      <FormatListChecks />
+                    </IconButton>
+                    </TableCell>
                   </TableRow>
                 ))}
                 </TableBody>
               </Table>
+              /* LOCAL TABLE END ---------------------------------------------------------*/
             )}
             </Collapse>
           </TableCell>
         </TableRow>
+        {/* WIDE TABLE Body END ---------------------------------------------------------*/}
       </>
     );
   }
@@ -173,7 +233,11 @@ const TableWideAreas =  props => {
           <TableCell>#</TableCell>
           <TableCell>구역</TableCell>
           <TableCell sx={{display:{xs:'none',sm:'table-cell'}}}>종료</TableCell>
-          <TableCell sx={{display:{xs:'none',sm:'table-cell'}}}>Total Areas</TableCell>
+          <TableCell sx={{display:{xs:'none',sm:'none', md:'table-cell'}}}>
+            <Box sx={{display:'flex', alignItems:'center', justifyContent:'space-evenly'}}>
+              Device & Areas
+            </Box> 
+          </TableCell>
           <TableCell sx={{display:'flex', justifyContent:'space-around'}}
           ><span>설정</span> / <span>제공</span>
           </TableCell>
