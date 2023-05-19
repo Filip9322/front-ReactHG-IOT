@@ -227,7 +227,7 @@ const TableWideAreas =  props => {
   return(
   <TableContainer component={ Paper }>
     <TableLocals />
-    <Table  aria-label='List all Provincies'>
+    <Table wareas={wareasList} aria-label='List all Provincies'>
       <TableHead>
         <TableRow>
           <TableCell />
