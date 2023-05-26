@@ -142,9 +142,7 @@ const WideAreasPage = () => {
       {user_ID: user_id, access_token: access_token}
     ).then ((response) => {
       updateWideAreasList(response);
-    }).catch((error) => {
-      console.error('error: ' + error);
-    });
+    }).catch(error => console.error('error: ' + error));
   }
 
   async function fetchMap_User_Access(){
@@ -152,12 +150,18 @@ const WideAreasPage = () => {
       `${process.env.REACT_APP_APIURL}/map_list`,
       {user_ID: user_id, access_token: access_token}
     ).then((response) => {
-      console.log(response.wide_areas);
       setWideAreasAccessList(response.wide_areas);
       setLocalAreasAccessList(response.local_areas);
-    }).catch((error) =>{
-      console.error('error: '+ error);
-    });
+    }).catch(error => console.error('error: ' + error));
+  }
+
+  async function fetchLAreas_Device_Subscriptions(){
+    getFetchURL(
+      `${process.env.REACT_APP_APIURL}/API/lareas_dev_subscriptions`,
+      {user_ID: user_id, access_token: access_token}
+    ).then(response => {
+      console.log(response)
+    }).catch(error => console.error('error: ' + error));
   }
 
   // ** Start Initialization
@@ -178,6 +182,7 @@ const WideAreasPage = () => {
     if(userAuthenticated){
       fetchWide_Areas();
       fetchMap_User_Access();
+      fetchLAreas_Device_Subscriptions();
     }else {console.error('Authentication Error');}
   }, [userAuthenticated]);
 
