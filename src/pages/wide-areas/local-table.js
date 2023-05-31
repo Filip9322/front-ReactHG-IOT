@@ -43,7 +43,7 @@ const TableLocals = props => {
   }
 
   useEffect(() =>{
-    console.log(bulkInsert);
+    //console.log(bulkInsert);
   },[])
 
   return (

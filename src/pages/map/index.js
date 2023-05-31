@@ -43,7 +43,7 @@ const WideAreasPage = () => {
   // -- Tabs Status
   const [valueTab, setValueTab] = useState('0');
   // -- Map Status
-  const initialMapSelected = {id: 1, wa_name: '서울'};
+  const initialMapSelected = {id: 1, wa_name: '서울', subs: [1]};
   const [mapSelectedArea, updateMapSelectedArea] = useState(initialMapSelected);
   // -- Highlight Card status
   const [highLightCard, updateHighLightCard] = useState(0);
@@ -58,7 +58,7 @@ const WideAreasPage = () => {
   // -- Local areas list Status
   const [showLocalAreasCard, setShowLocalAreaCard] = useState(false);
   // -- Fetch User Access
-  const [wideAreasAccessList, setWideAreasAccessList] = useState([]);
+  const [wideAreasAccessList, setWideAreasAccessList] = useState(initialWideArea);
   const [localAreasAccessList, setLocalAreasAccessList] = useState([]);
   const [localAreasPerWA, updateLocalAreasPerWA] = useState([]);
     
@@ -104,12 +104,13 @@ const WideAreasPage = () => {
     let title = warea.getAttribute('data-title');
 
     // Toggle'selected' class
-    updateHighLightCard(id);
     updateMapSelectedArea({id: parseInt(id), name: title});
-    updateShowHighLightCard(true);
-    setShowCardWidearea(true);
+    updateHighLightCard(id);
     // Update Local Areas 
     updateLocalAreasPerWA(searchMatchArea.locals);
+
+    updateShowHighLightCard(true);
+    setShowCardWidearea(true);
   }
 
   // ** Captures event when click on Map
@@ -118,10 +119,11 @@ const WideAreasPage = () => {
       if(warea.id === area_id){
         updateMapSelectedArea({id: parseInt(area_id), name: area_name});
         updateHighLightCard(parseInt(area_id));
-        setShowCardWidearea(true);
-        updateShowHighLightCard(true);
         // Update Local Areas 
         updateLocalAreasPerWA(searchMatchArea.locals);
+
+        setShowCardWidearea(true);
+        updateShowHighLightCard(true);
       }
     })
   };
@@ -157,7 +159,7 @@ const WideAreasPage = () => {
 
   async function fetchLAreas_Device_Subscriptions(){
     getFetchURL(
-      `${process.env.REACT_APP_APIURL}/API/lareas_dev_subscriptions`,
+      `${process.env.REACT_APP_APIURL}/API/device_types`,
       {user_ID: user_id, access_token: access_token}
     ).then(response => {
       console.log(response)
@@ -180,23 +182,25 @@ const WideAreasPage = () => {
   // ** IF Authenticated in order trigger Fetch
   useEffect(() => {
     if(userAuthenticated){
-      fetchWide_Areas();
       fetchMap_User_Access();
+      fetchWide_Areas();
       fetchLAreas_Device_Subscriptions();
     }else {console.error('Authentication Error');}
   }, [userAuthenticated]);
 
   // ** Updated base on Area selected in the map
   useEffect(() => {
-    let searchArea = wideAreasList.find(warea => warea.id === mapSelectedArea.id);
+    let searchArea = wideAreasAccessList.find(warea => warea.id === mapSelectedArea.id);
     if(searchArea) {
       updateSearchMatchArea(searchArea);
     }
   },[mapSelectedArea]);
-    
+  
   // ** Search the matching selected in the Map into all wide area list
   useEffect(() => {
+    if(searchMatchArea.subs) console.log("subs: ",searchMatchArea.subs);
     if(searchMatchArea.wa_logo) {setShowCardWidearea(true)}
+    if(searchMatchArea.locals) console.log("length: ",searchMatchArea.locals.length)
   },[searchMatchArea]);
 
   // ** Update Wide Areas to show based on the user access wide areas
@@ -315,8 +319,7 @@ const WideAreasPage = () => {
                     <Typography sx={{ fontSize: 15 }}>17시/구</Typography>
                   </Box>
                   <Divider light />
-                  
-                  {/** Content 음향신호기 ----- */}
+
                   <Box 
                     sx={{ 
                       display: 'flex', justifyContent: 'space-evenly',
@@ -330,6 +333,9 @@ const WideAreasPage = () => {
                       }
                     }}
                   >
+                  {/** Content 음향신호기 ----- */}
+                  { searchMatchArea.subs && searchMatchArea.locals.length > 0 ?
+                    searchMatchArea.subs['0'] == 1 || searchMatchArea.subs['1'] == 1 ?
                     <Box
                       className={classNames({
                         'selected': typeDeviceSelected == 1,
@@ -369,8 +375,8 @@ const WideAreasPage = () => {
                       <CardActions sx={{padding: '0.2rem 1.25rem'}}>
                         <Button 
                           variant="outlined" 
-                          onClick={clickButtonDetails}
-                          data-warea = {searchMatchArea.id}
+                          onClick={ clickButtonDetails }
+                          data-warea = { searchMatchArea.id }
                           data-type="1"
                           sx={{ 
                             fontSize: {xs: '0.4rem',sm:14},
@@ -381,8 +387,10 @@ const WideAreasPage = () => {
                       </Button>
                     </CardActions>
                   </Box>
-                  
+                  : '' :''}
                   {/** Content 음성유도기 ----- */}
+                  {searchMatchArea.subs && searchMatchArea.locals.length > 0?
+                  searchMatchArea.subs['1'] == 2 || searchMatchArea.subs['0'] == 2 ?
                   <Box 
                     className={classNames({
                       'selected': typeDeviceSelected == 2,
@@ -432,6 +440,7 @@ const WideAreasPage = () => {
                         >{textButtonDetails}</Button>
                       </CardActions>                                
                     </Box>
+                  : '' :''}
                   </Box>
                 </Box>
               </CardContent>
