@@ -106,6 +106,12 @@ const WideAreasPage = () => {
     // Toggle'selected' class
     updateMapSelectedArea({id: parseInt(id), name: title});
     updateHighLightCard(id);
+
+    // Reset Card show or not devices(avoid blank spaces)
+    setTextButtonDetails('자세히');
+    setShowLocalAreaCard(false);
+    setTypeDeviceSelected(3);
+
     // Update Local Areas 
     updateLocalAreasPerWA(searchMatchArea.locals);
 
@@ -117,8 +123,15 @@ const WideAreasPage = () => {
   const clickMapWideArea = (area_name, area_id) => {
     wideAreasAccessList.some(warea => {
       if(warea.id === area_id){
+        // Toggle'selected' class
         updateMapSelectedArea({id: parseInt(area_id), name: area_name});
         updateHighLightCard(parseInt(area_id));
+
+        // Reset Card show or not devices(avoid blank spaces)
+        setTextButtonDetails('자세히');
+        setShowLocalAreaCard(false);
+        setTypeDeviceSelected(3)
+        
         // Update Local Areas 
         updateLocalAreasPerWA(searchMatchArea.locals);
 
@@ -198,9 +211,7 @@ const WideAreasPage = () => {
   
   // ** Search the matching selected in the Map into all wide area list
   useEffect(() => {
-    if(searchMatchArea.subs) console.log("subs: ",searchMatchArea.subs);
     if(searchMatchArea.wa_logo) {setShowCardWidearea(true)}
-    if(searchMatchArea.locals) console.log("length: ",searchMatchArea.locals.length)
   },[searchMatchArea]);
 
   // ** Update Wide Areas to show based on the user access wide areas
@@ -459,8 +470,11 @@ const WideAreasPage = () => {
               >
               { /** LIST of local Areas -------------------- */}
               { searchMatchArea.locals.map((row, listID) => {
+                console.log(Object.values(row.subs).includes(typeDeviceSelected))
+                console.log(typeDeviceSelected+' '+Object.values(row.subs))
                 return(
-                  <LAreaCard key={row.id} city={row.local_name}/>
+                  Object.values(row.subs).includes(typeDeviceSelected)? 
+                  <LAreaCard key={row.id} city={row.local_name}/> : ''
                 );
                 }) 
               }
@@ -481,7 +495,7 @@ const WideAreasPage = () => {
               overflowX: {xs:'auto', sm:'hidden'},
               scrollBehavior: 'smooth',
               scrollSnapType: 'x mandatory',
-              paddingLeft:{xs:'60rem', sm: '10rem'}
+              paddingLeft:{xs:'0rem', sm: '10rem'}
             }}
           >
           { wideAreasList.map((row, listID) => {
