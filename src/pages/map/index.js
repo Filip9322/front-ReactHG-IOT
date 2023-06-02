@@ -29,7 +29,7 @@ import { decodeToken } from "react-jwt"
 
 // ** Custom Components Imports
 import KoreaMapComponent from 'src/@core/components/maps/korea_division'
-import TableWideAreas from 'src/pages/wide-areas/table'
+import TableWideAreas from './table'
 
 //** Class Manager & Helpers*/
 import classNames from "classnames"
@@ -374,7 +374,7 @@ const WideAreasPage = () => {
                           음향신호기
                       </Typography>
                       <Box sx={{ position: 'relative', width:{xs:'25px', sm :'30px'}}}>
-                        <VoiceGuidance max-height={100} max-width={100} color={'#686868'} arial-label="음향신호기"/>
+                        <VoiceTrafficLight max-height={100} max-width={100} color={'#686868'} arial-label="음향신호기"/>
                       </Box>
                       <Box sx={{
                         '& :nth-of-type(1)':{ color: '#2F9F49'},
@@ -429,7 +429,7 @@ const WideAreasPage = () => {
                         음성유도기
                       </Typography>
                       <Box sx={{ position: 'relative',  width:{xs:'25px', sm :'30px'}}}>
-                        <VoiceTrafficLight max-height={100} max-width={100} color={'#686868'} arial-label="음향신호기"/>
+                        <VoiceGuidance max-height={100} max-width={100} color={'#686868'} arial-label="음향신호기"/>
                       </Box>
                       <Box sx={{
                         '& :nth-of-type(1)':{ color: '#2F9F49'},
@@ -470,8 +470,6 @@ const WideAreasPage = () => {
               >
               { /** LIST of local Areas -------------------- */}
               { searchMatchArea.locals.map((row, listID) => {
-                console.log(Object.values(row.subs).includes(typeDeviceSelected))
-                console.log(typeDeviceSelected+' '+Object.values(row.subs))
                 return(
                   Object.values(row.subs).includes(typeDeviceSelected)? 
                   <LAreaCard key={row.id} city={row.local_name}/> : ''

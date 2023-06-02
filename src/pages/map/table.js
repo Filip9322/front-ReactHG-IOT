@@ -34,8 +34,9 @@ import VoiceGuidance from 'public/images/misc/hangil-voice-guidance.svg'
 const TableWideAreas =  props => {
 
   // ** Props *
-  const {wareas, lareas, isAdmin} = props;
+  const {wareas, lareas} = props;
   const [wareasList,updateWareasList] = useState([])
+  const [isAdmin, updatedIsAdmin] = useState(false);
 
   const clickListLocals = event =>{
     let action = event.currentTarget.getAttribute('data-action')
@@ -87,6 +88,7 @@ const TableWideAreas =  props => {
           <TableCell sx={{display:{xs:'none',sm:'table-cell'}}}>{row.country_wa_term}</TableCell>
           <TableCell sx={{display:{xs:'none',sm:'none', md:'table-cell'}}} onClick={()=> setOpen(!open)}>
             <Link sx={{display:'flex', alignItems:'center', justifyContent:'space-evenly'}}>
+              { Object.values(row.subs).includes(1) ? 
               <Box sx={{display:'flex', alignItems:'center',':hover':{cursor: 'pointer'}}}
                 onMouseDown={downListLocals}
                 onClick={downListLocals}
@@ -99,6 +101,8 @@ const TableWideAreas =  props => {
                 </Box>
                 5522: {row.locals ? row.locals.length : lareas.length} 구역
               </Box>
+              : '' }
+              { Object.values(row.subs).includes(2) ? 
               <Box sx={{display:'flex', alignItems:'center',':hover':{cursor: 'pointer'}}}
                 onMouseDown={downListLocals}
                 onClick={downListLocals}
@@ -111,6 +115,7 @@ const TableWideAreas =  props => {
                 </Box>
                 8200: {row.locals ? row.locals.length : lareas.length} 시/구
               </Box>
+              : '' }
             </Link>
           </TableCell>
           {isAdmin ? 
@@ -198,6 +203,7 @@ const TableWideAreas =  props => {
                     </TableCell>
                     : ''}
                     <TableCell>
+                    { Object.values(larea.subs).includes(3) ?
                     <IconButton
                       edge='end'
                       title='전체 구역'
@@ -209,6 +215,17 @@ const TableWideAreas =  props => {
                     >
                       <FormatListChecks />
                     </IconButton>
+                    : ''}
+                    {Object.values(larea.subs).includes(1) ?
+                    <Box sx={{ display: 'inline-block', position: 'relative',  width:{xs:'16px', sm :'16px'}, paddingRight:'1rem'}}>
+                      <VoiceTrafficLight max-height={100} max-width={100} color={'#686868'} arial-label="음향신호기"/>
+                    </Box>
+                    : ''}
+                    {Object.values(larea.subs).includes(2) ?
+                    <Box sx={{ display: 'inline-block', position: 'relative',  width:{xs:'16px', sm :'16px'}, paddingRight:'1rem'}}>
+                      <VoiceGuidance max-height={100} max-width={100} color={'#686868'} arial-label="음향신호기"/>
+                    </Box>
+                    : ''}
                     </TableCell>
                   </TableRow>
                 ))}

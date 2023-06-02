@@ -23,6 +23,7 @@ const WAreasPage = () => {
   // ** API Responses
   const [wideAreaList, updateWideAreasList] = useState([]);
   const [localAreaList, updateLocalAreaList] = useState([]);
+  const [isAdmin, updateIsAdmin] = useState(false);
 
   // ** Fetch API
   async function fetchWide_Areas(){
@@ -41,6 +42,15 @@ const WAreasPage = () => {
     ).then((response) => {
       updateLocalAreaList(response);
     }).catch((error) => console.error('error: ' + error));
+  }
+
+  async function fetchGetUserRoles(){
+    getFetchURL(
+      `${process.env.REACT_APP_APIURL}/login/${user_id}`,
+      {user_ID: user_id, access_token: access_token}
+    ).then((response) => {
+      updateIsAdmin(response);
+    }).catch(error => console.error('error: ' + error));
   }
 
   // ** Groups locals by wide A
@@ -64,6 +74,7 @@ const WAreasPage = () => {
     user_id = getWithExpiry('user_ID');
 
     const myDecodeToken = decodeToken(access_token);
+    console.log(Object.keys(myDecodeToken));
     if(myDecodeToken.user_ID == user_id){
       userAuthenticated = true;
     } else userAuthenticated = false;
@@ -73,6 +84,7 @@ const WAreasPage = () => {
   useEffect(() => {
     if(userAuthenticated){
       //fetchWide_AreasUser();
+      fetchGetUserRoles(user_id);
 
       if(user_id === 'admin'){
         fetchWide_Areas();
@@ -95,7 +107,7 @@ const WAreasPage = () => {
             <CardHeader title='구역'>
             </CardHeader>
             <CardContent>
-              <TableWideAreas wareas={wideAreaList} lareas={localAreaList}/>
+              <TableWideAreas wareas={wideAreaList} lareas={localAreaList} isAdmin={isAdmin}/>
             </CardContent>
           </Card>
         </Grid>
