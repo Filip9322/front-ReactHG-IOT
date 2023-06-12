@@ -22,7 +22,6 @@ import TableLocals from './local-table'
 import AccountSupervisor from 'mdi-material-ui/AccountSupervisor'
 import FormatListChecks from 'mdi-material-ui/FormatListChecks'
 import MapMarkerRadiusOutline from 'mdi-material-ui/MapMarkerRadiusOutline'
-import MapMarkerMinusOutline  from 'mdi-material-ui/MapMarkerMinusOutline'
 import MapMarkerMultipleOutline from 'mdi-material-ui/MapMarkerMultipleOutline'
 import ChevronUp   from 'mdi-material-ui/ChevronUp'
 import ChevronDown from 'mdi-material-ui/ChevronDown'
@@ -39,18 +38,18 @@ const TableWideAreas =  props => {
 
   const clickListLocals = event =>{
     let action = event.currentTarget.getAttribute('data-action')
-    let warea  = event.currentTarget.getAttribute('data-warea')
+    let larea  = event.currentTarget.getAttribute('data-larea')
     let device = event.currentTarget.getAttribute('data-device')
     
-    console.log(action+' '+warea+ ' '+device);
+    console.log(action+' '+larea+ ' '+device);
   }
 
   const downListLocals = event =>{
     let action = event.currentTarget.getAttribute('data-action')
-    let warea  = event.currentTarget.getAttribute('data-warea')
+    let larea  = event.currentTarget.getAttribute('data-larea')
     let device = event.currentTarget.getAttribute('data-device')
     
-    console.log(action+' '+warea+ ' '+device);
+    console.log(action+' '+larea+ ' '+device);
   }
 
   const Row = props => {
@@ -113,107 +112,15 @@ const TableWideAreas =  props => {
               </Box>
             </Link>
           </TableCell>
-          {isAdmin ? 
-          <TableCell sx={{display:'flex', justifyContent:'space-around', alignItems:'center', marginBottom:'-1px'}}>
-            <IconButton
-              edge='end'
-              title='전체 구역'
-              arial-label='button list all local areas'
-              data-action='list-lareas'
-              onClick={clickListLocals}
-              onMouseDown={downListLocals}
-              data-warea={row.id}
-            >
-              <MapMarkerMultipleOutline />
-            </IconButton>
-            <IconButton
-              edge='end'
-              title='전체 구역'
-              arial-label='button list all local areas'
-              data-action='Edit-Warea'
-              onClick={clickListLocals}
-              onMouseDown={downListLocals}
-              data-warea={row.id}
-            >
-              <MapMarkerRadiusOutline />
-            </IconButton>
-            { /* TODO: only admins */ }
-            <IconButton
-              edge='end'
-              title='전체 구역'
-              arial-label='button list all local areas'
-              data-action='Inactive-Warea'
-              onClick={clickListLocals}
-              onMouseDown={downListLocals}
-              data-warea={row.id}
-            >
-              <MapMarkerMinusOutline />
-            </IconButton>
-          </TableCell>
-          : ''}
         </TableRow>
         <TableRow  sx={{borderBottom: open? '1px solid rgba(58, 53, 65, 0.12)': '0px solid transparent', boxSizing:'content-box'}}>
           <TableCell style={{ paddingBottom: 0, paddingTop: 0, borderBottom: '1px solid transparent' }} colSpan={6}>
             <Collapse in={open} timeout="auto" mountOnEnter unmountOnExit>
             {!row.locals.length > 0? (
               <Typography sx={{textAlign: 'center', fontSize:'1.2rem', padding:'1rem 0'}} >No local Areas</Typography>
-            ):(
+              ):(
               /* LOCAL TABLE BEGIN ---------------------------------------------------------*/
-              <Table aria-label='list locals'>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>#</TableCell>
-                    <TableCell>Name</TableCell>
-                    <TableCell>Type</TableCell>
-                    <TableCell>Address</TableCell>
-                    {isAdmin ? 
-                    <TableCell># Users</TableCell>
-                    : ''}
-                    <TableCell>Equipment</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                {!row.locals? 'No local Areas': row.locals.map((larea, localID) =>(
-                  <TableRow sx={{backgroundColor: larea.is_IOT ? '#fffeef':'white', position:'relative',}} key={localID}>
-                    <TableCell 
-                      sx={{
-                        '& span':{ color:'red', position:'absolute', top: 0, right: 0 }
-                      }}
-                    >{localID+1}<span>{larea.is_IOT ?'  IOT':''}</span></TableCell>
-                    <TableCell>{larea.local_name}</TableCell>
-                    <TableCell>{larea.local_type}</TableCell>
-                    <TableCell>{larea.local_address}</TableCell>
-                    {isAdmin ? 
-                    <TableCell>
-                      {10}
-                      <IconButton
-                        edge='end'
-                        title='user with access'
-                        arial-label='list users with Access'
-                        data-action='list-users'
-                        data-larea={larea.id}
-                      >
-                        <AccountSupervisor />
-                      </IconButton>
-                    </TableCell>
-                    : ''}
-                    <TableCell>
-                    <IconButton
-                      edge='end'
-                      title='전체 구역'
-                      arial-label='button list all local areas'
-                      data-action='Inactive-Warea'
-                      onClick={clickListLocals}
-                      onMouseDown={downListLocals}
-                      data-larea={larea.id}
-                    >
-                      <FormatListChecks />
-                    </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
-                </TableBody>
-              </Table>
+              <TableLocals lareas={row.locals} wareaID={row.id}/>
               /* LOCAL TABLE END ---------------------------------------------------------*/
             )}
             </Collapse>
@@ -232,7 +139,6 @@ const TableWideAreas =  props => {
 
   return(
   <TableContainer component={ Paper }>
-    <TableLocals />
     <Table wareas={wareasList} aria-label='List all Provincies'>
       <TableHead>
         <TableRow>
@@ -246,11 +152,6 @@ const TableWideAreas =  props => {
               Device & Areas
             </Box> 
           </TableCell>
-          {isAdmin ? 
-          <TableCell sx={{display:'flex', justifyContent:'space-around'}}
-          ><span>설정</span> / <span>제공</span>
-          </TableCell>
-          : ''}
         </TableRow>
       </TableHead>
       <TableBody>

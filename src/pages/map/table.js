@@ -15,9 +15,6 @@ import Typography from '@mui/material/Typography'
 import IconButton from '@mui/material/IconButton'
 import TableContainer from '@mui/material/TableContainer'
 
-// ** Custom Components Import
-import TableLocals from './local-table'
-
 // ** Icons Imports
 import AccountSupervisor from 'mdi-material-ui/AccountSupervisor'
 import FormatListChecks from 'mdi-material-ui/FormatListChecks'
@@ -249,7 +246,6 @@ const TableWideAreas =  props => {
 
   return(
   <TableContainer component={ Paper }>
-    <TableLocals />
     <Table wareas={wareasList} aria-label='List all Provincies'>
       <TableHead>
         <TableRow>
