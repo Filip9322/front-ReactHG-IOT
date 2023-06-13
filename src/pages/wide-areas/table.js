@@ -17,6 +17,7 @@ import TableContainer from '@mui/material/TableContainer'
 
 // ** Custom Components Import
 import TableLocals from './local-table'
+import { Modal, ModalBackground } from '../../@core/utils/modal'
 
 // ** Icons Imports
 import AccountSupervisor from 'mdi-material-ui/AccountSupervisor'
@@ -34,7 +35,22 @@ const TableWideAreas =  props => {
 
   // ** Props *
   const {wareas, lareas, isAdmin} = props;
+
+  // ** States
+  const [openModal, setOpenModal] = useState(false);
+  const [dialogAction, setDialogAction] = useState('');
+  const [dialogLArea,  setDialogLArea ] = useState(1);
   const [wareasList,updateWareasList] = useState([])
+
+  const handleOpenModal = event => {
+    //let action = event.currentTarget.getAttribute('')
+    setOpenModal(true);
+    console.log('Open Modal');
+  }
+  const handleCloseModal = event => {
+    setOpenModal(false);
+    console.log('Close Modal');
+  }
 
   const clickListLocals = event =>{
     let action = event.currentTarget.getAttribute('data-action')
@@ -52,9 +68,20 @@ const TableWideAreas =  props => {
     console.log(action+' '+larea+ ' '+device);
   }
 
+  const clickActionButton = event => {
+    event.preventDefault()
+    let action = event.currentTarget.getAttribute('data-action')
+    let larea  = event.currentTarget.getAttribute('data-larea')
+
+    setOpenModal(true);
+    setDialogAction(action);
+    setDialogLArea (larea);
+    console.log( 'action: ' + action + ' larea: ' + larea )
+  }
+
   const Row = props => {
     const { row, listID } = props;
-    const [open,setOpen] = useState(false);
+    const [ open,setOpen ] = useState(false);
 
     return (
       <>
@@ -120,7 +147,7 @@ const TableWideAreas =  props => {
               <Typography sx={{textAlign: 'center', fontSize:'1.2rem', padding:'1rem 0'}} >No local Areas</Typography>
               ):(
               /* LOCAL TABLE BEGIN ---------------------------------------------------------*/
-              <TableLocals lareas={row.locals} wareaID={row.id}/>
+              <TableLocals lareas={row.locals} wareaID={row.id} clickActionButton={clickActionButton}/>
               /* LOCAL TABLE END ---------------------------------------------------------*/
             )}
             </Collapse>
@@ -161,6 +188,18 @@ const TableWideAreas =  props => {
       ))}
       </TableBody>
     </Table>
+    <Modal
+      openModal = {openModal}
+      larea = {dialogLArea}
+      dialogAction      = {dialogAction}
+      dialogTitle       = {'Title '}
+      dialogDescription = {'Description'}
+      btnLeftDialog     = {'Close'}
+      btnRightDialog    = {'Save'}
+      handleClose       = {handleCloseModal}
+      handleActionDialog= {handleOpenModal} 
+    />
+    <ModalBackground />
   </TableContainer>
   )
 }

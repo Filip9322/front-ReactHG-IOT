@@ -2,8 +2,6 @@
 import { useState, useEffect } from "react";
 
 // ** Import Icons
-import Close from 'mdi-material-ui/Close'
-
 import FormatListChecks  from 'mdi-material-ui/FormatListChecks'
 import AccountSupervisor from 'mdi-material-ui/AccountSupervisor'
 import MapMarkerMinusOutline  from 'mdi-material-ui/MapMarkerMinusOutline'
@@ -12,8 +10,6 @@ import MapMarkerRadiusOutline from 'mdi-material-ui/MapMarkerRadiusOutline'
 // ** Material UI Import
 import { DataGrid, GridRow, GridColumnHeaders, GridTollbar } from '@mui/x-data-grid'
 import { object } from "prop-types";
-
-import { Box } from '@mui/material'
 import { Typography } from "@mui/material";
 import { IconButton } from "@mui/material";
 
@@ -22,7 +18,7 @@ import { IconButton } from "@mui/material";
 
 const TableLocals = props => {
 
-  const { lareas, wareaID } = props;
+  const { lareas, wareaID , clickActionButton} = props;
   const [ rows, updateRows ] = useState([]);
 
   const localRowsUpdate = () => {
@@ -45,18 +41,11 @@ const TableLocals = props => {
     console.log('length: '+ lrows.length)
     updateRows(lrows);
   }
-
-  const clickActionButton = event => {
-    let action = event.currentTarget.getAttribute('data-action')
-    let larea  = event.currentTarget.getAttribute('data-larea')
-
-    console.log( 'action: ' + action + ' larea: ' + larea )
-  }
   
   const data = {
     'columns':[
       {field:'id',   headerName: '#'},
-      {field:'name', headerName: 'Name'},
+      {field:'name', headerName: 'Name', minWidth: 200},
       {field:'type', headerName: 'type'},
       {field:'iot',  headerName: 'IOT',
        renderCell: params => (
