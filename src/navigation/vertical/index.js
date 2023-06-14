@@ -51,6 +51,12 @@ const navigation = () => {
       openInNewTab: false
     },
     {
+      title: 'Monitor_Location',
+      icon: AccountPlusOutline,
+      path: '/map_monitor_location',
+      openInNewTab: false
+    },
+    {
       title: 'Register',
       icon: AccountPlusOutline,
       path: '/pages/register',
