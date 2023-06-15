@@ -24,7 +24,6 @@ class CustomDocument extends Document {
           <link rel='apple-touch-icon' sizes='180x180' href='/images/apple-touch-icon.png' />
           <link rel='shortcut icon' href='/images/favicon.png' />
           
-          <script src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.KAKAO_JS_KEY}&libraries=services,clusterer`} async={true} />
         </Head>
         <body>
           <Main />
@@ -32,6 +31,7 @@ class CustomDocument extends Document {
         </body>
       </Html>
     )
+    //<script src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.KAKAO_JS_KEY}&libraries=services,clusterer`} async={true} />
   }
 }
 CustomDocument.getInitialProps = async ctx => {
