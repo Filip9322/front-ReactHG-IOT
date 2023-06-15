@@ -1,45 +1,34 @@
 // ** React Imports
 import { useState, useEffect } from 'react';
-import { Map, MapMarker }from 'react-kakao-maps-sdk';
+import { Map, MapMarker } from "react-kakao-maps-sdk"
 
 // ** Material Components Imports
 import { Box } from '@mui/material'
 
 // ** Custom Imports
-import { kakao_api_Init } from '../../@core/utils/kakao_map_api'
+import { KakaoInit } from '../../@core/utils/kakao_map_api'
 
 const Map_Monitor_Location_Page = () => {
   
   const [kakaoInitated, setKakaoInitiated] = useState(false);
   
-  const checkIsLoaded = () => {
-    setKakaoInitiated(true);
-  }
-  
   useEffect(() => {
-    kakao_api_Init().then((res)=>{
-      console.log(res)
-      checkIsLoaded();
-      //res.addEventListener("load", checkIsLoaded);
-    });
+    setKakaoInitiated(true);
   },[])
 
   return (
     <Box className="content-center">
     { kakaoInitated ? (
-      <Map 
-        center={{lat: 33.5563, lng: 126.79581}}
-        sx={{width: '100%', height: '360ppx'}}
+      <Map
+      center={{ lat: 33.5563, lng: 126.79581 }}
+      style={{ width: "100%", height: "360px" }}
       >
-        <MapMarker position={{ lat: 33.55635, lng: 126.795841}}>
-          <Box sx={{color: 'black'}}>
-            {'Hello World'}
-          </Box>
+        <MapMarker position={{ lat: 33.55635, lng: 126.795841 }}>
+          <div style={{ color: "#000" }}>Hello World!</div>
         </MapMarker>
-        {'help'}
       </Map>
       ): 'good Baye'}
-      <kakao_api_Init />
+      <KakaoInit />
     </Box>
   );
 };
