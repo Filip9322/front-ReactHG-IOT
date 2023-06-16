@@ -53,20 +53,20 @@ const navigation = () => {
     {
       title: 'Monitor_Location',
       icon: AccountPlusOutline,
-      path: '/map_monitor_location',
+      path: '/map_monitor_location/1',
       openInNewTab: false
     },
     {
       title: 'Register',
       icon: AccountPlusOutline,
       path: '/pages/register',
-      openInNewTab: true
+      openInNewTab: false
     },
     {
       title: 'Error',
       icon: AlertCircleOutline,
       path: '/pages/error',
-      openInNewTab: true
+      openInNewTab: false
     },
     {
       sectionTitle: 'User Interface'
