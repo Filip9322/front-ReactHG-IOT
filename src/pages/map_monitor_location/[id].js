@@ -62,7 +62,18 @@ const Map_Monitor_Location_Page = () => {
         center={{ lat: lat, lng: lng }}
         style={{ width: "100%", height: "360px" }}
       >
-        <MapMarker position={{ lat: lat, lng: lng }}>
+        {/* 1,2,3,4 .png - red, yellow, green, blue - 1076 x 1428 */}
+        <MapMarker 
+          position={{ lat: lat, lng: lng }}
+          image={{
+            src: '/icon/1.png',
+            size: { width: 40, height: 50 },
+            option: {
+              spriteSize: { width: 36, height: 98 },
+              spriteOrigin: { x: 0, y: 0 }
+            }
+          }}
+        >
           <Box style={{ color: "#000" }}>{`lat: ${lat}, lng: ${lng}`}</Box>
         </MapMarker>
       </Map>
