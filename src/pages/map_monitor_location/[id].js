@@ -1,10 +1,10 @@
 // ** React Imports
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { Map, MapMarker } from "react-kakao-maps-sdk"
+import { Map, MapMarker, MarkerClusterer } from "react-kakao-maps-sdk"
 
 // ** Material Components Imports
-import { Box } from '@mui/material'
+import { Box, Link } from '@mui/material'
 import { CircularProgress }  from '@mui/material'
 
 // ** Utils
@@ -62,20 +62,48 @@ const Map_Monitor_Location_Page = () => {
         center={{ lat: lat, lng: lng }}
         style={{ width: "100%", height: "360px" }}
       >
-        {/* 1,2,3,4 .png - red, yellow, green, blue - 1076 x 1428 */}
-        <MapMarker 
-          position={{ lat: lat, lng: lng }}
-          image={{
-            src: '/icon/1.png',
-            size: { width: 40, height: 50 },
-            option: {
-              spriteSize: { width: 36, height: 98 },
-              spriteOrigin: { x: 0, y: 0 }
-            }
-          }}
+        <MarkerClusterer 
+          averageCenter = {true}
+          minLevel = {3}
         >
-          <Box style={{ color: "#000" }}>{`lat: ${lat}, lng: ${lng}`}</Box>
-        </MapMarker>
+          {/* 1,2,3,4 .png - red, yellow, green, blue - 1076 x 1428 */}
+          <MapMarker 
+            position  = {{ lat: lat, lng: lng }}
+            draggable = { true }
+            image={{
+              src: '/icon/2.png',
+              size: { width: 40, height: 50 },
+              option: {
+                spriteSize: { width: 36, height: 98 },
+                spriteOrigin: { x: 0, y: 0 }
+              }
+            }}
+          >
+            <Box className={'customoverlay'} style={{ color: "#000" }}>
+              <Link href='/map_monitor_location/3' target='_blank'>
+                {`lat: ${lat}, lng: ${lng}`}
+              </Link>
+            </Box>
+          </MapMarker>
+          <MapMarker 
+            position  = {{ lat: lat, lng: lng }}
+            draggable = { true }
+            image={{
+              src: '/icon/1.png',
+              size: { width: 40, height: 50 },
+              option: {
+                spriteSize: { width: 36, height: 98 },
+                spriteOrigin: { x: 0, y: 0 }
+              }
+            }}
+          >
+            <Box className={'customoverlay'} style={{ color: "#000" }}>
+              <Link href='/map_monitor_location/3' target='_blank'>
+                {`lat: ${lat}, lng: ${lng}`}
+              </Link>
+            </Box>
+          </MapMarker>
+        </MarkerClusterer>
       </Map>
       ): 
         <CircularProgress />
