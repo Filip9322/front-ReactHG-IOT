@@ -53,7 +53,7 @@ const navigation = () => {
     {
       title: 'Monitor_Location',
       icon: AccountPlusOutline,
-      path: '/map_monitor_location/1',
+      path: '/map_monitor_location/1/1',
       openInNewTab: false
     },
     {
