@@ -11,6 +11,7 @@ import { CircularProgress }  from '@mui/material'
 import { KakaoInit } from 'src/@core/utils/kakao_map_api'
 import { handleURLQueries } from 'src/@core/layouts/utils'
 import { getFetchURL }  from 'src/@core/utils/fetchHelper'
+import { LateralPanel } from '../commons'
 
 const Map_Monitor_Location_Page = () => {
   
@@ -21,6 +22,8 @@ const Map_Monitor_Location_Page = () => {
   const [kakaoInitated, setKakaoInitiated] = useState(false);
   const [lat, setLat] = useState(33.5563);
   const [lng, setLng] = useState(126.79581);
+
+  const [controllerSelected, SetControllerSelected] = useState({});
   
   // ** Hooks
   const router = useRouter();
@@ -52,6 +55,11 @@ const Map_Monitor_Location_Page = () => {
     setLng(x);
     setLat(y);
   }
+
+  const clickController = (controller) => {
+    SetControllerSelected(controller);
+  }
+
 
   // ** TODO: Scroll map for mobile with drag events
   const updateCenter = (event) => {
@@ -100,7 +108,12 @@ const Map_Monitor_Location_Page = () => {
           {
             controllers.map((controller, listID) =>{
               return(
-                <MapDeviceMarker controller={controller} listID={listID} key={listID} />
+                <MapDeviceMarker 
+                  controller={controller} 
+                  listID={listID} 
+                  key={listID} 
+                  clickController={clickController}
+                />
               )
             })
           }
@@ -111,6 +124,7 @@ const Map_Monitor_Location_Page = () => {
         <CircularProgress />
       }
       <KakaoInit />
+      <LateralPanel controller = {controllerSelected}/>
     </Box>
   );
 };
@@ -120,7 +134,7 @@ const MapDeviceMarker = props =>{
 
   const [viewDeviceInfo, setViewDeviceInfo]= useState(false);
 
-  const { controller, listID } = props;
+  const { controller, listID , clickController } = props;
 
   // ** UpdateMarkers Div Container
   const updateMapMarkers = () => {
@@ -151,7 +165,7 @@ const MapDeviceMarker = props =>{
         style: {display: 'none', width:'100%'}
       }}
       clickable = { true }
-      onClick ={() => {setViewDeviceInfo(!viewDeviceInfo); updateMapMarkers()}}
+      onClick ={() => {setViewDeviceInfo(!viewDeviceInfo); updateMapMarkers(); clickController(controller)}}
       draggable = { false }
       image={{
         src: '/icon/icon_on.png',
