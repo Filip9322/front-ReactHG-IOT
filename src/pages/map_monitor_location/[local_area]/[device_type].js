@@ -1,7 +1,7 @@
 // ** React Imports
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { Map, MapMarker, MarkerClusterer } from "react-kakao-maps-sdk"
+import { Map, MapMarker, MarkerClusterer } from "react-kakao-maps-sdk";
 
 // ** Material Components Imports
 import { Box, Link } from '@mui/material'
@@ -24,7 +24,6 @@ const Map_Monitor_Location_Page = () => {
   
   // ** Hooks
   const router = useRouter();
-
   
   // ** Fetch
   async function fetchLocalAreaByID() {
@@ -53,6 +52,13 @@ const Map_Monitor_Location_Page = () => {
     setLng(x);
     setLat(y);
   }
+
+  // ** TODO: Scroll map for mobile with drag events
+  const updateCenter = (event) => {
+    //console.log('Lat: ' + lat + ' Lng: '+ lng);
+    //console.log(event);
+  }
+
   
   // ** Update Triggers useEffect
   useEffect(() => {
@@ -61,50 +67,40 @@ const Map_Monitor_Location_Page = () => {
   },[])
   
   useEffect(() => {
-
     if(router.query.local_area) {
       fetchLocalAreaByID();
       fetchControllers();
     }
   },[router])
-  
+
   return (
     <Box className="content-center">
     {spinner.toString()}
     { kakaoInitated && !spinner ? (
       <Map
         center={{ lat: lat, lng: lng }}
-        style={{ width: "100%", height: "360px" }}
+        style={{
+          width: "100%",
+          height: "800px" 
+        }}
+        onDragEnd = {updateCenter}
       >
         <MarkerClusterer 
           averageCenter = {true}
           minLevel = {7}
+          className={'markerCluster'}
+          style={{
+            '& div:has(.customOverlay)':{
+              width: '100%',
+              border: 0
+            } 
+          }}
         >
           {/* 1,2,3,4 .png - red, yellow, green, blue - 1076 x 1428 */}
           {
             controllers.map((controller, listID) =>{
-              console.log(controller.map_x);
               return(
-                <MapMarker
-                  key={listID}
-                  className={'mapMarker'}
-                  position  = {{ lat: controller.map_x, lng: controller.map_y }}
-                  draggable = { false }
-                  image={{
-                    src: '/icon/2.png',
-                    size: { width: 40, height: 50 },
-                    option: {
-                      spriteSize: { width: 36, height: 98 },
-                      spriteOrigin: { x: 0, y: 0 }
-                    }
-                  }}
-                >
-                  <Box className={'customoverlay'} style={{ backgroundColor: "rgba(255,255,255,0.6)" }}>
-                    <Link href='/map_monitor_location/3' target='_blank'>
-                      {controller.controller_name}
-                    </Link>
-                  </Box>
-                </MapMarker>
+                <MapDeviceMarker controller={controller} listID={listID} key={listID} />
               )
             })
           }
@@ -118,5 +114,74 @@ const Map_Monitor_Location_Page = () => {
     </Box>
   );
 };
+
+
+const MapDeviceMarker = props =>{
+
+  const [viewDeviceInfo, setViewDeviceInfo]= useState(false);
+
+  const { controller, listID } = props;
+
+  // ** UpdateMarkers Div Container
+  const updateMapMarkers = () => {
+    const divContainMapMarkers = document.getElementsByClassName('customOverlay');
+
+    if(divContainMapMarkers.length > 0){
+      Array.from(divContainMapMarkers).map(marker => {
+        const parent = marker.parentNode;
+        parent.style['width']= '100%';
+      })
+    }
+  }
+
+  useEffect(()=>{
+
+  },[viewDeviceInfo]);
+
+  return(
+    <MapMarker
+      position  = {{ lat: controller.map_x, lng: controller.map_y }}
+      key={listID}
+      sx={{
+          width: '100%',
+          border: 0
+      }}
+      infoWindowOptions ={{
+        className: 'markerInfoWindow',
+        style: {display: 'none', width:'100%'}
+      }}
+      clickable = { true }
+      onClick ={() => {setViewDeviceInfo(!viewDeviceInfo); updateMapMarkers()}}
+      draggable = { false }
+      image={{
+        src: '/icon/icon_on.png',
+        size: { width: 50, height: 50 },
+        option: {
+          spriteSize: { width: 36, height: 98 },
+          spriteOrigin: { x: 0, y: 0 }
+        }
+      }}
+      title={controller.local_area_controller_number+'번 '+controller.controller_name}
+    >
+      {viewDeviceInfo && (
+        <Box 
+          className={'customOverlay'} 
+          style={{
+            width: '100%',
+            padding: '5px',
+            fontSize: '12px',
+            fontWeight: 'bold',
+            backgroundColor: "#005826", 
+            color: 'white',
+            display: 'inline-block',
+            textAlign: 'center'
+          }}
+        >
+          {controller.local_area_controller_number+'번 '+controller.controller_name}
+        </Box>
+      )}
+    </MapMarker>
+  )
+}
 
 export default Map_Monitor_Location_Page;
