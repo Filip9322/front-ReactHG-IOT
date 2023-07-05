@@ -3,7 +3,9 @@ import { useState, useEffect }  from 'react';
 import { useRouter } from 'next/router';
 
 // **  Material Components Imports
-import { Box, Button, Drawer } from '@mui/material';
+import { Box, Button,
+        Drawer , TextField, Autocomplete
+      } from '@mui/material';
 
 
 const LateralPanel = props => {
@@ -39,15 +41,44 @@ const LateralPanel = props => {
 }
 const CountingBar = props => {
 
+  return (
+    <Box>
+
+    </Box>
+  );
 }
 
 
 const SearchBar = props => {
+  const { controllersNames } = props;
 
+  useEffect(()=>{
+    console.log(controllersNames.length);
+  },[props]);
+
+  const textFieldInput = params => {
+    return (
+      <TextField {...params} label='제우기 검색:' variant='outlined' />
+    )
+  }
+
+  return (
+    <Autocomplete
+      id='searchField'
+      sx={{width: 300 }}
+      options={controllersNames.map(controller => controller.name)}
+      autoHighlight
+      renderInput={params => (textFieldInput(params))}
+    />
+  );
 }
 
 const BtLateralMenu = props => {
-
+  return (
+    <Box>
+      
+    </Box>
+  );
 }
 
 export { 

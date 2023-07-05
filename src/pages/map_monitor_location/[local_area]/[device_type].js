@@ -11,7 +11,7 @@ import { CircularProgress }  from '@mui/material'
 import { KakaoInit } from 'src/@core/utils/kakao_map_api'
 import { handleURLQueries } from 'src/@core/layouts/utils'
 import { getFetchURL }  from 'src/@core/utils/fetchHelper'
-import { LateralPanel } from '../commons'
+import { LateralPanel, CountingBar, SearchBar, BtLateralMenu } from '../commons'
 
 const Map_Monitor_Location_Page = () => {
   
@@ -19,6 +19,7 @@ const Map_Monitor_Location_Page = () => {
   const [spinner, setSpinner] = useState(true);
   const [localArea, setLocalArea] = useState({lat:0, lng:0});
   const [controllers, setControllers] = useState([]);
+  const [controllersNames, SetControllerNames] = useState([{id: 1, name: 'test'}]);
   const [kakaoInitated, setKakaoInitiated] = useState(false);
   const [lat, setLat] = useState(33.5563);
   const [lng, setLng] = useState(126.79581);
@@ -42,12 +43,15 @@ const Map_Monitor_Location_Page = () => {
   }
 
   async function fetchControllers(){
+    setSpinner(true);
     getFetchURL(
        `${process.env.REACT_APP_APIURL}/map_controllers/${router.query.local_area}/${router.query.device_type}`
     ).then(response => {
       if(response) setControllers(response);
     }).catch(error=> { console.error('error: '+ error)
-    }).finally(() => setSpinner(false));
+    }).finally(() => {
+      setSpinner(false);
+    });
    }
   
   // ** Custom Functions
@@ -81,8 +85,26 @@ const Map_Monitor_Location_Page = () => {
     }
   },[router])
 
+  useEffect(()=> {
+    // ** Arrange names for easy look up on the autocomplete textfield
+    let names = [];
+    controllers.map(controller => {
+      let body = {};
+      let name = controller.local_area_controller_number+'범 '+ controller.controller_name;
+
+      Object.assign(body, {id: controller.id });
+      Object.assign(body, {number: controller.local_area_controller_number});
+      Object.assign(body, {name: name });
+
+      names.push(body);
+    });
+    SetControllerNames(names);
+  },[controllers])
+
   return (
     <Box className="content-center">
+      <CountingBar />
+      <SearchBar controllersNames = {controllersNames} />
     {spinner.toString()}
     { kakaoInitated && !spinner ? (
       <Map
@@ -104,7 +126,7 @@ const Map_Monitor_Location_Page = () => {
             } 
           }}
         >
-          {/* 1,2,3,4 .png - red, yellow, green, blue - 1076 x 1428 */}
+          {/* 1,2,3,4 .png - red, yellow, green, blue - 1076  x 1428 */}
           {
             controllers.map((controller, listID) =>{
               return(
@@ -124,6 +146,7 @@ const Map_Monitor_Location_Page = () => {
         <CircularProgress />
       }
       <KakaoInit />
+      <BtLateralMenu />
       <LateralPanel controller = {controllerSelected}/>
     </Box>
   );
