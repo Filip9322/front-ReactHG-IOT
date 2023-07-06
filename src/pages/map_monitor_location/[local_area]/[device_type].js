@@ -24,7 +24,8 @@ const Map_Monitor_Location_Page = () => {
   const [lat, setLat] = useState(33.5563);
   const [lng, setLng] = useState(126.79581);
 
-  const [controllerSelected, SetControllerSelected] = useState({});
+  const [controllerSelected, setControllerSelected] = useState({});
+  const [searchedController, setSearchedController] = useState({});
   
   // ** Hooks
   const router = useRouter();
@@ -61,7 +62,17 @@ const Map_Monitor_Location_Page = () => {
   }
 
   const clickController = (controller) => {
-    SetControllerSelected(controller);
+    setControllerSelected(controller);
+  }
+
+  const updateSearchedController = controllerID => {
+    const controller_s = controllers.find(controller => 
+      controller.id == controllerID
+    );
+    
+    setControllerSelected(controller_s);
+    setSearchedController(controller_s);
+    console.log(controller_s);
   }
 
 
@@ -101,10 +112,18 @@ const Map_Monitor_Location_Page = () => {
     SetControllerNames(names);
   },[controllers])
 
+  useEffect(() =>{
+    setLng(controllerSelected.map_y);
+    setLat(controllerSelected.map_x);
+  },[controllerSelected])
+
   return (
     <Box className="content-center">
       <CountingBar />
-      <SearchBar controllersNames = {controllersNames} />
+      <SearchBar 
+        controllersNames = {controllersNames} 
+        updateSearchedController = { updateSearchedController }
+      />
     {spinner.toString()}
     { kakaoInitated && !spinner ? (
       <Map

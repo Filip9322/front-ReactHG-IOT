@@ -50,25 +50,36 @@ const CountingBar = props => {
 
 
 const SearchBar = props => {
-  const { controllersNames } = props;
+  const { controllersNames, updateSearchedController } = props;
 
   useEffect(()=>{
-    console.log(controllersNames.length);
+    //console.log(controllersNames.length);
   },[props]);
 
   const textFieldInput = params => {
     return (
-      <TextField {...params} label='제우기 검색:' variant='outlined' />
+      <TextField {...params} label='제우기 검색:' variant='outlined'/>    
     )
   }
 
   return (
     <Autocomplete
       id='searchField'
-      sx={{width: 300 }}
-      options={controllersNames.map(controller => controller.name)}
       autoHighlight
+      onChange={(event, newValue) => {
+        updateSearchedController(newValue.id);
+        //setTimeout(() => { debugger; }, 5000);
+      }}
+      onClick={(event)=>{event.preventDefault()}}
+      sx={{width: 300 }}
+      getOptionLabel={(option) => {
+        return option.name;
+      }}
+      options={controllersNames.map(controller => controller)}
       renderInput={params => (textFieldInput(params))}
+      renderOption={(props, controller) => (
+        <li {...props} key={controller.id} value={controller.id}>{controller.name}</li>
+      )}
     />
   );
 }
