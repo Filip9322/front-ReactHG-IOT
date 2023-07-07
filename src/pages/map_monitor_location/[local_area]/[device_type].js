@@ -118,7 +118,7 @@ const Map_Monitor_Location_Page = () => {
   },[controllerSelected])
 
   return (
-    <Box className="content-center">
+    <Box className="content-center" sx={{position: 'relative'}}>
       <CountingBar />
       <SearchBar 
         controllersNames = {controllersNames} 

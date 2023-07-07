@@ -3,7 +3,7 @@ import { useState, useEffect }  from 'react';
 import { useRouter } from 'next/router';
 
 // **  Material Components Imports
-import { Box, Button,
+import { Box, Button, Typography,
         Drawer , TextField, Autocomplete
       } from '@mui/material';
 
@@ -41,9 +41,87 @@ const LateralPanel = props => {
 }
 const CountingBar = props => {
 
-  return (
-    <Box>
 
+  return (
+    <Box
+      sx={{
+        position: 'absolute',
+        zIndex: 2,
+        top: 0, left: 0,
+        backgroundColor:'white',
+        border: 'solid 2px #aaa',
+        borderRadius: '20px',
+        textAlign: 'center',
+        width: 'fit-content',
+        padding : '0 20px',
+        display: 'flex',
+        flexDirection: 'row',
+        '& .tyCounter': {
+          fontSize: '18px',
+          fontWeight: 'bold',
+          fontFamily: 'Nanum Gothic, dotum, Verdana',
+          cursor: 'pointer',
+          lineHeight: '50px',
+          margin: '0 5px',
+          borderWidth: '0px 0px 1px 0px'
+        },
+        '& #totalCount':{
+          color: '#666',
+          borderBottom: 'solid 1px #666'
+        },
+        '& #normalCount':{
+          color: 'green',
+          borderBottom: 'solid 1px green'
+        },
+        '& #abnormalCount':{
+          color: 'red',
+          borderBottom: 'solid 1px red'
+        },
+        '& #schoolCount':{
+          color: 'orange',
+          borderBottom: 'solid 1px orange'
+        },
+        '& #uninstallCount':{
+          color: '#777',
+          borderBottom: 'solid 1px #777'
+        }
+      }}
+    >
+      <Typography 
+        variant="overline"
+        display="block"
+        className='tyCounter'
+        id="totalCount"
+        gutterBottom
+      >전체지점: 259</Typography>
+      <Typography 
+        variant="overline"
+        display="block"
+        className='tyCounter'
+        id="normalCount"
+        gutterBottom
+      >정상: 250</Typography>
+      <Typography 
+        variant="overline"
+        display="block"
+        className='tyCounter'
+        id="abnormalCount"
+        gutterBottom
+      >이상: 9</Typography>
+      <Typography 
+        variant="overline"
+        display="block"
+        className='tyCounter'
+        id="schoolCount"
+        gutterBottom
+      >스쿨존: 10</Typography>
+      <Typography 
+        variant="overline"
+        display="block"
+        className='tyCounter'
+        id="uninstallCount"
+        gutterBottom
+      >미설치: 2</Typography>
     </Box>
   );
 }
@@ -58,13 +136,23 @@ const SearchBar = props => {
 
   const textFieldInput = params => {
     return (
-      <TextField {...params} label='제우기 검색:' variant='outlined'/>    
+      <TextField {...params} 
+        label='제우기 검색:' 
+        variant='outlined'
+        
+      />
     )
   }
 
   return (
     <Autocomplete
       id='searchField'
+      sx={{
+        width: 300, 
+        position: 'absolute', 
+        zIndex: 2 ,
+        backgroundColor: 'white'
+      }}
       clearOnBlur
       autoHighlight
       onChange={(event, newValue) => {
@@ -75,7 +163,6 @@ const SearchBar = props => {
         //setTimeout(() => { debugger; }, 5000);
       }}
       onClick={(event)=>{event.preventDefault()}}
-      sx={{width: 300 }}
       getOptionLabel={(option) => {
         return option.name;
       }}
