@@ -65,9 +65,13 @@ const SearchBar = props => {
   return (
     <Autocomplete
       id='searchField'
+      clearOnBlur
       autoHighlight
       onChange={(event, newValue) => {
-        updateSearchedController(newValue.id);
+        console.log(newValue);
+        if(newValue){
+          updateSearchedController(newValue.id);
+        }
         //setTimeout(() => { debugger; }, 5000);
       }}
       onClick={(event)=>{event.preventDefault()}}

@@ -71,7 +71,7 @@ const Map_Monitor_Location_Page = () => {
     );
     
     setControllerSelected(controller_s);
-    setSearchedController(controller_s);
+    setSearchedController(controllerID);
     console.log(controller_s);
   }
 
@@ -154,6 +154,7 @@ const Map_Monitor_Location_Page = () => {
                   listID={listID} 
                   key={listID} 
                   clickController={clickController}
+                  searchedController={searchedController}
                 />
               )
             })
@@ -176,7 +177,7 @@ const MapDeviceMarker = props =>{
 
   const [viewDeviceInfo, setViewDeviceInfo]= useState(false);
 
-  const { controller, listID , clickController } = props;
+  const { controller, listID , clickController, searchedController } = props;
 
   // ** UpdateMarkers Div Container
   const updateMapMarkers = () => {
@@ -189,6 +190,13 @@ const MapDeviceMarker = props =>{
       })
     }
   }
+
+  useEffect(()=>{
+    if (controller.id == searchedController) {
+      setViewDeviceInfo(true)
+      //updateMapMarkers();
+    }
+  }, [searchedController])
 
   useEffect(()=>{
 
@@ -207,6 +215,7 @@ const MapDeviceMarker = props =>{
         style: {display: 'none', width:'100%'}
       }}
       clickable = { true }
+      onCreate={() => updateMapMarkers()}
       onClick ={() => {setViewDeviceInfo(!viewDeviceInfo); updateMapMarkers(); clickController(controller)}}
       draggable = { false }
       image={{
