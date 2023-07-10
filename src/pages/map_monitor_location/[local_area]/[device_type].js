@@ -1,17 +1,22 @@
 // ** React Imports
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { Map, MapMarker, MarkerClusterer } from "react-kakao-maps-sdk";
+import { Map, MapMarker,
+  MarkerClusterer, MapTypeControl, ZoomControl } from "react-kakao-maps-sdk";
 
 // ** Material Components Imports
 import { Box, Link } from '@mui/material'
 import { CircularProgress }  from '@mui/material'
+import { InputAdornment } from '@mui/material'
 
 // ** Utils
 import { KakaoInit } from 'src/@core/utils/kakao_map_api'
 import { handleURLQueries } from 'src/@core/layouts/utils'
 import { getFetchURL }  from 'src/@core/utils/fetchHelper'
 import { LateralPanel, CountingBar, SearchBar, BtLateralMenu } from '../commons'
+
+// ** Icons Imports
+import Magnify from 'mdi-material-ui/Magnify'
 
 const Map_Monitor_Location_Page = () => {
   
@@ -119,21 +124,25 @@ const Map_Monitor_Location_Page = () => {
 
   return (
     <Box className="content-center" sx={{position: 'relative'}}>
-      <CountingBar />
       <SearchBar 
         controllersNames = {controllersNames} 
         updateSearchedController = { updateSearchedController }
       />
-    {spinner.toString()}
+      <CountingBar />
     { kakaoInitated && !spinner ? (
       <Map
         center={{ lat: lat, lng: lng }}
         style={{
           width: "100%",
-          height: "800px" 
+          height: "800px",
+          border: 'solid 1px #aaa'
         }}
         onDragEnd = {updateCenter}
+        draggable = {true}
       >
+        {console.log(kakao.maps)}
+        <MapTypeControl />
+        <ZoomControl />
         <MarkerClusterer 
           averageCenter = {true}
           minLevel = {7}

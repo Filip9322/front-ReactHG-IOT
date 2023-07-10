@@ -7,7 +7,6 @@ import { Box, Button, Typography,
         Drawer , TextField, Autocomplete
       } from '@mui/material';
 
-
 const LateralPanel = props => {
 
   // * Props and states
@@ -22,6 +21,10 @@ const LateralPanel = props => {
     setState ({...state, [anchor]: open});
   }
 
+  const controllerBox = (controller) => {
+
+  }
+
   return (
     controller.id != null ? (
       <Box>
@@ -33,23 +36,74 @@ const LateralPanel = props => {
           open={state['right']}
           onClose={toogleDrawer('right', false)}
         >
-          {controller.local_area_controller_number+'번 '+controller.controller_name}
+          <Box 
+            sx={{
+              backgroundColor: 'rgba(241,244,249,1)',
+              width: '100%',
+              height: '100%'
+            }}
+          >
+            {controller.local_area_controller_number+'번 '+controller.controller_name}
+          </Box>
         </Drawer>
       </Box>
     ):('Here')
   );
 }
+
+const DrawerListControllers = props => {
+
+  // * Props and states
+  const { controller } = props;
+  const [state, setState] = useState({ right: false });
+
+
+  const toogleDrawer = (anchor, open) => event => {
+    if(event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+      return;
+    }
+    setState ({...state, [anchor]: open});
+  }
+
+  const controllerBox = (controller) => {
+
+  }
+
+  return (
+    controller.id != null ? (
+      <Box>
+        <Button onClick={toogleDrawer('right',true)}>
+          {controller.controller_name}
+        </Button>
+        <Drawer
+          anchor={'right'}
+          open={state['right']}
+          onClose={toogleDrawer('right', false)}
+        >
+          <Box 
+            sx={{
+              backgroundColor: 'rgba(241,244,249,1)',
+              width: '100%',
+              height: '100%'
+            }}
+          >
+            {controller.local_area_controller_number+'번 '+controller.controller_name}
+          </Box>
+        </Drawer>
+      </Box>
+    ):('Here')
+  );
+}
+
 const CountingBar = props => {
-
-
   return (
     <Box
       sx={{
         position: 'absolute',
+        top: 0, right: 0,
         zIndex: 2,
-        top: 0, left: 0,
         backgroundColor:'white',
-        border: 'solid 2px #aaa',
+        border: 'solid 1px #aaa',
         borderRadius: '20px',
         textAlign: 'center',
         width: 'fit-content',
@@ -139,7 +193,11 @@ const SearchBar = props => {
       <TextField {...params} 
         label='제우기 검색:' 
         variant='outlined'
-        
+        sx={{
+          '& fieldset.MuiOutlinedInput-notchedOutline':{
+            border: 'solid 1px #aaa'
+          }
+        }}
       />
     )
   }
@@ -149,7 +207,6 @@ const SearchBar = props => {
       id='searchField'
       sx={{
         width: 300, 
-        position: 'absolute', 
         zIndex: 2 ,
         backgroundColor: 'white'
       }}
@@ -185,6 +242,7 @@ const BtLateralMenu = props => {
 
 export { 
   LateralPanel,
+  DrawerListControllers,
   CountingBar,
   SearchBar,
   BtLateralMenu
