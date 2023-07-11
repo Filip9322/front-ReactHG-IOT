@@ -13,10 +13,8 @@ import { InputAdornment } from '@mui/material'
 import { KakaoInit } from 'src/@core/utils/kakao_map_api'
 import { handleURLQueries } from 'src/@core/layouts/utils'
 import { getFetchURL }  from 'src/@core/utils/fetchHelper'
-import { LateralPanel, CountingBar, SearchBar, BtLateralMenu } from '../commons'
-
-// ** Icons Imports
-import Magnify from 'mdi-material-ui/Magnify'
+import { LateralPanel, CountingBar,
+  SearchBar, BtLateralMenu, DrawerListControllers } from '../commons'
 
 const Map_Monitor_Location_Page = () => {
   
@@ -176,6 +174,7 @@ const Map_Monitor_Location_Page = () => {
       }
       <KakaoInit />
       <BtLateralMenu />
+      <DrawerListControllers controller = {controllerSelected}/>
       <LateralPanel controller = {controllerSelected}/>
     </Box>
   );

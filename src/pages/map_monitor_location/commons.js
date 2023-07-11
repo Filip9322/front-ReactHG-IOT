@@ -4,8 +4,15 @@ import { useRouter } from 'next/router';
 
 // **  Material Components Imports
 import { Box, Button, Typography,
-        Drawer , TextField, Autocomplete
+        Drawer , TextField, Autocomplete,
+        ToggleButtonGroup, ToggleButton,
+        Card, CardContent, CardMedia,
+        Menu, MenuItem, Fade, ListItemIcon
       } from '@mui/material';
+
+// ** Icons Imports
+import ChevronDown from 'mdi-material-ui/ChevronDown'      
+import { padding } from '@mui/system';
 
 const LateralPanel = props => {
 
@@ -56,7 +63,11 @@ const DrawerListControllers = props => {
   // * Props and states
   const { controller } = props;
   const [state, setState] = useState({ right: false });
-
+  const [anchorEl, setAnchorEl] = useState();
+  
+  const open = Boolean(anchorEl);
+  const handleClick = event => {setAnchorEl(event.currentTarget)};
+  const handleClose = () => {setAnchorEl(null)};
 
   const toogleDrawer = (anchor, open) => event => {
     if(event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
@@ -65,8 +76,45 @@ const DrawerListControllers = props => {
     setState ({...state, [anchor]: open});
   }
 
-  const controllerBox = (controller) => {
-
+  const ControllerBox = (controller) => {
+    return(
+      <Card 
+        sx={{ 
+          maxWidth: 345,
+          display: 'flex',
+          alignItems:'center',
+          backgroundColor: '#eaeaea',
+          margin: '5px',
+          borderRadius: '20px'
+        }}>
+        <CardMedia
+          sx={{ height: 40, width:'50px', height: '50px' }}
+          image={'/icon/icon_on.png'}
+          title='지우기'
+        />
+        <CardContent
+          sx={{
+            '& div.text': {fontSize: '12px'}
+          }}
+        >
+          <Typography className='text' gutterBottom variant='h7' component='div'>
+            1. 강서도로사업소 교차로
+          </Typography>
+          <Typography className='text' gutterBottom component='div'>
+            교차로상태: 정상
+          </Typography>
+          <Typography className='text' gutterBottom component='div'>
+            설치대수: 0
+          </Typography>
+          <Typography className='text' gutterBottom component='div'>
+            이상건수: 0
+          </Typography>
+          <Typography className='text' gutterBottom component='div'>
+            발생시간: 2019-02-19 14:41
+          </Typography>
+        </CardContent>
+      </Card>
+    )
   }
 
   return (
@@ -80,15 +128,69 @@ const DrawerListControllers = props => {
           open={state['right']}
           onClose={toogleDrawer('right', false)}
         >
-          <Box 
+          <ToggleButtonGroup
+            color="primary"
+            value={1}
+            exclusive
+            aria-label="지우기"
             sx={{
-              backgroundColor: 'rgba(241,244,249,1)',
               width: '100%',
-              height: '100%'
+              display: 'flex',
+              justifyContent: 'center',
+              '& .toogleTitle.Mui-disabled': {color: '#392d2d'}
             }}
           >
-            {controller.local_area_controller_number+'번 '+controller.controller_name}
-          </Box>
+            <ToggleButton
+              className='toogleTitle'
+              value="title" 
+              disabled
+            >교차로 상태 정보</ToggleButton>
+            <ToggleButton value="area">
+              <Button 
+                id="btnSelectTypeController"
+                color="secondary"
+                aria-controls={open ? 'basic-menu': undefined}
+                aria-haspopup='true'
+                aria-expanded={open ? 'true': undefined}
+                onClick={handleClick}
+              >
+                {'선택'}
+                <ListItemIcon>
+                  <ChevronDown fontSize='small' />
+                </ListItemIcon>
+              </Button>
+              <Menu
+                id="selectStatusController"
+                MenuListProps={{ 'aria-labelledby': 'fade-button' }}
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                TransitionComponent={Fade}
+                sx={{
+                  '& .normal':{
+                    color: 'green',
+                  },
+                  '& .abnormal':{
+                    color: 'red',
+                  },
+                  '& .school':{
+                    color: 'orange',
+                  },
+                  '& .uninstall':{
+                    color: '#777',
+                  }
+                }}
+              >
+                <MenuItem onClick={handleClose}>전체</MenuItem>
+                <MenuItem className='normal' onClick={handleClose}>정상</MenuItem>
+                <MenuItem className='abnormal' onClick={handleClose}>이상</MenuItem>
+                <MenuItem className='school' onClick={handleClose}>스쿨존</MenuItem>
+                <MenuItem className='uninstall' onClick={handleClose}>미설치</MenuItem>
+              </Menu>
+            </ToggleButton>
+          </ToggleButtonGroup>
+          {/** List Controllers */}
+          <ControllerBox controller={controller} />
         </Drawer>
       </Box>
     ):('Here')
