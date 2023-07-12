@@ -40,7 +40,7 @@ const TableWideAreas =  props => {
   const [openModal, setOpenModal] = useState(false);
   const [dialogAction, setDialogAction] = useState('');
   const [dialogLArea,  setDialogLArea ] = useState(1);
-  const [wareasList,updateWareasList] = useState([])
+  const [wareasList,updateWareasList] = useState([]);
 
   const handleOpenModal = event => {
     //let action = event.currentTarget.getAttribute('')
@@ -74,14 +74,16 @@ const TableWideAreas =  props => {
     let larea  = event.currentTarget.getAttribute('data-larea')
 
     setOpenModal(true);
-    setDialogAction(action);
-    setDialogLArea (larea);
+    console.log('open Collap: ' + open + ' open Modal: ' + openModal);
+    //setDialogAction(action);
+    //setDialogLArea (larea);
     console.log( 'action: ' + action + ' larea: ' + larea )
   }
 
   const Row = props => {
+ 
     const { row, listID } = props;
-    const [ open,setOpen ] = useState(false);
+    const [ open , setOpen ] = useState(false);
 
     return (
       <>
