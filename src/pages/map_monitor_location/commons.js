@@ -61,7 +61,7 @@ const LateralPanel = props => {
 const DrawerListControllers = props => {
 
   // * Props and states
-  const { controller } = props;
+  const { controllers } = props;
   const [state, setState] = useState({ right: false });
   const [anchorEl, setAnchorEl] = useState();
   
@@ -76,16 +76,18 @@ const DrawerListControllers = props => {
     setState ({...state, [anchor]: open});
   }
 
-  const ControllerBox = (controller) => {
+  const ControllerBox = props => {
+    const { controller } = props;
     return(
-      <Card 
+      <Card
         sx={{ 
           maxWidth: 345,
           display: 'flex',
           alignItems:'center',
           backgroundColor: '#eaeaea',
           margin: '5px',
-          borderRadius: '20px'
+          borderRadius: '20px',
+          minHeight: '128px'
         }}>
         <CardMedia
           sx={{ height: 40, width:'50px', height: '50px' }}
@@ -94,11 +96,12 @@ const DrawerListControllers = props => {
         />
         <CardContent
           sx={{
-            '& div.text': {fontSize: '12px'}
+            '& div.text': {fontSize: '12px'},
+            '& div.title': {fontWeight: 'bold'}
           }}
         >
-          <Typography className='text' gutterBottom variant='h7' component='div'>
-            1. 강서도로사업소 교차로
+          <Typography className='text title' gutterBottom variant='h7' component='div'>
+            {controller.id + '. ' + controller.controller_name}
           </Typography>
           <Typography className='text' gutterBottom component='div'>
             교차로상태: 정상
@@ -118,10 +121,10 @@ const DrawerListControllers = props => {
   }
 
   return (
-    controller.id != null ? (
+    controllers.length > 0 ? (
       <Box>
         <Button onClick={toogleDrawer('right',true)}>
-          {controller.controller_name}
+          HERE
         </Button>
         <Drawer
           anchor={'right'}
@@ -181,7 +184,7 @@ const DrawerListControllers = props => {
                   }
                 }}
               >
-                <MenuItem onClick={handleClose}>전체</MenuItem>
+                <MenuItem className='title' onClick={handleClose}>전체</MenuItem>
                 <MenuItem className='normal' onClick={handleClose}>정상</MenuItem>
                 <MenuItem className='abnormal' onClick={handleClose}>이상</MenuItem>
                 <MenuItem className='school' onClick={handleClose}>스쿨존</MenuItem>
@@ -190,7 +193,13 @@ const DrawerListControllers = props => {
             </ToggleButton>
           </ToggleButtonGroup>
           {/** List Controllers */}
-          <ControllerBox controller={controller} />
+          {
+            controllers.map(controller => {
+              return(
+                <ControllerBox key={controller.id} controller={controller} />
+              )
+            })
+          }
         </Drawer>
       </Box>
     ):('Here')

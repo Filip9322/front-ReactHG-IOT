@@ -174,7 +174,7 @@ const Map_Monitor_Location_Page = () => {
       }
       <KakaoInit />
       <BtLateralMenu />
-      <DrawerListControllers controller = {controllerSelected}/>
+      <DrawerListControllers controllers = {controllers}/>
       <LateralPanel controller = {controllerSelected}/>
     </Box>
   );
