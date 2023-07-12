@@ -64,10 +64,17 @@ const DrawerListControllers = props => {
   const { controllers } = props;
   const [state, setState] = useState({ right: false });
   const [anchorEl, setAnchorEl] = useState();
+  const [menuSelected, setMenuSelected] = useState();
   
   const open = Boolean(anchorEl);
   const handleClick = event => {setAnchorEl(event.currentTarget)};
-  const handleClose = () => {setAnchorEl(null)};
+  const handleClose = event => {
+    let menuItem = event.currentTarget;
+    let type = menuItem.getAttribute('data-type');
+
+    setMenuSelected(parseInt(type));
+    setAnchorEl(null)
+  };
 
   const toogleDrawer = (anchor, open) => event => {
     if(event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
@@ -78,6 +85,45 @@ const DrawerListControllers = props => {
 
   const ControllerBox = props => {
     const { controller } = props;
+    const [state, setState] = useState(0);
+    const [iconController, setIconController] = useState(0);
+    
+    useEffect(()=> {
+      if (controller.is_installed){
+        if(controller.is_active){
+          // Check School Zone
+          if(controller.is_school_zone){
+            if(controller.has_abnormalities){
+            setState
+              setState(4); // State 4: School Zone with abnormalities - Yellow and Red
+              setIconController('icon_school_error');              
+            } else {
+              setState(3); // State 3: School Zone NO abnormalities - Yellow
+              setIconController('icon_school');
+            }
+          }
+          // Check 일반 if have or not abnormality
+          if(controller.has_abnormalities){
+            setState(2); // State 2: Active Abnormal State - Red
+            setIconController('icon_err');
+          }else {
+            setState(1); // State 1: Active Normal State - Green
+            setIconController('icon_on');
+          }
+        } else {
+          setState(5); // State 5: UnActtive Installed State - Gray
+          setIconController('icon_off');
+        }
+      } else {
+        setState(6); // State 6: Not installed - Gray
+        setIconController('icon_off');
+      }
+    },[])
+
+    useEffect(()=>{
+
+    },state);
+
     return(
       <Card
         sx={{ 
@@ -91,7 +137,7 @@ const DrawerListControllers = props => {
         }}>
         <CardMedia
           sx={{ height: 40, width:'50px', height: '50px' }}
-          image={'/icon/icon_on.png'}
+          image={`/icon/${iconController}.png`}
           title='지우기'
         />
         <CardContent
@@ -184,11 +230,11 @@ const DrawerListControllers = props => {
                   }
                 }}
               >
-                <MenuItem className='title' onClick={handleClose}>전체</MenuItem>
-                <MenuItem className='normal' onClick={handleClose}>정상</MenuItem>
-                <MenuItem className='abnormal' onClick={handleClose}>이상</MenuItem>
-                <MenuItem className='school' onClick={handleClose}>스쿨존</MenuItem>
-                <MenuItem className='uninstall' onClick={handleClose}>미설치</MenuItem>
+                <MenuItem data-type={0} className='title' onClick={handleClose}>전체</MenuItem>
+                <MenuItem data-type={1} className='normal' onClick={handleClose}>정상</MenuItem>
+                <MenuItem data-type={2} className='abnormal' onClick={handleClose}>이상</MenuItem>
+                <MenuItem data-type={3} className='school' onClick={handleClose}>스쿨존</MenuItem>
+                <MenuItem data-type={6} className='uninstall' onClick={handleClose}>미설치</MenuItem>
               </Menu>
             </ToggleButton>
           </ToggleButtonGroup>
