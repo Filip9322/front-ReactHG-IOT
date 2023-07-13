@@ -227,7 +227,7 @@ const MapDeviceMarker = props =>{
       onClick ={() => {setViewDeviceInfo(!viewDeviceInfo); updateMapMarkers(); clickController(controller)}}
       draggable = { false }
       image={{
-        src: '/icon/icon_on.png',
+        src: controller.has_abnormalities ?'/icon/icon_err.png':'/icon/icon_on.png',
         size: { width: 50, height: 50 },
         option: {
           spriteSize: { width: 36, height: 98 },

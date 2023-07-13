@@ -62,16 +62,20 @@ const DrawerListControllers = props => {
 
   // * Props and states
   const { controllers } = props;
+  const [controllersFiltered, setControllersFiltered] = useState(controllers);
   const [state, setState] = useState({ right: false });
   const [anchorEl, setAnchorEl] = useState();
-  const [menuSelected, setMenuSelected] = useState();
+  const [menuSelected, setMenuSelected] = useState(0);
+  const [menuTitle, setMenuTitle] = useState('전체');
   
   const open = Boolean(anchorEl);
   const handleClick = event => {setAnchorEl(event.currentTarget)};
   const handleClose = event => {
     let menuItem = event.currentTarget;
-    let type = menuItem.getAttribute('data-type');
+    let type  = menuItem.getAttribute('data-type');
+    let title = menuItem.getAttribute('data-title');
 
+    setMenuTitle(title);
     setMenuSelected(parseInt(type));
     setAnchorEl(null)
   };
@@ -83,10 +87,57 @@ const DrawerListControllers = props => {
     setState ({...state, [anchor]: open});
   }
 
+  useEffect(() => {
+    setControllersFiltered(controllers);
+  },[controllers])
+
+  useEffect(()=>{
+    console.log(menuSelected);
+    switch(menuSelected){
+      case 1: 
+        let filtered_1 = controllers.filter(controller => 
+          controller.is_installed && controller.is_active && !controller.has_abnormalities)
+        setControllersFiltered(filtered_1);
+        break;
+      case 2: 
+        let filtered_2 = controllers.filter(controller => 
+          controller.is_installed && controller.is_active && controller.has_abnormalities)
+        setControllersFiltered(filtered_2);
+        break;
+      case 3: 
+        let filtered_3 = controllers.filter(controller => 
+          controller.is_installed && controller.is_active && !controller.has_abnormalities && controller.is_school_zone)
+        setControllersFiltered(filtered_3);
+        break;
+      case 4: 
+        let filtered_4 = controllers.filter(controller => 
+          controller.is_installed && controller.is_active && controller.has_abnormalities && controller.is_school_zone)
+        setControllersFiltered(filtered_4);
+        break;
+      case 5: 
+        let filtered_5 = controllers.filter(controller => 
+          controller.is_installed && !controller.is_active)
+        setControllersFiltered(filtered_5);
+        break;
+      case 6: 
+        let filtered_6 = controllers.filter(controller => 
+          !controller.is_installed )
+        setControllersFiltered(filtered_6);
+        break;
+      default: 
+        setControllersFiltered(controllers);
+        console.log(controllersFiltered.length);
+        break;
+    }
+  },[menuSelected]);
+
+  useEffect(() =>{}, [controllersFiltered]);
+
+  //** Return SubComponent ControllerBox Start */
   const ControllerBox = props => {
     const { controller } = props;
     const [state, setState] = useState(0);
-    const [iconController, setIconController] = useState(0);
+    const [iconController, setIconController] = useState('icon_on');
     
     useEffect(()=> {
       if (controller.is_installed){
@@ -119,11 +170,9 @@ const DrawerListControllers = props => {
         setIconController('icon_off');
       }
     },[])
+    //** Return SubComponent ControllerBox End */
 
-    useEffect(()=>{
-
-    },state);
-
+    //** Return DrawerListComponent Start */
     return(
       <Card
         sx={{ 
@@ -174,6 +223,7 @@ const DrawerListControllers = props => {
         </Button>
         <Drawer
           anchor={'right'}
+          sx={{width: '300px'}}
           open={state['right']}
           onClose={toogleDrawer('right', false)}
         >
@@ -195,7 +245,7 @@ const DrawerListControllers = props => {
               disabled
             >교차로 상태 정보</ToggleButton>
             <ToggleButton value="area">
-              <Button 
+              <Box 
                 id="btnSelectTypeController"
                 color="secondary"
                 aria-controls={open ? 'basic-menu': undefined}
@@ -203,11 +253,11 @@ const DrawerListControllers = props => {
                 aria-expanded={open ? 'true': undefined}
                 onClick={handleClick}
               >
-                {'선택'}
+                {menuTitle}
                 <ListItemIcon>
                   <ChevronDown fontSize='small' />
                 </ListItemIcon>
-              </Button>
+              </Box>
               <Menu
                 id="selectStatusController"
                 MenuListProps={{ 'aria-labelledby': 'fade-button' }}
@@ -230,19 +280,25 @@ const DrawerListControllers = props => {
                   }
                 }}
               >
-                <MenuItem data-type={0} className='title' onClick={handleClose}>전체</MenuItem>
-                <MenuItem data-type={1} className='normal' onClick={handleClose}>정상</MenuItem>
-                <MenuItem data-type={2} className='abnormal' onClick={handleClose}>이상</MenuItem>
-                <MenuItem data-type={3} className='school' onClick={handleClose}>스쿨존</MenuItem>
-                <MenuItem data-type={6} className='uninstall' onClick={handleClose}>미설치</MenuItem>
+                <MenuItem 
+                  data-type={0} data-title={'전체'}
+                  className='title' onClick={handleClose}>전체</MenuItem>
+                <MenuItem data-type={1} data-title={'정상'}
+                  className='normal' onClick={handleClose}>정상</MenuItem>
+                <MenuItem data-type={2} data-title={'이상'}
+                  className='abnormal' onClick={handleClose}>이상</MenuItem>
+                <MenuItem data-type={3} data-title={'스쿨존'}
+                  className='school' onClick={handleClose}>스쿨존</MenuItem>
+                <MenuItem data-type={6} data-title={'미설치'}
+                  className='uninstall' onClick={handleClose}>미설치</MenuItem>
               </Menu>
             </ToggleButton>
           </ToggleButtonGroup>
           {/** List Controllers */}
           {
-            controllers.map(controller => {
+            controllersFiltered.map((controller,index) => {
               return(
-                <ControllerBox key={controller.id} controller={controller} />
+                <ControllerBox key={index} controller={controller} />
               )
             })
           }
