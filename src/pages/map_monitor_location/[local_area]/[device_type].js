@@ -29,6 +29,8 @@ const Map_Monitor_Location_Page = () => {
 
   const [controllerSelected, setControllerSelected] = useState({});
   const [searchedController, setSearchedController] = useState({});
+
+  const [filterMapMarker, setFilterMapMarker] = useState(0);
   
   // ** Hooks
   const router = useRouter();
@@ -97,6 +99,11 @@ const Map_Monitor_Location_Page = () => {
     return body; 
   }
 
+  const filterMapType = type => {
+    console.log(type);
+    setFilterMapMarker(type);
+  }
+
   // ** TODO: Scroll map for mobile with drag events
   const updateCenter = (event) => {
     //console.log('Lat: ' + lat + ' Lng: '+ lng);
@@ -139,7 +146,7 @@ const Map_Monitor_Location_Page = () => {
         controllersNames = {controllersNames} 
         updateSearchedController = { updateSearchedController }
       />
-      <CountingBar />
+      <CountingBar controllers={controllers} filterMapType={filterMapType}/>
     { kakaoInitated && !spinner ? (
       <Map
         center={{ lat: lat, lng: lng }}
@@ -151,7 +158,6 @@ const Map_Monitor_Location_Page = () => {
         onDragEnd = {updateCenter}
         draggable = {true}
       >
-        {console.log(kakao.maps)}
         <MapTypeControl />
         <ZoomControl />
         <MarkerClusterer 

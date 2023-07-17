@@ -2,13 +2,49 @@
 import { useState, useEffect }  from 'react';
 
 // **  Material Components Imports
-import { Box, Typography,
-    Drawer
-  } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 
 
 
 const CountingBar = props => {
+
+  const [normal, setNormal]      = useState(0);
+  const [abnormal, setAbnormal]  = useState(0);
+  const [school, setSchool]      = useState(0);
+  const [unistall, setUninstall] = useState(0);
+
+  const { controllers, filterMapType } = props;
+
+  const onClickFilter = event => {
+    let typo = event.currentTarget;
+    let type = typo.getAttribute('data-type');
+
+    filterMapType(type);
+  }
+
+  useEffect(() => {
+    console.log(controllers.length)
+    countByType(controllers)
+  },[props])
+
+  const countByType = controllers => {
+    let filter_1 = controllers.filter(controller => 
+      controller.is_installed && controller.is_active && !controller.has_abnormalities );
+    setNormal(filter_1.length);
+
+    let filter_2 = controllers.filter(controller => 
+      controller.is_installed && controller.is_active && controller.has_abnormalities );
+    setAbnormal(filter_2.length);
+
+    let filter_3 = controllers.filter(controller => 
+      controller.is_installed && controller.is_active && controller.is_school_zone );
+    setSchool(filter_3.length);
+
+    let filter_4 = controllers.filter(controller => 
+      !controller.is_installed || !controller.is_active );
+    setUninstall(filter_4.length);
+  }
+
   return (
     <Box
       sx={{
@@ -60,35 +96,45 @@ const CountingBar = props => {
         className='tyCounter'
         id="totalCount"
         gutterBottom
-      >전체지점: 259</Typography>
+        data-type= {0}
+        onClick={onClickFilter}
+      >전체지점: {controllers.length}</Typography>
       <Typography 
         variant="overline"
         display="block"
         className='tyCounter'
         id="normalCount"
         gutterBottom
-      >정상: 250</Typography>
+        data-type= {1}
+        onClick={onClickFilter}
+      >정상: { normal }</Typography>
       <Typography 
         variant="overline"
         display="block"
         className='tyCounter'
         id="abnormalCount"
         gutterBottom
-      >이상: 9</Typography>
+        data-type= {2}
+        onClick={onClickFilter}
+      >이상: { abnormal }</Typography>
       <Typography 
         variant="overline"
         display="block"
         className='tyCounter'
         id="schoolCount"
         gutterBottom
-      >스쿨존: 10</Typography>
+        data-type= {3}
+        onClick={onClickFilter}
+      >스쿨존: { school }</Typography>
       <Typography 
         variant="overline"
         display="block"
         className='tyCounter'
         id="uninstallCount"
         gutterBottom
-      >미설치: 2</Typography>
+        data-type= {6}
+        onClick={onClickFilter}
+      >미설치: { unistall }</Typography>
     </Box>
   );
 }

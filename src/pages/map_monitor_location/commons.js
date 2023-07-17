@@ -20,10 +20,6 @@ const LateralPanel = props => {
     setState ({...state, [anchor]: open});
   }
 
-  const controllerBox = (controller) => {
-
-  }
-
   return (
     controller.id != null ? (
       <Box>

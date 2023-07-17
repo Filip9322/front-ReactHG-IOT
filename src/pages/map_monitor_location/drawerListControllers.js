@@ -45,7 +45,6 @@ const DrawerListControllers = props => {
   },[controllers])
   
   useEffect(()=>{
-    console.log(menuSelected);
     switch(menuSelected){
       case 1: 
         let filtered_1 = controllers.filter(controller => 
