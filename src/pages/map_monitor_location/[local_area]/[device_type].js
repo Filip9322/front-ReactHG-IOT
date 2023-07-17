@@ -51,7 +51,15 @@ const Map_Monitor_Location_Page = () => {
     getFetchURL(
        `${process.env.REACT_APP_APIURL}/map_controllers/${router.query.local_area}/${router.query.device_type}`
     ).then(response => {
-      if(response) setControllers(response);
+      if(response) {
+        response.map(controller => {
+          //  Creating State and Logo key & values
+          let body = set_ControllerStatusAndLogo(controller);
+          Object.assign(controller, {state: body.state});
+          Object.assign(controller, {logo:  body.logo});
+        })
+        setControllers(response);
+      }
     }).catch(error=> { console.error('error: '+ error)
     }).finally(() => {
       setSpinner(false);
@@ -78,6 +86,55 @@ const Map_Monitor_Location_Page = () => {
     console.log(controller_s);
   }
 
+  const set_ControllerName = controller =>{
+    let body = {};
+    let name = controller.local_area_controller_number+'범 '+ controller.controller_name;
+
+    Object.assign(body, {id: controller.id });
+    Object.assign(body, {number: controller.local_area_controller_number});
+    Object.assign(body, {name: name });
+
+    return body; 
+  }
+
+  const set_ControllerStatusAndLogo = controller => {
+    let body = {};
+    let state = 0;
+    let logo = '';
+
+    if (controller.is_installed) {
+      if(controller.is_active){
+        //**----- */
+        if(controller.has_abnormalities && controller.is_school_zone){
+          state = 4; // State 4: School Zone with abnormalities - Yellow and Red
+          logo  = 'icon_school_error';
+        } else {
+          state = 3; // State 3: School Zone NO abnormalities - Yellow
+          logo  = 'icon_school';
+        }
+        //**----- */
+        if(controller.has_abnormalities && !controller.is_school_zone){
+          state = 2; // State 2: Active Abnormal State - Red
+          logo  = 'icon_err';
+        } else if (!controller.has_abnormalities && !controller.is_school_zone) {
+          state = 1; // State 1: Active Normal State - Green
+          logo  = 'icon_on';
+        }
+      }else {
+        state = 5; // State 5: UnActtive Installed State - Gray
+        logo  = 'icon_off';
+      }
+    } else {
+      state = 6; // State 6: Not installed - Gray
+      logo  = 'icon_off';
+    }
+
+    Object.assign(body, {state: state});
+    Object.assign(body, {logo: logo});
+
+    return body;
+
+  }
 
   // ** TODO: Scroll map for mobile with drag events
   const updateCenter = (event) => {
@@ -103,14 +160,9 @@ const Map_Monitor_Location_Page = () => {
     // ** Arrange names for easy look up on the autocomplete textfield
     let names = [];
     controllers.map(controller => {
-      let body = {};
-      let name = controller.local_area_controller_number+'범 '+ controller.controller_name;
-
-      Object.assign(body, {id: controller.id });
-      Object.assign(body, {number: controller.local_area_controller_number});
-      Object.assign(body, {name: name });
-
-      names.push(body);
+      // Creatte Array of controllers with name
+      let controllerName = set_ControllerName(controller);
+      names.push(controllerName);
     });
     SetControllerNames(names);
   },[controllers])
@@ -227,7 +279,7 @@ const MapDeviceMarker = props =>{
       onClick ={() => {setViewDeviceInfo(!viewDeviceInfo); updateMapMarkers(); clickController(controller)}}
       draggable = { false }
       image={{
-        src: controller.has_abnormalities ?'/icon/icon_err.png':'/icon/icon_on.png',
+        src: `/icon/${controller.logo}.png`,
         size: { width: 50, height: 50 },
         option: {
           spriteSize: { width: 36, height: 98 },

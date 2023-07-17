@@ -106,7 +106,7 @@ const DrawerListControllers = props => {
         break;
       case 3: 
         let filtered_3 = controllers.filter(controller => 
-          controller.is_installed && controller.is_active && !controller.has_abnormalities && controller.is_school_zone)
+          controller.is_installed && controller.is_active && controller.is_school_zone)
         setControllersFiltered(filtered_3);
         break;
       case 4: 
@@ -136,41 +136,6 @@ const DrawerListControllers = props => {
   //** Return SubComponent ControllerBox Start */
   const ControllerBox = props => {
     const { controller } = props;
-    const [state, setState] = useState(0);
-    const [iconController, setIconController] = useState('icon_on');
-    
-    useEffect(()=> {
-      if (controller.is_installed){
-        if(controller.is_active){
-          // Check School Zone
-          if(controller.is_school_zone){
-            if(controller.has_abnormalities){
-            setState
-              setState(4); // State 4: School Zone with abnormalities - Yellow and Red
-              setIconController('icon_school_error');              
-            } else {
-              setState(3); // State 3: School Zone NO abnormalities - Yellow
-              setIconController('icon_school');
-            }
-          }
-          // Check 일반 if have or not abnormality
-          if(controller.has_abnormalities){
-            setState(2); // State 2: Active Abnormal State - Red
-            setIconController('icon_err');
-          }else {
-            setState(1); // State 1: Active Normal State - Green
-            setIconController('icon_on');
-          }
-        } else {
-          setState(5); // State 5: UnActtive Installed State - Gray
-          setIconController('icon_off');
-        }
-      } else {
-        setState(6); // State 6: Not installed - Gray
-        setIconController('icon_off');
-      }
-    },[])
-    //** Return SubComponent ControllerBox End */
 
     //** Return DrawerListComponent Start */
     return(
@@ -186,7 +151,7 @@ const DrawerListControllers = props => {
         }}>
         <CardMedia
           sx={{ height: 40, width:'50px', height: '50px' }}
-          image={`/icon/${iconController}.png`}
+          image={`/icon/${controller.logo}.png`}
           title='지우기'
         />
         <CardContent
