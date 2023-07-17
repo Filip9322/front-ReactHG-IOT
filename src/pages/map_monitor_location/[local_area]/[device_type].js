@@ -11,10 +11,11 @@ import { InputAdornment } from '@mui/material'
 
 // ** Utils
 import { KakaoInit } from 'src/@core/utils/kakao_map_api'
-import { handleURLQueries } from 'src/@core/layouts/utils'
 import { getFetchURL }  from 'src/@core/utils/fetchHelper'
+import { SearchBar } from '../searchBar'
+import { DrawerListControllers } from '../drawerListControllers'
 import { LateralPanel, CountingBar,
-  SearchBar, BtLateralMenu, DrawerListControllers } from '../commons'
+  set_ControllerStatusAndLogo, BtLateralMenu } from '../commons'
 
 const Map_Monitor_Location_Page = () => {
   
@@ -95,45 +96,6 @@ const Map_Monitor_Location_Page = () => {
     Object.assign(body, {name: name });
 
     return body; 
-  }
-
-  const set_ControllerStatusAndLogo = controller => {
-    let body = {};
-    let state = 0;
-    let logo = '';
-
-    if (controller.is_installed) {
-      if(controller.is_active){
-        //**----- */
-        if(controller.has_abnormalities && controller.is_school_zone){
-          state = 4; // State 4: School Zone with abnormalities - Yellow and Red
-          logo  = 'icon_school_error';
-        } else {
-          state = 3; // State 3: School Zone NO abnormalities - Yellow
-          logo  = 'icon_school';
-        }
-        //**----- */
-        if(controller.has_abnormalities && !controller.is_school_zone){
-          state = 2; // State 2: Active Abnormal State - Red
-          logo  = 'icon_err';
-        } else if (!controller.has_abnormalities && !controller.is_school_zone) {
-          state = 1; // State 1: Active Normal State - Green
-          logo  = 'icon_on';
-        }
-      }else {
-        state = 5; // State 5: UnActtive Installed State - Gray
-        logo  = 'icon_off';
-      }
-    } else {
-      state = 6; // State 6: Not installed - Gray
-      logo  = 'icon_off';
-    }
-
-    Object.assign(body, {state: state});
-    Object.assign(body, {logo: logo});
-
-    return body;
-
   }
 
   // ** TODO: Scroll map for mobile with drag events
