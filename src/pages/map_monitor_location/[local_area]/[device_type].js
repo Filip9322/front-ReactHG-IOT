@@ -32,7 +32,7 @@ const Map_Monitor_Location_Page = () => {
   const [controllerSelected, setControllerSelected] = useState({});
   const [searchedController, setSearchedController] = useState({});
 
-  const [filterMapMarker, setFilterMapMarker] = useState(0);
+  const [filterMapMarker, setFilterMapMarker] = useState(1);
   
   // ** Hooks
   const router = useRouter();
@@ -63,6 +63,8 @@ const Map_Monitor_Location_Page = () => {
           Object.assign(controller, {logo:  body.logo});
         })
         setControllers(response);
+
+        setFilterMapMarker(parseInt(0));
       }
     }).catch(error=> { console.error('error: '+ error)
     }).finally(() => {
@@ -133,7 +135,6 @@ const Map_Monitor_Location_Page = () => {
       names.push(controllerName);
     });
     SetControllerNames(names);
-
   },[controllers])
 
   useEffect(() =>{
@@ -145,9 +146,8 @@ const Map_Monitor_Location_Page = () => {
     //** Apply filter on Map Markers */
     let filteredMapMarkers = filterControllerMapMarkersByType( controllers, filterMapMarker );
     updateFilteredControllers(filteredMapMarkers);
-
   },[filterMapMarker]);
-
+  
   return (
     <Box className="content-center" sx={{position: 'relative'}}>
       <SearchBar 

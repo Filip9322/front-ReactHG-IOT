@@ -7,7 +7,7 @@ import { Box } from '@mui/material'
 
 const MapDeviceMarker = props =>{
 
-  const [viewDeviceInfo, setViewDeviceInfo]= useState(false);
+  const [viewDeviceInfo, setViewDeviceInfo]= useState(true);
 
   const { controller, listID , clickController, searchedController } = props;
 
@@ -19,6 +19,12 @@ const MapDeviceMarker = props =>{
       Array.from(divContainMapMarkers).map(marker => {
         const parent = marker.parentNode;
         parent.style['width']= '100%';
+
+        const parentParent = parent.parentNode;
+        parentParent.style['width']  = '170px';
+        parentParent.style['height'] = 'auto';
+        parentParent.style['border'] = 0;
+        parentParent.style['text-align']  = 'center';
       })
     }
   }
@@ -64,8 +70,8 @@ const MapDeviceMarker = props =>{
         <Box 
           className={'customOverlay'} 
           style={{
-            width: '100%',
-            padding: '5px',
+            width: 'auto',
+            padding: '2px 5px',
             fontSize: '12px',
             fontWeight: 'bold',
             backgroundColor: "#005826", 

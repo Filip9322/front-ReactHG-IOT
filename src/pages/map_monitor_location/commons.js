@@ -95,6 +95,7 @@ const set_ControllerStatusAndLogo = controller => {
 
 const filterControllerMapMarkersByType = (controllers, typeFilter) => {
   let filtered = [];
+
   switch(typeFilter){
     case 0:
       filtered = controllers;
@@ -118,7 +119,7 @@ const filterControllerMapMarkersByType = (controllers, typeFilter) => {
       filtered = controllers.filter(controller => controller.state == 6 || controller.state == 5);
       break;
   }
-  
+
   return filtered;
 }
 
@@ -127,4 +128,5 @@ export {
   BtLateralMenu,
   set_ControllerStatusAndLogo,
   filterControllerMapMarkersByType
+
 };
