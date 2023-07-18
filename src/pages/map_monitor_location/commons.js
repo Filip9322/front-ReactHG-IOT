@@ -93,8 +93,38 @@ const set_ControllerStatusAndLogo = controller => {
 
 }
 
+const filterControllerMapMarkersByType = (controllers, typeFilter) => {
+  let filtered = [];
+  switch(typeFilter){
+    case 0:
+      filtered = controllers;
+      break;
+    case 1:
+      filtered = controllers.filter(controller => controller.state == 1 || controller.state == 3);
+      break;
+    case 2:
+      filtered = controllers.filter(controller => controller.state == 2 || controller.state == 4);
+      break;
+    case 3:
+      filtered = controllers.filter(controller => controller.state == 3 || controller.state == 4);
+      break;
+    case 4:
+      filtered = controllers.filter(controller => controller.state == typeFilter);
+      break;
+    case 5:
+      filtered = controllers.filter(controller => controller.state == typeFilter);
+      break;
+    case 6:
+      filtered = controllers.filter(controller => controller.state == 6 || controller.state == 5);
+      break;
+  }
+  
+  return filtered;
+}
+
 export { 
   LateralPanel,
   BtLateralMenu,
-  set_ControllerStatusAndLogo
+  set_ControllerStatusAndLogo,
+  filterControllerMapMarkersByType
 };

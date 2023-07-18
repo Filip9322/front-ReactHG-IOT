@@ -14,7 +14,8 @@ import { MapDeviceMarker } from '../mapDeviceMarker'
 import { SearchBar } from '../searchBar'
 import { DrawerListControllers } from '../drawerListControllers'
 import { CountingBar } from '../countingBar'
-import { LateralPanel, set_ControllerStatusAndLogo, BtLateralMenu } from '../commons'
+import { LateralPanel, set_ControllerStatusAndLogo, 
+  filterControllerMapMarkersByType, BtLateralMenu } from '../commons'
 
 const Map_Monitor_Location_Page = () => {
   
@@ -22,6 +23,7 @@ const Map_Monitor_Location_Page = () => {
   const [spinner, setSpinner] = useState(true);
   const [localArea, setLocalArea] = useState({lat:0, lng:0});
   const [controllers, setControllers] = useState([]);
+  const [filteredControllers, updateFilteredControllers] = useState([]);
   const [controllersNames, SetControllerNames] = useState([{id: 1, name: 'test'}]);
   const [kakaoInitated, setKakaoInitiated] = useState(false);
   const [lat, setLat] = useState(33.5563);
@@ -85,7 +87,6 @@ const Map_Monitor_Location_Page = () => {
     
     setControllerSelected(controller_s);
     setSearchedController(controllerID);
-    console.log(controller_s);
   }
 
   const set_ControllerName = controller =>{
@@ -100,8 +101,7 @@ const Map_Monitor_Location_Page = () => {
   }
 
   const filterMapType = type => {
-    console.log(type);
-    setFilterMapMarker(type);
+    setFilterMapMarker(parseInt(type));
   }
 
   // ** TODO: Scroll map for mobile with drag events
@@ -133,12 +133,20 @@ const Map_Monitor_Location_Page = () => {
       names.push(controllerName);
     });
     SetControllerNames(names);
+
   },[controllers])
 
   useEffect(() =>{
     setLng(controllerSelected.map_y);
     setLat(controllerSelected.map_x);
   },[controllerSelected])
+
+  useEffect (() => {
+    //** Apply filter on Map Markers */
+    let filteredMapMarkers = filterControllerMapMarkersByType( controllers, filterMapMarker );
+    updateFilteredControllers(filteredMapMarkers);
+
+  },[filterMapMarker]);
 
   return (
     <Box className="content-center" sx={{position: 'relative'}}>
@@ -171,9 +179,9 @@ const Map_Monitor_Location_Page = () => {
             } 
           }}
         >
-          {/* 1,2,3,4 .png - red, yellow, green, blue - 1076  x 1428 */}
+          {/* 1,2,3,4 .png - red, yellow, green, blue - 1076  x 1428 filteredControllers */}
           {
-            controllers.map((controller, listID) =>{
+            filteredControllers.map((controller, listID) =>{
               return(
                 <MapDeviceMarker 
                   controller={controller} 
