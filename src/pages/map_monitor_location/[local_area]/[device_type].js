@@ -14,7 +14,8 @@ import { MapDeviceMarker } from '../mapDeviceMarker'
 import { SearchBar } from '../searchBar'
 import { DrawerListControllers } from '../drawerListControllers'
 import { CountingBar } from '../countingBar'
-import { LateralPanel, set_ControllerStatusAndLogo, 
+import { LateralDeatilPanel } from '../lateralDetailPanel'
+import { set_ControllerStatusAndLogo, 
   filterControllerMapMarkersByType, BtLateralMenu } from '../commons'
 
 const Map_Monitor_Location_Page = () => {
@@ -202,7 +203,7 @@ const Map_Monitor_Location_Page = () => {
       <KakaoInit />
       <BtLateralMenu />
       <DrawerListControllers controllers = {controllers}/>
-      <LateralPanel controller = {controllerSelected}/>
+      <LateralDeatilPanel controller = {controllerSelected}/>
     </Box>
   );
 };

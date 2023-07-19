@@ -153,14 +153,14 @@ const DrawerListControllers = props => {
               width: '100%',
               display: 'flex',
               justifyContent: 'center',
-              '& .toogleTitle.Mui-disabled': {color: '#392d2d'}
+              '& .toggleTitle.Mui-disabled': {color: '#392d2d'}
             }}
           >
             <ToggleButton
-              className='toogleTitle'
+              className='toggleTitle'
               value="title" 
               disabled
-            >교차로 상태 정보</ToggleButton>
+            >{'교차로 상태 정보'}</ToggleButton>
             <ToggleButton value="area">
               <Box 
                 id="btnSelectTypeController"

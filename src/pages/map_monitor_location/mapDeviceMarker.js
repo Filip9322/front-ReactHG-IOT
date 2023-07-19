@@ -7,7 +7,7 @@ import { Box } from '@mui/material'
 
 const MapDeviceMarker = props =>{
 
-  const [viewDeviceInfo, setViewDeviceInfo]= useState(true);
+  const [viewDeviceInfo, setViewDeviceInfo]= useState(false);
 
   const { controller, listID , clickController, searchedController } = props;
 
@@ -25,6 +25,7 @@ const MapDeviceMarker = props =>{
         parentParent.style['height'] = 'auto';
         parentParent.style['border'] = 0;
         parentParent.style['text-align']  = 'center';
+        parentParent.style['z-index']  = 10;
       })
     }
   }

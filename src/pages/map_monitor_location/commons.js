@@ -1,50 +1,5 @@
-// ** React Imports
-import { useState, useEffect }  from 'react';
-
 // **  Material Components Imports
-import { Box, Button, Typography,
-        Drawer
-      } from '@mui/material';
-
-const LateralPanel = props => {
-
-  // * Props and states
-  const { controller } = props;
-  const [state, setState] = useState({ right: false });
-
-
-  const toogleDrawer = (anchor, open) => event => {
-    if(event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-      return;
-    }
-    setState ({...state, [anchor]: open});
-  }
-
-  return (
-    controller.id != null ? (
-      <Box>
-        <Button onClick={toogleDrawer('right',true)}>
-          {controller.controller_name}
-        </Button>
-        <Drawer
-          anchor={'right'}
-          open={state['right']}
-          onClose={toogleDrawer('right', false)}
-        >
-          <Box 
-            sx={{
-              backgroundColor: 'rgba(241,244,249,1)',
-              width: '100%',
-              height: '100%'
-            }}
-          >
-            {controller.local_area_controller_number+'번 '+controller.controller_name}
-          </Box>
-        </Drawer>
-      </Box>
-    ):('Here')
-  );
-}
+import { Box } from '@mui/material';
 
 const BtLateralMenu = props => {
   return (
@@ -124,7 +79,6 @@ const filterControllerMapMarkersByType = (controllers, typeFilter) => {
 }
 
 export { 
-  LateralPanel,
   BtLateralMenu,
   set_ControllerStatusAndLogo,
   filterControllerMapMarkersByType
