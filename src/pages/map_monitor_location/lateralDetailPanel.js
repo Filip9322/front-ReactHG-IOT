@@ -13,8 +13,8 @@ import ChevronDown from 'mdi-material-ui/ChevronDown'
 const LateralDeatilPanel = props => {
 
   // * Props and states
-  const { controller } = props;
-  const [state, setState] = useState({ right: false });
+  const { controller, openDrawer, setOpenDrawer } = props;
+  const [state, setState] = useState({ right: openDrawer });
   const [anchorEl, setAnchorEl] = useState();
   const [menuTitle, setMenuTitle] = useState('기준시설 정보');
 
@@ -32,19 +32,26 @@ const LateralDeatilPanel = props => {
     if(event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
       return;
     }
-    setState ({...state, [anchor]: open});
+    setOpenDrawer(open);
+    setState ({...state, [anchor]: openDrawer});
   }
 
   return (
     controller.id != null ? (
       <Box>
+        {openDrawer}
         <Button onClick={toogleDrawer('right',true)}>
-          {controller.controller_name}
+          {controller.controller_name}{openDrawer.toString()}
         </Button>
         <Drawer
+          className='drawerDetails'
           anchor={'right'}
-          open={state['right']}
+          open={openDrawer}
           onClose={toogleDrawer('right', false)}
+          sx={{
+            backgroundColor: 'rgba(255,255,255,0.1)',
+            opacity: '1'
+          }}
         >
           <ToggleButtonGroup
             color='primary'
@@ -194,7 +201,7 @@ const LateralDeatilPanel = props => {
           </Box>
         </Drawer>
       </Box>
-    ):('Here')
+    ):(`Here ${openDrawer}`)
   );
 }
 

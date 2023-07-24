@@ -31,6 +31,7 @@ const Map_Monitor_Location_Page = () => {
   const [lng, setLng] = useState(126.79581);
 
   const [controllerSelected, setControllerSelected] = useState({});
+  const [openDrawerSelController, SetOpenDrawerSelController] = useState(false);
   const [searchedController, setSearchedController] = useState({});
 
   const [filterMapMarker, setFilterMapMarker] = useState(1);
@@ -81,6 +82,7 @@ const Map_Monitor_Location_Page = () => {
 
   const clickController = (controller) => {
     setControllerSelected(controller);
+    SetOpenDrawerSelController(true);
   }
 
   const updateSearchedController = controllerID => {
@@ -107,6 +109,10 @@ const Map_Monitor_Location_Page = () => {
     setFilterMapMarker(parseInt(type));
   }
 
+  const changeOpenDrawerController = setOpen => {
+    SetOpenDrawerSelController(setOpen);
+  }
+
   // ** TODO: Scroll map for mobile with drag events
   const updateCenter = (event) => {
     //console.log('Lat: ' + lat + ' Lng: '+ lng);
@@ -118,6 +124,7 @@ const Map_Monitor_Location_Page = () => {
   useEffect(() => {
     setSpinner(true);
     setKakaoInitiated(true);
+    SetOpenDrawerSelController(false);
   },[])
   
   useEffect(() => {
@@ -141,6 +148,7 @@ const Map_Monitor_Location_Page = () => {
   useEffect(() =>{
     setLng(controllerSelected.map_y);
     setLat(controllerSelected.map_x);
+    SetOpenDrawerSelController(true);
   },[controllerSelected])
 
   useEffect (() => {
@@ -148,14 +156,24 @@ const Map_Monitor_Location_Page = () => {
     let filteredMapMarkers = filterControllerMapMarkersByType( controllers, filterMapMarker );
     updateFilteredControllers(filteredMapMarkers);
   },[filterMapMarker]);
+
+  useEffect(() => {},[kakaoInitated]);
   
   return (
     <Box className="content-center" sx={{position: 'relative'}}>
-      <SearchBar 
-        controllersNames = {controllersNames} 
-        updateSearchedController = { updateSearchedController }
-      />
-      <CountingBar controllers={controllers} filterMapType={filterMapType}/>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-end'
+        }}
+      >
+        <SearchBar 
+          controllersNames = {controllersNames} 
+          updateSearchedController = { updateSearchedController }
+        />
+        <CountingBar controllers={controllers} filterMapType={filterMapType}/>
+      </Box>
     { kakaoInitated && !spinner ? (
       <Map
         center={{ lat: lat, lng: lng }}
@@ -201,9 +219,22 @@ const Map_Monitor_Location_Page = () => {
         <CircularProgress />
       }
       <KakaoInit />
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        <DrawerListControllers controllers = {controllers}/>
+      </Box>
+        <LateralDeatilPanel 
+          controller = {controllerSelected} 
+          openDrawer={openDrawerSelController}
+          setOpenDrawer={changeOpenDrawerController}
+        />
       <BtLateralMenu />
-      <DrawerListControllers controllers = {controllers}/>
-      <LateralDeatilPanel controller = {controllerSelected}/>
     </Box>
   );
 };

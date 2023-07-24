@@ -9,7 +9,8 @@ import { Box, Button, Typography, Drawer,
 } from '@mui/material';
 
 // ** Icons Imports
-import ChevronDown from 'mdi-material-ui/ChevronDown'      
+import ChevronDown from 'mdi-material-ui/ChevronDown'
+import Apps from 'mdi-material-ui/Apps'
 
 const DrawerListControllers = props => {
 
@@ -135,8 +136,14 @@ const DrawerListControllers = props => {
   return (
     controllers.length > 0 ? (
       <Box>
-        <Button onClick={toogleDrawer('right',true)}>
-          HERE
+        <Button 
+          onClick={toogleDrawer('right',true)}
+          variant={'contained'}
+          sx={{
+            zIndex:4
+          }}
+        >
+          <Apps fontSize='medium' /> 기기 전체 보기
         </Button>
         <Drawer
           anchor={'right'}

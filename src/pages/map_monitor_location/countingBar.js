@@ -48,8 +48,6 @@ const CountingBar = props => {
   return (
     <Box
       sx={{
-        position: 'absolute',
-        top: 0, right: 0,
         zIndex: 2,
         backgroundColor:'white',
         border: 'solid 1px #aaa',
