@@ -14,7 +14,7 @@ const FooterContent = () => {
         {`© ${new Date().getFullYear()}, Made `}
         {` by `}
         <Link target='_blank' href='https://github.com/Filip9322'>
-          펠리페
+          한길에이치씨
         </Link>
       </Typography>
     </Box>
