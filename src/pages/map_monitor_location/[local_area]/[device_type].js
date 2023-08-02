@@ -14,9 +14,9 @@ import { MapDeviceMarker } from '../mapDeviceMarker'
 import { SearchBar } from '../searchBar'
 import { DrawerListControllers } from '../drawerListControllers'
 import { CountingBar } from '../countingBar'
-import { LateralDeatilPanel } from '../lateralDetailPanel'
-import { set_ControllerStatusAndLogo, 
-  filterControllerMapMarkersByType, BtLateralMenu } from '../commons'
+import { LateralDetailPanel } from '../lateralDetailPanel'
+import { set_ControllerStatusAndLogo, BtLateralMenu,
+  filterControllerMapMarkersByType } from '../commons'
 
 const Map_Monitor_Location_Page = () => {
   
@@ -229,7 +229,7 @@ const Map_Monitor_Location_Page = () => {
       >
         <DrawerListControllers controllers = {controllers}/>
       </Box>
-        <LateralDeatilPanel 
+        <LateralDetailPanel 
           controller = {controllerSelected} 
           openDrawer={openDrawerSelController}
           setOpenDrawer={changeOpenDrawerController}

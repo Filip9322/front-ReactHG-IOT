@@ -2,30 +2,39 @@
 import { useState, useEffect }  from 'react';
 
 // **  Material Components Imports
+import { styled } from '@mui/material/styles';
 import { Box, Button, Typography, Menu, MenuItem, Fade,
         Drawer, ToggleButtonGroup, ToggleButton, ListItemIcon,
-        TextField, Snackbar
+        TextField, Snackbar, FormGroup, FormControlLabel, Checkbox, Switch
       } from '@mui/material';
 
 // ** Icons Imports
 import ChevronDown from 'mdi-material-ui/ChevronDown'
 
-const LateralDeatilPanel = props => {
+const LateralDetailPanel = props => {
 
   // * Props and states
   const { controller, openDrawer, setOpenDrawer } = props;
   const [state, setState] = useState({ right: openDrawer });
   const [anchorEl, setAnchorEl] = useState();
   const [menuTitle, setMenuTitle] = useState('기준시설 정보');
+  
+  const [edit, setEdit] = useState(false);
+
+  const [controllerStatus, setControllerStatus] = useState(false);
 
   const open = Boolean(anchorEl);
-  const handleClick = event => {setAnchorEl(event.currentTarget)};
-  const handleClose = event => {
-    let menuItem = event.currentTarget;
-    let option   = menuItem.getAttribute('data-option');
+  const handleClick = event => { setAnchorEl(event.currentTarget)};
+  const handleClose = event => { setAnchorEl(event.target.value)};
+  const handleChange = event => {
+    let value = event.target.getAttribute('data-option');
+    
+    if(value == '설정'){
+      setEdit(true);
+    }
 
-    console.log(option)
-    setAnchorEl(null);
+    setMenuTitle(value);
+    handleClose(event);
   }
 
   const toogleDrawer = (anchor, open) => event => {
@@ -33,12 +42,33 @@ const LateralDeatilPanel = props => {
       return;
     }
     setOpenDrawer(open);
+    setControllerStatus(controller.is_installed);
     setState ({...state, [anchor]: openDrawer});
+
   }
+  
+  const handleInstallCheckbox = event => {
+    let checkBox = event.currentTarget;
+    let checked  = checkBox.checked;
+    
+    setControllerStatus(checked);
+    
+  }
+
+  useEffect(() => {
+    if(controller.is_installed  !== undefined ){
+      if(controller.is_installed){
+        setControllerStatus(controller.is_installed);
+      }
+    }
+    console.log('value: '+controllerStatus);
+  },[])
+
+  useEffect(() => {},[controllerStatus])
 
   return (
     controller.id != null ? (
-      <Box>
+      <div>
         {openDrawer}
         <Button onClick={toogleDrawer('right',true)}>
           {controller.controller_name}{openDrawer.toString()}
@@ -74,7 +104,7 @@ const LateralDeatilPanel = props => {
               }}
               disabled
             >
-              {'기준시설 정보'}
+              {'설정 & 상태'}
             </ToggleButton>
             <ToggleButton 
               sx={{
@@ -101,17 +131,18 @@ const LateralDeatilPanel = props => {
                 anchorEl={anchorEl}
                 open={open}
                 onClose={handleClose}
+                onClick={handleChange}
                 TransitionComponent={Fade}
                 sx={{
                   border: '0'
                 }}
               >
                 <MenuItem
-                  data-option={0}
-                >{'option 1'}</MenuItem>
+                  data-option={'설정'}
+                >{'설정'}</MenuItem>
                 <MenuItem
-                  data-option={1}
-                >{'option 2'}</MenuItem>
+                  data-option={'상태'}
+                >{'상태'}</MenuItem>
               </Menu>
             </ToggleButton>
           </ToggleButtonGroup>
@@ -132,6 +163,40 @@ const LateralDeatilPanel = props => {
               }}
               variant='h6'
             >{controller.local_area_controller_number}번 {controller.controller_name}</Typography>
+          </Box>
+          <Box
+          className="lookAtMe"
+            sx={{
+              '& .MuiFormGroup-root':{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'space-around'
+              }
+            }}
+          >
+              <FormGroup>
+                {/*--- Checkbox Installed  */}
+                <FormControlLabel 
+                  control={
+                    <Checkbox
+                      color={'primary'}
+                      onChange={handleInstallCheckbox}
+                      checked={controller.is_installed}
+                      data-controller={controller.id}                   
+                    />
+                  }
+                  label={'설치 여부'} 
+                />
+                {/*--- Switch School zone */}
+                <FormControlLabel 
+                  control={
+                    <SchoolZoneSwitch
+                      checked={controller.is_school_zone}
+                    />
+                  }
+                  label={'스쿨존'}
+                />
+              </FormGroup>
           </Box>
           <Box 
             sx={{
@@ -200,7 +265,7 @@ const LateralDeatilPanel = props => {
             </Box>
           </Box>
         </Drawer>
-      </Box>
+      </div>
     ):(`Here ${openDrawer}`)
   );
 }
@@ -246,4 +311,53 @@ const TextAndInputComponent = props => {
   );
 }
 
-export { LateralDeatilPanel };
+const SchoolZoneSwitch =  styled(Switch)(({ theme }) => ({
+  width: 62,
+  height: 34,
+  padding: 7,
+  '& .MuiSwitch-switchBase': {
+    margin: 0,
+    padding: 0,
+    transform: 'translateX(6px)',
+    '&.Mui-checked': {
+      color: '#fff',
+      transform: 'translateX(22px)',
+      '& .MuiSwitch-thumb:before': {
+        backgroundColor: theme.palette.mode === 'dark' ? '#003892' : 'orange',
+        borderRadius: 50,
+        backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 20 20"><path fill="${encodeURIComponent(
+        '#fff',
+        )}" d="M3,6C1.89,6 1,6.89 1,8V15H3A3,3 0 0,0 6,18A3,3 0 0,0 9,15H15A3,3 0 0,0 18,18A3,3 0 0,0 21,15H23V12C23,10.89 22.11,10 21,10H19V8C19,6.89 18.11,6 17,6H3M13.5,7.5H17.5V10H13.5V7.5M2.5,7.5H6.5V10H2.5V7.5M8,7.5H12V10H8V7.5M6,13.5A1.5,1.5 0 0,1 7.5,15A1.5,1.5 0 0,1 6,16.5A1.5,1.5 0 0,1 4.5,15A1.5,1.5 0 0,1 6,13.5M18,13.5A1.5,1.5 0 0,1 19.5,15A1.5,1.5 0 0,1 18,16.5A1.5,1.5 0 0,1 16.5,15A1.5,1.5 0 0,1 18,13.5Z"/></svg>')`,
+      },
+      '& + .MuiSwitch-track': {
+        opacity: 1,
+        backgroundColor: theme.palette.mode === 'dark' ? '#8796A5' : '#ffc8008c',
+      },
+    },
+  },
+  '& .MuiSwitch-thumb': {
+    backgroundColor: theme.palette.mode === 'dark' ? '#003892' : '#777',
+    width: 32,
+    height: 32,
+    '&:before': {
+      content: "''",
+      position: 'absolute',
+      width: '100%',
+      height: '100%',
+      left: 0,
+      top: 0,
+      backgroundRepeat: 'no-repeat',
+      backgroundPosition: 'center',
+      backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 20 20"><path fill="${encodeURIComponent(
+          '#fff',
+        )}" d="0"/></svg>')`,
+    },
+  },
+  '& .MuiSwitch-track': {
+    opacity: 1,
+    backgroundColor: theme.palette.mode === 'dark' ? '#8796A5' : '#aab4be',
+    borderRadius: 20 / 2,
+  },
+}));
+
+export { LateralDetailPanel };
