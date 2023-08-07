@@ -12,7 +12,7 @@ import { Box, Button, Typography, Menu, MenuItem, Fade,
 import ChevronDown from 'mdi-material-ui/ChevronDown'
 
 // ** Utils
-import { postFetchURL } from 'src/@core/utils/fetchHelper'
+import { putFetchURL } from 'src/@core/utils/fetchHelper'
 
 const LateralDetailPanel = props => {
 
@@ -29,9 +29,11 @@ const LateralDetailPanel = props => {
   const [schoolSwitch, setSchoolSwitch] = useState(false);
 
   // ** Form Delivery
-  const [formValues, setFormValues] = useState([]);
+  const [formValues, setFormValues] = useState({id: controller.id});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+
+  // ** handlers Functions ~~
   const open = Boolean(anchorEl);
   const handleClick = event => { setAnchorEl(event.currentTarget)};
   const handleClose = event => { setAnchorEl(event.target.value)};
@@ -47,6 +49,55 @@ const LateralDetailPanel = props => {
     setMenuTitle(value);
     handleClose(event);
   }
+  
+  const handleInstallCheckbox = event => {
+    let checkBox = event.currentTarget;
+    let checked  = checkBox.checked;
+    
+    setControllerStatus(checked);
+    
+    if(edit){
+      setFormValues({...formValues, ['is_installed']: checked});
+      setFormValues({...formValues, ['is_active']: checked});
+      setInstalledCheckbox(checked);
+    }
+  }
+
+  const handleSwitchSchool = event => {
+    let checkBox = event.currentTarget;
+    let checked  = checkBox.checked;
+    
+    if(edit){
+      setFormValues({...formValues, ['is_school_zone']: checked});
+      setSchoolSwitch(checked);
+    }
+  }
+
+  const handleChangeInputComponent = event => {
+    const {name, value} = event.target;
+    console.log(event.target);
+    setFormValues({...formValues, [name]: value});
+  }
+
+  const handleSubmit = event => {
+    event.preventDefault();
+    try{
+      let validateSubmit = false;
+
+      // Check errors
+      let errors = validate(formValues);
+      setFormValues({...formValues, errors: errors });
+
+      validateSubmit = true;
+
+      //setFormErrors(validateSubmit);
+      setFormValues({...formValues, ['id']: controller.id});
+      setIsSubmitting(validateSubmit);  
+
+    } catch (error) {
+      if(error !== undefined )console.log(error)
+    }
+  }
 
   const toogleDrawer = (anchor, open) => event => {
     if(event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
@@ -58,36 +109,26 @@ const LateralDetailPanel = props => {
 
   }
   
-  const handleInstallCheckbox = event => {
-    let checkBox = event.currentTarget;
-    let checked  = checkBox.checked;
-    
-    setControllerStatus(checked);
-    
-    if(edit){
-      setInstalledCheckbox(checked);
-    }
-  }
-
-  const handleSwitchSchool = event => {
-    let checkBox = event.currentTarget;
-    let checked  = checkBox.checked;
-    
-    if(edit){
-      setSchoolSwitch(checked);
-    }
-  }
-
-  const handleSubmit = event => {
-    event.preventDefault();
-    postFetchURL(
-      `${process.env.REACT_APP_APIURL}/login`,
-      {user_ID: '1', user_pw:'haha' }
+  const postControllerForm = () =>{
+    putFetchURL(
+      `${process.env.REACT_APP_APIURL}/api/controllers/${controller.id}`,
+      {...formValues}
     ).then((response) => {
+      setIsSubmitting(false);
       console.log(response);
     }).catch(error => {
-      console.log(error);
+      if(error) console.error(JSON.stringify(error));
+      setIsSubmitting(false);
     })
+  }
+
+  const validate = formValues => {
+    let errors = {};
+
+    // 정규식 표현 - Regular expressions
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
+
+    return errors;
   }
 
   //***------- UseEffect */
@@ -102,7 +143,13 @@ const LateralDetailPanel = props => {
     console.log('value: '+controllerStatus);
   },[controller])
 
-  useEffect(() => {},[controllerStatus])
+  useEffect(() => {
+    if(isSubmitting){
+      postControllerForm();
+    }
+  }, [isSubmitting]);
+
+  useEffect(() => {},[controllerStatus]);
 
   //***------- Return >>> */
   return (
@@ -256,61 +303,75 @@ const LateralDetailPanel = props => {
             >
               <TextAndInputComponent
                 required = {true}
+                name = {'local_area_controller_number'}
                 inputTxt = {'관리번호'}
                 valueTxt = {`${controller.local_area_controller_number}번`}
                 labelTxt = {'관리번호'}
                 edit={edit}
+                onChange={handleChangeInputComponent}
                 value={formValues.field_1}
               />
               <TextAndInputComponent
                 required = {true}
+                name = {'local_goverment_controller_number'}
                 inputTxt = {'제어기 No.'}
                 valueTxt = {controller.local_goverment_controller_number? controller.local_goverment_controller_number:'-'}
                 labelTxt = {'제어기 No.'}
                 edit={edit}
+                onChange={handleChangeInputComponent}
                 value={formValues.field_2}
               />
               <TextAndInputComponent
                 required = {true}
+                name = {'controller_name'}
                 inputTxt = {'교차로명형태'}
                 valueTxt = {controller.controller_name}
                 labelTxt = {'교차로명형태'}
                 edit={edit}
+                onChange={handleChangeInputComponent}
                 value={formValues.field_3}
               />
               <TextAndInputComponent
                 required = {false}
+                name = {'controller_management_departnment'}
                 inputTxt = {'관리부서'}
                 valueTxt = {controller.controller_management_departnment}
                 labelTxt = {'관리부서'}
                 edit={edit}
+                onChange={handleChangeInputComponent}
                 value={formValues.field_4}
               />
               <TextAndInputComponent
                 required = {true}
+                name = {'controller_address'}
                 inputTxt = {'주소'}
                 valueTxt = {controller.controller_address}
                 labelTxt = {'주소'}
                 edit={edit}
+                onChange={handleChangeInputComponent}
                 multiline = {true}
                 value={formValues.field_5}
                 />
               <TextAndInputComponent
                 required = {true}
+                name = {'map_xy'}
                 inputTxt = {'좌표'}
-                valueTxt = {`X: ${controller.map_x}\r\n Y: ${controller.map_y}`}
+                valueTxt = {`X: ${controller.map_x}\r\nY: ${controller.map_y}`}
                 labelTxt = {'좌표'}
                 multiline = {true}
                 edit={edit}
+                onChange={handleChangeInputComponent}
                 value={formValues.field_6}
               />
               <TextAndInputComponent
                 required = {false}
+                name = {'bigo'}
                 inputTxt = {'비고'}
                 valueTxt = {controller.bigo}
                 labelTxt = {'비고'}
                 multiline = {true}
                 edit={edit}
+                onChange={handleChangeInputComponent}
                 value={formValues.field_7}
               />
               <Box
@@ -357,7 +418,8 @@ const LateralDetailPanel = props => {
 
 const TextAndInputComponent = props => {
 
-  const { inputTxt, valueTxt, labelTxt, multiline = false , edit, required} = props;
+  const { name, inputTxt, valueTxt, labelTxt, multiline = false , 
+    edit, required, onChange} = props;
 
   return (
     <Box
@@ -387,6 +449,7 @@ const TextAndInputComponent = props => {
         }}
       >{inputTxt}</Typography>
       <TextField
+        name={name}
         required={required}
         sx ={{width: '60%'}}
         className= 'textFieldFormDetails'
@@ -395,6 +458,7 @@ const TextAndInputComponent = props => {
         defaultValue={valueTxt}
         variant={!edit?"standard":"outlined"}
         multiline={multiline}
+        onChange={onChange}
       />
     </Box>
   );
