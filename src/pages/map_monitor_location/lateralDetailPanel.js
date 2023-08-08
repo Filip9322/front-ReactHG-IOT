@@ -40,14 +40,20 @@ const LateralDetailPanel = props => {
   const handleChange = event => {
     let value = event.target.getAttribute('data-option');
     
-    if(value == '설정'){
-      setEdit(true);
-    } else {
-      setEdit(false);
+    if(value != null){
+      if(value == '설정'){
+        setEdit(true);
+      } else {
+        setEdit(false);
+      }
+    
+      setMenuTitle(value);
     }
-
-    setMenuTitle(value);
     handleClose(event);
+  }
+  
+  const handleClickCancel = event =>{
+    setOpenDrawer(false);
   }
   
   const handleInstallCheckbox = event => {
@@ -75,7 +81,6 @@ const LateralDetailPanel = props => {
 
   const handleChangeInputComponent = event => {
     const {name, value} = event.target;
-    console.log(event.target);
     setFormValues({...formValues, [name]: value});
   }
 
@@ -134,13 +139,13 @@ const LateralDetailPanel = props => {
   //***------- UseEffect */
   useEffect(() => {
     if(controller.is_installed  !== undefined ){
+      
       if(controller.is_installed){
         setControllerStatus(controller.is_installed);
       }
       setSchoolSwitch(controller.is_school_zone);
       setInstalledCheckbox(controller.is_installed);
     }
-    console.log('value: '+controllerStatus);
   },[controller])
 
   useEffect(() => {
@@ -149,7 +154,9 @@ const LateralDetailPanel = props => {
     }
   }, [isSubmitting]);
 
-  useEffect(() => {},[controllerStatus]);
+  useEffect(() => {
+    console.log('changed');
+  },[openDrawer]);
 
   //***------- Return >>> */
   return (
@@ -398,6 +405,7 @@ const LateralDetailPanel = props => {
                   <Button
                     color={'error'}
                     variant={'outlined'}
+                    onClick={handleClickCancel}
                   >{'최소'}</Button>
                   :''}
                 {edit?
