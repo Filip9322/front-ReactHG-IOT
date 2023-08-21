@@ -22,6 +22,18 @@ const LateralDetailPanel = props => {
   const [anchorEl, setAnchorEl] = useState();
   const [menuTitle, setMenuTitle] = useState('기준시설 정보');
   
+  const initialFormValues = {
+    'local_goverment_controller_number' : controller.local_goverment_controller_number,
+    'controller_name local_area_controller_number': controller.local_area_controller_number,
+    'controller_name': controller.controller_name,
+    'controller_management_departnment': controller.controller_management_departnment,
+    'controller_address': controller.controller_address,
+    'map_x': controller.map_x,
+    'map_y': controller.map_y,
+    'bigo': controller.bigo
+  }
+  const [formController, setFormController] = useState(initialFormValues);
+
   const [edit, setEdit] = useState(false);
 
   const [controllerStatus, setControllerStatus] = useState(false);
@@ -136,6 +148,12 @@ const LateralDetailPanel = props => {
     return errors;
   }
 
+  const resetDrawerInfo = () => {
+    setMenuTitle('기준시설 정보');
+    setFormController(initialFormValues);
+    setEdit(false);
+  }
+
   //***------- UseEffect */
   useEffect(() => {
     if(controller.is_installed  !== undefined ){
@@ -145,6 +163,8 @@ const LateralDetailPanel = props => {
       }
       setSchoolSwitch(controller.is_school_zone);
       setInstalledCheckbox(controller.is_installed);
+
+      setFormController({...formController, ...controller});
     }
   },[controller])
 
@@ -155,7 +175,7 @@ const LateralDetailPanel = props => {
   }, [isSubmitting]);
 
   useEffect(() => {
-    console.log('changed');
+    resetDrawerInfo();
   },[openDrawer]);
 
   //***------- Return >>> */
@@ -314,7 +334,6 @@ const LateralDetailPanel = props => {
                 inputTxt = {'관리번호'}
                 valueTxt = {`${controller.local_area_controller_number}번`}
                 labelTxt = {'관리번호'}
-                edit={edit}
                 onChange={handleChangeInputComponent}
                 value={formValues.field_1}
               />
@@ -322,7 +341,7 @@ const LateralDetailPanel = props => {
                 required = {true}
                 name = {'local_goverment_controller_number'}
                 inputTxt = {'제어기 No.'}
-                valueTxt = {controller.local_goverment_controller_number? controller.local_goverment_controller_number:'-'}
+                valueTxt = {formController.local_goverment_controller_number? formController.local_goverment_controller_number:'-'}
                 labelTxt = {'제어기 No.'}
                 edit={edit}
                 onChange={handleChangeInputComponent}
@@ -330,9 +349,9 @@ const LateralDetailPanel = props => {
               />
               <TextAndInputComponent
                 required = {true}
-                name = {'controller_name'}
+                name = {'controller_name'} 
                 inputTxt = {'교차로명형태'}
-                valueTxt = {controller.controller_name}
+                valueTxt = {formController.controller_name}
                 labelTxt = {'교차로명형태'}
                 edit={edit}
                 onChange={handleChangeInputComponent}
@@ -342,7 +361,7 @@ const LateralDetailPanel = props => {
                 required = {false}
                 name = {'controller_management_departnment'}
                 inputTxt = {'관리부서'}
-                valueTxt = {controller.controller_management_departnment}
+                valueTxt = {formController.controller_management_departnment}
                 labelTxt = {'관리부서'}
                 edit={edit}
                 onChange={handleChangeInputComponent}
@@ -352,7 +371,7 @@ const LateralDetailPanel = props => {
                 required = {true}
                 name = {'controller_address'}
                 inputTxt = {'주소'}
-                valueTxt = {controller.controller_address}
+                valueTxt = {formController.controller_address}
                 labelTxt = {'주소'}
                 edit={edit}
                 onChange={handleChangeInputComponent}
@@ -363,7 +382,7 @@ const LateralDetailPanel = props => {
                 required = {true}
                 name = {'map_xy'}
                 inputTxt = {'좌표'}
-                valueTxt = {`X: ${controller.map_x}\r\nY: ${controller.map_y}`}
+                valueTxt = {`X: ${formController.map_x}\r\nY: ${formController.map_y}`}
                 labelTxt = {'좌표'}
                 multiline = {true}
                 edit={edit}
@@ -374,7 +393,7 @@ const LateralDetailPanel = props => {
                 required = {false}
                 name = {'bigo'}
                 inputTxt = {'비고'}
-                valueTxt = {controller.bigo}
+                valueTxt = {formController.bigo}
                 labelTxt = {'비고'}
                 multiline = {true}
                 edit={edit}
