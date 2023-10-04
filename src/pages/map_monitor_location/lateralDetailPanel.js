@@ -10,6 +10,7 @@ import { Box, Button, Typography, Menu, MenuItem, Fade,
 
 // ** Icons Imports
 import ChevronDown from 'mdi-material-ui/ChevronDown'
+import Server from 'mdi-material-ui/Server'
 
 // ** Utils
 import { putFetchURL } from 'src/@core/utils/fetchHelper'
@@ -18,6 +19,8 @@ const LateralDetailPanel = props => {
 
   // * Props and states
   const { controller, openDrawer, setOpenDrawer } = props;
+  const [ openLeftDrawer, setOpenLeftDrawer ] = useState(false);
+  
   const [state, setState] = useState({ right: openDrawer });
   const [anchorEl, setAnchorEl] = useState();
   const [menuTitle, setMenuTitle] = useState('기준시설 정보');
@@ -116,6 +119,24 @@ const LateralDetailPanel = props => {
     }
   }
 
+  const handleOpenLeftDrawer = (event) => {
+    event.preventDefault();
+    try{
+      setOpenLeftDrawer(true);
+      
+      console.log('open left drawer');
+    }catch(error){
+      if(error !== undefined ) console.log(error);
+    }
+  }
+
+  const toogleEquiStateDrawer = (anchor, open) => event => {
+    if(event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+      return;
+    }
+    setOpenLeftDrawer(open);
+  }
+
   const toogleDrawer = (anchor, open) => event => {
     if(event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
       return;
@@ -183,9 +204,27 @@ const LateralDetailPanel = props => {
     controller.id != null ? (
       <div>
         {openDrawer}
-        <Button onClick={toogleDrawer('right',true)}>
-          {controller.controller_name}{openDrawer.toString()}
+        <Button 
+          onClick={toogleDrawer('right',true)}
+          variant={'contained'}
+          sx={{
+            zIndex:4
+          }}
+        >
+          <Server fontSize='medium' /> {controller.controller_name}
         </Button>
+        <Drawer
+          className='drawerControllerDetails'
+          anchor={'left'}
+          open={openLeftDrawer}
+          onClose={toogleEquiStateDrawer('left', false)}
+          sx={{
+            backgroundColor: 'rgba(255,255,255,0.1)',
+            opacity: '1'
+          }}
+        >
+
+        </Drawer>
         <Drawer
           className='drawerDetails'
           anchor={'right'}
@@ -412,6 +451,9 @@ const LateralDetailPanel = props => {
                   <Button
                     color={'success'}
                     variant={'contained'}
+                    onClick={handleOpenLeftDrawer}
+                    data-larea={controller.local_area_id}
+                    data-controller-la-id={controller.local_area_controller_number}
                   >{'상세보기'}</Button>
                   :''}
                 {!edit?
@@ -439,7 +481,7 @@ const LateralDetailPanel = props => {
           </form>
         </Drawer>
       </div>
-    ):(`Here ${openDrawer}`)
+    ):('')
   );
 }
 
