@@ -1,11 +1,11 @@
 // ** React Imports
-import { useState, useEffect }  from 'react';
+import { useState, useEffect, forwardRef }  from 'react';
 
 // **  Material Components Imports
 import { styled } from '@mui/material/styles';
 import { Box, Button, Typography, Menu, MenuItem, Fade,
         Drawer, ToggleButtonGroup, ToggleButton, ListItemIcon,
-        TextField, Snackbar, FormGroup, FormControlLabel, Checkbox, Switch
+        TextField, Snackbar, Alert, FormGroup, FormControlLabel, Checkbox, Switch
       } from '@mui/material';
 
 // ** Icons Imports
@@ -14,12 +14,21 @@ import Server from 'mdi-material-ui/Server'
 
 // ** Utils
 import { putFetchURL } from 'src/@core/utils/fetchHelper'
+import { ControllerInformation } from '../controller/[local_area]/[controller_larea_id]'
+
+// ** Forward React Reference
+/*const Alert = forwardRef( function Alert(props, ref ) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+})*/
 
 const LateralDetailPanel = props => {
 
   // * Props and states
   const { controller, openDrawer, setOpenDrawer } = props;
-  const [ openLeftDrawer, setOpenLeftDrawer ] = useState(false);
+  const [ openEquiStatus, setOpenEquiStatus ] = useState(false);
+
+  const [ openSnackbar , setOpenSnackbar ]    = useState(false);
+  const [ isErrorSaving, setIsErrorSaving ]   = useState(false);
   
   const [state, setState] = useState({ right: openDrawer });
   const [anchorEl, setAnchorEl] = useState();
@@ -60,6 +69,12 @@ const LateralDetailPanel = props => {
         setEdit(true);
       } else {
         setEdit(false);
+      }
+
+      if(value == '상태'){
+        setOpenEquiStatus(true);
+      } else {
+        setOpenEquiStatus(false);
       }
     
       setMenuTitle(value);
@@ -119,22 +134,31 @@ const LateralDetailPanel = props => {
     }
   }
 
-  const handleOpenLeftDrawer = (event) => {
+  const handleOpenEquiStatus = (event) => {
     event.preventDefault();
     try{
-      setOpenLeftDrawer(true);
+      setOpenEquiStatus(true);
       
       console.log('open left drawer');
     }catch(error){
       if(error !== undefined ) console.log(error);
     }
   }
+  
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === 'clickanyway') {
+      return;
+    }
+
+    setOpenSnackbar(false);
+  }
 
   const toogleEquiStateDrawer = (anchor, open) => event => {
     if(event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
       return;
     }
-    setOpenLeftDrawer(open);
+    //setOpenDrawer(false);
+    setOpenEquiStatus(open);
   }
 
   const toogleDrawer = (anchor, open) => event => {
@@ -155,12 +179,20 @@ const LateralDetailPanel = props => {
       setIsSubmitting(false);
       console.log(response);
     }).catch(error => {
-      if(error) console.error(JSON.stringify(error));
-      setIsSubmitting(false);
+      if(error){
+        console.error(error);
+        setIsErrorSaving(true);
+        setIsSubmitting(false);
+      }
+    }).finally(() =>{
+      updateInitialValues();
+      setOpenSnackbar(true);
+      resetDrawerInfo();
     })
   }
 
-  const validate = formValues => {
+  const validate = formValues => { 
+    // TODO validate data to send to update controller info
     let errors = {};
 
     // 정규식 표현 - Regular expressions
@@ -170,9 +202,18 @@ const LateralDetailPanel = props => {
   }
 
   const resetDrawerInfo = () => {
-    setMenuTitle('기준시설 정보');
     setFormController(initialFormValues);
+    setMenuTitle('기준시설 정보');
     setEdit(false);
+  }
+
+  const updateInitialValues = () => {
+    for (const element of Object.keys(formValues))
+    {
+      if (element != 'id'){
+        initialFormValues[element] = formValues[element];
+      }
+    }
   }
 
   //***------- UseEffect */
@@ -199,6 +240,12 @@ const LateralDetailPanel = props => {
     resetDrawerInfo();
   },[openDrawer]);
 
+  useEffect(() => {
+    if(openEquiStatus){
+      setMenuTitle('상태');
+    }
+  }, [openEquiStatus] );
+
   //***------- Return >>> */
   return (
     controller.id != null ? (
@@ -214,18 +261,6 @@ const LateralDetailPanel = props => {
           <Server fontSize='medium' /> {controller.controller_name}
         </Button>
         <Drawer
-          className='drawerControllerDetails'
-          anchor={'left'}
-          open={openLeftDrawer}
-          onClose={toogleEquiStateDrawer('left', false)}
-          sx={{
-            backgroundColor: 'rgba(255,255,255,0.1)',
-            opacity: '1'
-          }}
-        >
-
-        </Drawer>
-        <Drawer
           className='drawerDetails'
           anchor={'right'}
           open={openDrawer}
@@ -235,73 +270,76 @@ const LateralDetailPanel = props => {
             opacity: '1'
           }}
         >
-          <form onSubmit={handleSubmit}>
-            <ToggleButtonGroup
-              color='primary'
-              value={1}
-              exclusive
-              aria-label={'지우기'}
+          <ToggleButtonGroup
+            color='primary'
+            value={1}
+            exclusive
+            aria-label={'지우기'}
+            sx={{
+              width: '100%',
+              display: 'flex',
+              justifyContent: 'center',
+              backgroundColor: 'rgba(241,244,249,1)',
+              '& .toggleTitle.Mui-disabled': { color: '#392d2d' }
+            }}
+          >
+            <ToggleButton
+              className='toggleTitle'
+              value='title'
               sx={{
-                width: '100%',
-                display: 'flex',
-                justifyContent: 'center',
-                backgroundColor: 'rgba(241,244,249,1)',
-                '& .toggleTitle.Mui-disabled': { color: '#392d2d' }
+                backgroundColor: 'rgba(230,224,235,1)'
               }}
+              disabled
             >
-              <ToggleButton
-                className='toggleTitle'
-                value='title'
-                sx={{
-                  backgroundColor: 'rgba(230,224,235,1)'
-                }}
-                disabled
+              {'설정 & 상태'}
+            </ToggleButton>
+            <ToggleButton 
+              sx={{
+                backgroundColor: 'rgba(255,255,255,1)'
+              }}
+              value='area'
+            >
+              <Box
+                id='btnSelectController'
+                color='secondary'
+                aria-controls={open ? 'basic-menu': undefined}
+                aria-haspopup='true'
+                aria-expanded={open ? 'true': undefined}
+                onClick={handleClick}
               >
-                {'설정 & 상태'}
-              </ToggleButton>
-              <ToggleButton 
+                {menuTitle}
+                <ListItemIcon>
+                  <ChevronDown fontSize='small' />
+                </ListItemIcon>
+              </Box>
+              <Menu
+                id = {'selectDetailController'}
+                MenuListProps={{'aria-labelledby': 'fade-button'}}
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                onClick={handleChange}
+                TransitionComponent={Fade}
                 sx={{
-                  backgroundColor: 'rgba(255,255,255,1)'
+                  border: '0'
                 }}
-                value='area'
               >
-                <Box
-                  id='btnSelectController'
-                  color='secondary'
-                  aria-controls={open ? 'basic-menu': undefined}
-                  aria-haspopup='true'
-                  aria-expanded={open ? 'true': undefined}
-                  onClick={handleClick}
-                >
-                  {menuTitle}
-                  <ListItemIcon>
-                    <ChevronDown fontSize='small' />
-                  </ListItemIcon>
-                </Box>
-                <Menu
-                  id = {'selectDetailController'}
-                  MenuListProps={{'aria-labelledby': 'fade-button'}}
-                  anchorEl={anchorEl}
-                  open={open}
-                  onClose={handleClose}
-                  onClick={handleChange}
-                  TransitionComponent={Fade}
-                  sx={{
-                    border: '0'
-                  }}
-                >
-                  <MenuItem
-                    data-option={'기준시설 정보'}
-                  >{'기준시설 정보'}</MenuItem>
-                  <MenuItem
-                    data-option={'설정'}
-                  >{'설정'}</MenuItem>
-                  <MenuItem
-                    data-option={'상태'}
-                  >{'상태'}</MenuItem>
-                </Menu>
-              </ToggleButton>
-            </ToggleButtonGroup>
+                <MenuItem
+                  data-option={'기준시설 정보'}
+                >{'기준시설 정보'}</MenuItem>
+                <MenuItem
+                  data-option={'설정'}
+                >{'설정'}</MenuItem>
+                <MenuItem
+                  data-option={'상태'}
+                >{'상태'}</MenuItem>
+              </Menu>
+            </ToggleButton>
+          </ToggleButtonGroup>
+          <form
+            hidden={ openEquiStatus }
+            onSubmit={ handleSubmit } 
+          >
             <Box
               sx={{
                 display: 'flex',
@@ -451,7 +489,7 @@ const LateralDetailPanel = props => {
                   <Button
                     color={'success'}
                     variant={'contained'}
-                    onClick={handleOpenLeftDrawer}
+                    onClick={handleOpenEquiStatus}
                     data-larea={controller.local_area_id}
                     data-controller-la-id={controller.local_area_controller_number}
                   >{'상세보기'}</Button>
@@ -479,6 +517,25 @@ const LateralDetailPanel = props => {
               </Box>
             </Box>
           </form>
+          <Box
+            hidden={!openEquiStatus}
+          >
+            <ControllerInformation 
+              controller={ controller }
+              openEquiStatus={ openEquiStatus }
+              setOpenEquiStatus={ setOpenEquiStatus }
+            />
+          </Box>
+          <Snackbar 
+            open={openSnackbar}
+            autoHideDuration={6000}
+            onClose={handleSnackbarClose}
+          >
+            {isErrorSaving? 
+              <Alert onClose={handleSnackbarClose} severity="error" variant='filled'> 저장 실페됬어요! </Alert> :
+              <Alert onClose={handleSnackbarClose} severity="success" variant='filled'> 저장 완료됬어요! </Alert>
+            }
+          </Snackbar>
         </Drawer>
       </div>
     ):('')
