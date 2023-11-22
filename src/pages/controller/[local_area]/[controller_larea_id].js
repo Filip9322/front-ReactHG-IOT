@@ -1,22 +1,33 @@
 // ** React imports
-import { useState, useEffect } from 'react';
-import { Map, MapTypeId, 
+import { useState, useEffect, useRef } from 'react';
+import { Map,
   MapTypeControl, ZoomControl } from "react-kakao-maps-sdk";
   
 // ** Material Components Imports
 import { Box, Typography } from '@mui/material'
 
 // ** Utils
-import { KakaoInit } from 'src/@core/utils/kakao_map_api'
-
+//import { KakaoInit } from 'src/@core/utils/kakao_map_api';
+//import { useKakaoLoader, bIsKakaoMapLoaded } from 'src/@core/utils/usekakaoLoader';
 
 const ControllerInformation = props => {
+
+  const refButton = useRef(null);
 
   const { controller, openEquiState, setOpenEquiStatus } = props;
   const [lat, setLat] = useState(controller.map_x);
   const [lng, setLng] = useState(controller.map_y);
 
   const [kakaoInitated, setKakaoInitiated] = useState(false);
+
+  useEffect(() => {
+    //console.log(bIsKakaoMapLoaded());
+
+    /*const element = document.querySelectorAll("button[title='스카이뷰']")[1];
+    refButton = element;
+    //refButton.click();
+    */
+  });
 
   return(
     <Box 
@@ -48,19 +59,43 @@ const ControllerInformation = props => {
           height: '100%',
           display: 'flex',
           flexDirection: 'column',
-          padding: '0 30px'
+          padding: '0 30px',
+          '& #react-kakao-maps-sdk-map-container':
+          {
+            '& div:nth-of-type(3)':{
+              '& div:nth-of-type(1)':{
+                width: '130px !important',
+                boxSizing: 'initial !important',
+                '& button:nth-of-type(1)':{
+                  width: '30px !important'
+                }
+              },
+              '& div:nth-of-type(2) div':{
+                width: 'initial !important',
+                '& div':{
+                  width: '32px !important',
+                  '& div:nth-of-type(1), & div:nth-of-type(2)':
+                  {
+                    width: '4px !important'
+                  },
+                  '& :nth-of-type(3)':{
+                    width: '20px !important'
+                  }
+                }
+              }
+            }
+          }
         }}
       >
         <Map
         center={{ lat: lat, lng: lng }}
         style={{
-          width: "100%",
-          height: "800px",
+          width: "1240px",
+          height: "505px",
           border: 'solid 1px #aaa'
         }}
         draggable = {false}
       >
-        <MapTypeId type={kakao.maps.MapTypeId.SKYVIEW} />
         <MapTypeControl />
         <ZoomControl />
       </Map>
@@ -69,5 +104,7 @@ const ControllerInformation = props => {
     </Box>
   )
 }
+
+//<MapTypeId type={kakao.maps.MapTypeId.SKYVIEW} />
 
 export { ControllerInformation };
