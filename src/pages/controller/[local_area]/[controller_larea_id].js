@@ -7,8 +7,7 @@ import { Map,
 import { Box, Typography } from '@mui/material'
 
 // ** Utils
-//import { KakaoInit } from 'src/@core/utils/kakao_map_api';
-//import { useKakaoLoader, bIsKakaoMapLoaded } from 'src/@core/utils/usekakaoLoader';
+import { getFetchURL } from 'src/@core/utils/fetchHelper';
 
 const ControllerInformation = props => {
 
@@ -20,14 +19,36 @@ const ControllerInformation = props => {
 
   const [kakaoInitated, setKakaoInitiated] = useState(false);
 
+  async function fetchEquiState(){
+    //setSpinner(true);
+    getFetchURL(
+      `${process.env.REACT_APP_APIURL}/equi_state/${controller.local_area_id}/${controller.id}`
+    ).then(response => {
+      if(response) {
+        response.map ( equi_state => {
+          console.log(equi_state.id);
+        })
+      }
+    }).catch(error => {
+      console.error('error: '+ error);
+    }).finally(() => {
+      //setSpinner(false);
+    })
+  }
+
   useEffect(() => {
+    if(controller.local_area_id && controller.id) {
+      fetchEquiState();
+    } else {
+      console.error('Missing local_area id or controller ID');
+    }
     //console.log(bIsKakaoMapLoaded());
 
     /*const element = document.querySelectorAll("button[title='스카이뷰']")[1];
     refButton = element;
     //refButton.click();
     */
-  });
+  },[]);
 
   return(
     <Box 
@@ -56,7 +77,7 @@ const ControllerInformation = props => {
           backgroundColor: 'rgba(241,244,249,1)',
           width: '100%',
           minWidth:' 400px',
-          height: '100%',
+          height: '505px',
           display: 'flex',
           flexDirection: 'column',
           padding: '0 30px',
@@ -74,13 +95,8 @@ const ControllerInformation = props => {
                 width: 'initial !important',
                 '& div':{
                   width: '32px !important',
-                  '& div:nth-of-type(1), & div:nth-of-type(2)':
-                  {
-                    width: '4px !important'
-                  },
-                  '& :nth-of-type(3)':{
-                    width: '20px !important'
-                  }
+                  '& div:nth-of-type(1), & div:nth-of-type(2)': { width: '4px !important' },
+                  '& :nth-of-type(3)':{ width: '20px !important' }
                 }
               }
             }
