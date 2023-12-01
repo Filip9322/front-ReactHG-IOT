@@ -1,10 +1,10 @@
 // ** React imports
 import { useState, useEffect, useRef } from 'react';
-import { Map,
+import { Map, MapMarker, MapTypeId,
   MapTypeControl, ZoomControl } from "react-kakao-maps-sdk";
   
 // ** Material Components Imports
-import { Box, Typography } from '@mui/material'
+import { Box, Typography, CircularProgress } from '@mui/material'
 
 // ** Utils
 import { getFetchURL } from 'src/@core/utils/fetchHelper';
@@ -14,25 +14,41 @@ const ControllerInformation = props => {
   const refButton = useRef(null);
 
   const { controller, openEquiState, setOpenEquiStatus } = props;
+
+  const [spinner, setSpinner] = useState(true);
+  const [devices, setDevices] = useState([]);
+  const [deviceLocations, setDevicesLocations] = useState([]);
   const [lat, setLat] = useState(controller.map_x);
   const [lng, setLng] = useState(controller.map_y);
 
   const [kakaoInitated, setKakaoInitiated] = useState(false);
 
   async function fetchEquiState(){
-    //setSpinner(true);
+    setSpinner(true);
     getFetchURL(
-      `${process.env.REACT_APP_APIURL}/equi_state/${controller.local_area_id}/${controller.id}`
+      `${process.env.REACT_APP_APIURL}/equi_state/${controller.local_area_id}/${controller.local_area_controller_number}`
     ).then(response => {
       if(response) {
-        response.map ( equi_state => {
-          console.log(equi_state.id);
+        let ArrayLocations = [];
+        response.map((equi_state, rowID) => {
+          let location = equi_state.gwl.split(',');
+          let locObject = 
+          {
+            'id': rowID,
+            'posX': location[0],
+            'posY': location[1]
+          }
+          ArrayLocations.push(locObject);
+          console.log('posX: '+location[0]+' posY: '+location[1]);
         })
+
+        setDevices(response);
+        setDevicesLocations(ArrayLocations);
       }
     }).catch(error => {
       console.error('error: '+ error);
     }).finally(() => {
-      //setSpinner(false);
+      setSpinner(false);
     })
   }
 
@@ -42,13 +58,13 @@ const ControllerInformation = props => {
     } else {
       console.error('Missing local_area id or controller ID');
     }
-    //console.log(bIsKakaoMapLoaded());
-
-    /*const element = document.querySelectorAll("button[title='스카이뷰']")[1];
-    refButton = element;
-    //refButton.click();
-    */
+    /*const element = document.querySelectorAll("button[title='스카이뷰']")[1]; refButton = element; //refButton.click();*/
   },[]);
+
+  useEffect(() => {
+    setKakaoInitiated(true);
+  },[devices]);
+  useEffect(() => {},[kakaoInitated]);
 
   return(
     <Box 
@@ -70,7 +86,7 @@ const ControllerInformation = props => {
           marginBottom: 5
         }}
         variant='h6'
-      >{controller.local_area_controller_number}번 {controller.controller_name}</Typography>
+      >{controller.local_area_controller_number}번 {controller.controller_name} Controllers: {deviceLocations.length}</Typography>
       <Box
         className="content-map"
         sx={{
@@ -103,7 +119,8 @@ const ControllerInformation = props => {
           }
         }}
       >
-        <Map
+      { (kakaoInitated && !spinner ) ? (
+      <Map
         center={{ lat: lat, lng: lng }}
         style={{
           width: "1240px",
@@ -111,16 +128,49 @@ const ControllerInformation = props => {
           border: 'solid 1px #aaa'
         }}
         draggable = {false}
+        level={1}
       >
         <MapTypeControl />
         <ZoomControl />
+        {/* -- Listing All Equi_states -- */}
+        {
+          devices.map((row, rowID) => {
+            return (
+              <MapMarker 
+                position={{
+                  lat: row.map_y,
+                  lng: row.map_x
+                }}
+                key={rowID}
+                sx={{
+                  with: '100%',
+                  border: 0
+                }}
+                infoWindowOptions={{
+                  className: 'markerInfoWindow',
+                  style: {display: 'none', width: '100%'}
+                }}
+                clickable = {false}
+                image={{
+                  src: `/icon/numberMapMarker/b_${rowID+1}.png`,
+                  size: {width: 30, height: 30},
+                  option: {
+                    spriteSize: { width: 36, height: 98 },
+                    spriteOrigin: {x: 0, y: 0}
+                  }
+                }}
+              />
+            )
+          })
+        }
+        <MapTypeId type={kakao.maps.MapTypeId.HYBRID} />
       </Map>
-      
+      ):
+      <CircularProgress /> 
+    }
       </Box>
     </Box>
   )
 }
-
-//<MapTypeId type={kakao.maps.MapTypeId.SKYVIEW} />
-
+//<MapTypeId type={kakao.maps.MapTypeId.HYBRID} />
 export { ControllerInformation };
