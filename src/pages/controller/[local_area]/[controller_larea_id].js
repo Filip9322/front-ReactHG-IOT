@@ -39,7 +39,7 @@ const ControllerInformation = props => {
             'posY': location[1]
           }
           ArrayLocations.push(locObject);
-          console.log('posX: '+location[0]+' posY: '+location[1]);
+          //console.log('posX: '+location[0]+' posY: '+location[1]);
         })
 
         setDevices(response);
@@ -65,6 +65,67 @@ const ControllerInformation = props => {
     setKakaoInitiated(true);
   },[devices]);
   useEffect(() => {},[kakaoInitated]);
+  
+  //** -- Custom Marker Component */
+  const CustomMarkerComponent = props => {
+
+    const {equi_state, rowID} = props;
+    const [hoverMarker, setHoverMarker] = useState(false);
+
+    useEffect(()=>{
+      console.log(equi_state.id)
+    },[])
+
+    return (
+      <MapMarker 
+        position={{
+          lat: equi_state.map_y,
+          lng: equi_state.map_x
+        }}
+        key={rowID}
+        sx={{
+          with: '100%',
+          border: 0
+        }}
+        infoWindowOptions={{
+          className: 'markerInfoWindow',
+          style: {display: 'none', width: '100%'}
+        }}
+        clickable = {false}
+        image={{
+          src: `/icon/numberMapMarker/b_${equi_state.equi_num}.png`,
+          size: {width: 30, height: 30},
+          option: {
+            spriteSize: { width: 36, height: 98 },
+            spriteOrigin: {x: 0, y: 0}
+          }
+        }}
+        onMouseOver={
+          () => setHoverMarker(true)
+        }
+        onMouseOut={
+          () => setHoverMarker(false)
+        }
+      >
+        { hoverMarker && 
+        <div style={{
+            padding: "5px",
+            color: "#000",
+            display: "flex",
+            flexDirection:'column',
+            fontSize: 12,
+            height: "120px"
+            }}>
+          <span>발생일시: 2023-12-12 10:07:53</span>
+          <span>시설물상태: 정상</span>
+          <span>보행등상태: 정상</span>
+          <span>스피커상태: 정상</span>
+          <span>버튼상태: 정상</span>
+        </div>}
+      </MapMarker>
+    )
+
+  }
 
   return(
     <Box 
@@ -134,34 +195,10 @@ const ControllerInformation = props => {
         <ZoomControl />
         {/* -- Listing All Equi_states -- */}
         {
-          devices.map((row, rowID) => {
-            return (
-              <MapMarker 
-                position={{
-                  lat: row.map_y,
-                  lng: row.map_x
-                }}
-                key={rowID}
-                sx={{
-                  with: '100%',
-                  border: 0
-                }}
-                infoWindowOptions={{
-                  className: 'markerInfoWindow',
-                  style: {display: 'none', width: '100%'}
-                }}
-                clickable = {false}
-                image={{
-                  src: `/icon/numberMapMarker/b_${rowID+1}.png`,
-                  size: {width: 30, height: 30},
-                  option: {
-                    spriteSize: { width: 36, height: 98 },
-                    spriteOrigin: {x: 0, y: 0}
-                  }
-                }}
-              />
-            )
-          })
+          devices.map((row, rowID) => (
+            //*********** */
+            <CustomMarkerComponent key={rowID} equi_state ={row} rowID ={rowID}/>
+            ))  
         }
         <MapTypeId type={kakao.maps.MapTypeId.HYBRID} />
       </Map>

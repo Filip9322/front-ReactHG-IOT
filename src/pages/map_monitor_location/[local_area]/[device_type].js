@@ -202,6 +202,7 @@ const Map_Monitor_Location_Page = () => {
           {
             filteredControllers.map((controller, listID) =>{
               return(
+                (controller.map_x != null)?(
                 <MapDeviceMarker 
                   controller={controller} 
                   listID={listID} 
@@ -209,6 +210,7 @@ const Map_Monitor_Location_Page = () => {
                   clickController={clickController}
                   searchedController={searchedController}
                 />
+              ): ("")
               )
             })
           }
