@@ -218,7 +218,7 @@ const EquipmentTableDetails = props => {
   return (
     <TableContainer component={ Paper }>
       <TableHead sx={{ 
-        '& tr th.MuiTableCell-head, & tr th.MuiTableCell-head.MuiTableCell-head:first-of-type':{
+        '& tr th.MuiTableCell-head, & tr th.MuiTableCell-head:first-of-type':{
           fontSize: 12, 
           height: 29, 
           color: '#444', 
@@ -238,7 +238,7 @@ const EquipmentTableDetails = props => {
           <TableCell align='center' colSpan={3}>{"보행등상태"}</TableCell>
           <TableCell align='center' colSpan={6}>{"볼륨 및 소리 설정"}</TableCell>
           <TableCell align='center' colSpan={2}>{"신호세기"}</TableCell>
-          <TableCell align='center' colSpan={2}>{"주기"}</TableCell>
+          <TableCell align='center' rowSpan={2}>{"주기"}</TableCell>
           <TableCell align='center' rowSpan={2}>{"스쿨존"}<br/>{"안전"}<br/>{"경고"}<br/>{"사용"}<br/>{"상태"}</TableCell>
           <TableCell align='center' rowSpan={2}>{"안전"}<br/>{"경고"}<br/>{"간격"}</TableCell>
           <TableCell align='center' rowSpan={2}>{"시간"}<br/>{"설정값"}<br/>{"확인"}</TableCell>
@@ -256,8 +256,6 @@ const EquipmentTableDetails = props => {
           <TableCell align='center'>{"본체"}</TableCell>
           <TableCell align='center'>{"LoRa"}</TableCell>
           <TableCell align='center'>{"BLE"}</TableCell>
-          <TableCell align='center'>{"상판"}<br/>{"열림"}<br/>{"횟수"}</TableCell>
-          <TableCell align='center'>{"버튼"}<br/>{"동작"}<br/>{"횟수"}</TableCell>
           <TableCell align='center'>{"358"}<br/>{"신호"}</TableCell>
           <TableCell align='center'>{"358"}<br/>{"유도"}</TableCell>
           <TableCell align='center'>{"235"}<br/>{"상호"}</TableCell>
@@ -274,8 +272,51 @@ const EquipmentTableDetails = props => {
           <TableCell align='center'>{"신호"}<br/>{"거리"}</TableCell>
         </TableRow>
       </TableHead>
-      <TableBody>
+      <TableBody sx={{ 
+        '& tr td.MuiTableCell-body, & tr td.MuiTableCell-body:first-of-type':{
+          fontSize: 12, 
+          height: 29, 
+          color: '#777',  
+          border: '1px solid #9d9d9d', 
+          padding: '2px 4px'
+        }
+      }}>
         {/* Listing All Equipment ------ */}
+        <TableRow sx={{boxSizing: 'content-box'}}>
+          <TableCell align='center'>{"1"}</TableCell>
+          <TableCell align='center'>{"1"}</TableCell>
+          <TableCell align='center'>{"702c1ffffe4fae0e"}</TableCell>
+          <TableCell align='center'>{"시청앞교차로방향"}</TableCell>
+          <TableCell align='center'>{"2023-12-14 10:33:30"}</TableCell>
+          <TableCell align='center'>{"정상"}</TableCell>
+          <TableCell align='center'>{"정상"}</TableCell>
+          <TableCell align='center'>{"정상"}</TableCell>
+          <TableCell align='center'>{"2"}<br/>{"1/1"}</TableCell>
+          <TableCell align='center'>{"정상"}</TableCell>
+          <TableCell align='center'>{"2021.7.a	"}</TableCell>
+          <TableCell align='center'>{"2020.5.c"}</TableCell>
+          <TableCell align='center'>{"2020.7.a"}</TableCell>
+          <TableCell align='center'>{"0"}</TableCell>
+          <TableCell align='center'>{"11"}</TableCell>
+          <TableCell align='center'>{"2"}</TableCell>
+          <TableCell align='center'>{"5"}</TableCell>
+          <TableCell align='center'>{"정상"}</TableCell>
+          <TableCell align='center'>{"정상"}</TableCell>
+          <TableCell align='center'>{"정상"}</TableCell>
+          <TableCell align='center'>{"정상"}</TableCell>
+          <TableCell align='center'>{"0"}</TableCell>
+          <TableCell align='center'>{"20"}</TableCell>
+          <TableCell align='center'>{"16"}</TableCell>
+          <TableCell align='center'>{"12"}</TableCell>
+          <TableCell align='center'>{"50"}</TableCell>
+          <TableCell align='center'>{"20"}</TableCell>
+          <TableCell align='center'>{"32"}</TableCell>
+          <TableCell align='center'>{"42"}</TableCell>
+          <TableCell align='center'>{"240"}</TableCell>
+          <TableCell align='center'>{"설정없음"}</TableCell>
+          <TableCell align='center'>{"10"}</TableCell>
+          <TableCell align='center'><a>{"시간"}<br/>{"설정값"}</a></TableCell>
+        </TableRow>
       </TableBody>
     </TableContainer>
   );
