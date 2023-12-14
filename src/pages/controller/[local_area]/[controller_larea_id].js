@@ -5,6 +5,7 @@ import { Map, MapMarker, MapTypeId,
   
 // ** Material Components Imports
 import { Box, Typography, CircularProgress } from '@mui/material'
+import { Paper, Table, TableHead, TableBody, TableRow, TableCell, TableContainer } from '@mui/material'
 
 // ** Utils
 import { getFetchURL } from 'src/@core/utils/fetchHelper';
@@ -206,8 +207,78 @@ const ControllerInformation = props => {
       <CircularProgress /> 
     }
       </Box>
+      <EquipmentTableDetails />
     </Box>
   )
 }
-//<MapTypeId type={kakao.maps.MapTypeId.HYBRID} />
+
+
+const EquipmentTableDetails = props => {
+
+  return (
+    <TableContainer component={ Paper }>
+      <TableHead sx={{ 
+        '& tr th.MuiTableCell-head, & tr th.MuiTableCell-head.MuiTableCell-head:first-of-type':{
+          fontSize: 12, 
+          height: 29, 
+          color: '#444', 
+          fontWeight: '700', 
+          border: '1px solid #9d9d9d', 
+          padding: '2px 4px'
+        }
+      }}>
+        <TableRow>
+          <TableCell align='center' rowSpan={2}>{"부착"}<br/>{"번호"}</TableCell>
+          <TableCell align='center' colSpan={5}>{"제품정보"}</TableCell>
+          <TableCell align='center' colSpan={4}>{"제품상태"}</TableCell>
+          <TableCell align='center' colSpan={3}>{"펌웨어정보"}</TableCell>
+          <TableCell align='center' rowSpan={2}>{"상판"}<br/>{"열림"}<br/>{"횟수"}</TableCell>
+          <TableCell align='center' rowSpan={2}>{"버튼"}<br/>{"동작"}<br/>{"횟수"}</TableCell>
+          <TableCell align='center' colSpan={3}>{"통신상태"}</TableCell>
+          <TableCell align='center' colSpan={3}>{"보행등상태"}</TableCell>
+          <TableCell align='center' colSpan={6}>{"볼륨 및 소리 설정"}</TableCell>
+          <TableCell align='center' colSpan={2}>{"신호세기"}</TableCell>
+          <TableCell align='center' colSpan={2}>{"주기"}</TableCell>
+          <TableCell align='center' rowSpan={2}>{"스쿨존"}<br/>{"안전"}<br/>{"경고"}<br/>{"사용"}<br/>{"상태"}</TableCell>
+          <TableCell align='center' rowSpan={2}>{"안전"}<br/>{"경고"}<br/>{"간격"}</TableCell>
+          <TableCell align='center' rowSpan={2}>{"시간"}<br/>{"설정값"}<br/>{"확인"}</TableCell>
+        </TableRow>
+        <TableRow sx={{ '& th':{textTransform: 'none'}}}>
+          <TableCell align='center'>{"Addr"}</TableCell>
+          <TableCell align='center'>{"LoRa ID"}</TableCell>
+          <TableCell align='center'>{"음원"}</TableCell>
+          <TableCell align='center'>{"발생 시각"}</TableCell>
+          <TableCell align='center'>{"상태"}</TableCell>
+          <TableCell align='center'>{"버튼"}</TableCell>
+          <TableCell align='center'>{"스피커"}</TableCell>
+          <TableCell align='center'>{"그룹"}<br/>{"(횟수)"}</TableCell>
+          <TableCell align='center'>{"전원"}</TableCell>
+          <TableCell align='center'>{"본체"}</TableCell>
+          <TableCell align='center'>{"LoRa"}</TableCell>
+          <TableCell align='center'>{"BLE"}</TableCell>
+          <TableCell align='center'>{"상판"}<br/>{"열림"}<br/>{"횟수"}</TableCell>
+          <TableCell align='center'>{"버튼"}<br/>{"동작"}<br/>{"횟수"}</TableCell>
+          <TableCell align='center'>{"358"}<br/>{"신호"}</TableCell>
+          <TableCell align='center'>{"358"}<br/>{"유도"}</TableCell>
+          <TableCell align='center'>{"235"}<br/>{"상호"}</TableCell>
+          <TableCell align='center'>{"적색"}</TableCell>
+          <TableCell align='center'>{"녹색"}</TableCell>
+          <TableCell align='center'>{"잔여"}</TableCell>
+          <TableCell align='center'>{"안전"}<br/>{"경고"}<br/>{"횟수"}</TableCell>
+          <TableCell align='center'>{"볼륨"}</TableCell>
+          <TableCell align='center'>{"바탕음"}<br/>{"볼륨"}</TableCell>
+          <TableCell align='center'>{"멜로디"}<br/>{"볼륨"}</TableCell>
+          <TableCell align='center'>{"야간"}<br/>{"볼륨"}</TableCell>
+          <TableCell align='center'>{"안전"}<br/>{"경고"}<br/>{"볼륨"}</TableCell>
+          <TableCell align='center'>{"유도"}<br/>{"거리"}</TableCell>
+          <TableCell align='center'>{"신호"}<br/>{"거리"}</TableCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {/* Listing All Equipment ------ */}
+      </TableBody>
+    </TableContainer>
+  );
+}
+
 export { ControllerInformation };
