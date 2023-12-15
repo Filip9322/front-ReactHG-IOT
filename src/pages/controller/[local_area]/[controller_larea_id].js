@@ -207,13 +207,15 @@ const ControllerInformation = props => {
       <CircularProgress /> 
     }
       </Box>
-      <EquipmentTableDetails />
+      <EquipmentTableDetails devices = {devices} />
     </Box>
   )
 }
 
 
 const EquipmentTableDetails = props => {
+
+  const { devices } = props;
 
   return (
     <TableContainer component={ Paper }>
@@ -282,41 +284,43 @@ const EquipmentTableDetails = props => {
         }
       }}>
         {/* Listing All Equipment ------ */}
-        <TableRow sx={{boxSizing: 'content-box'}}>
-          <TableCell align='center'>{"1"}</TableCell>
-          <TableCell align='center'>{"1"}</TableCell>
-          <TableCell align='center'>{"702c1ffffe4fae0e"}</TableCell>
-          <TableCell align='center'>{"시청앞교차로방향"}</TableCell>
-          <TableCell align='center'>{"2023-12-14 10:33:30"}</TableCell>
-          <TableCell align='center'>{"정상"}</TableCell>
-          <TableCell align='center'>{"정상"}</TableCell>
-          <TableCell align='center'>{"정상"}</TableCell>
-          <TableCell align='center'>{"2"}<br/>{"1/1"}</TableCell>
-          <TableCell align='center'>{"정상"}</TableCell>
-          <TableCell align='center'>{"2021.7.a	"}</TableCell>
-          <TableCell align='center'>{"2020.5.c"}</TableCell>
-          <TableCell align='center'>{"2020.7.a"}</TableCell>
-          <TableCell align='center'>{"0"}</TableCell>
-          <TableCell align='center'>{"11"}</TableCell>
-          <TableCell align='center'>{"2"}</TableCell>
-          <TableCell align='center'>{"5"}</TableCell>
-          <TableCell align='center'>{"정상"}</TableCell>
-          <TableCell align='center'>{"정상"}</TableCell>
-          <TableCell align='center'>{"정상"}</TableCell>
-          <TableCell align='center'>{"정상"}</TableCell>
-          <TableCell align='center'>{"0"}</TableCell>
-          <TableCell align='center'>{"20"}</TableCell>
-          <TableCell align='center'>{"16"}</TableCell>
-          <TableCell align='center'>{"12"}</TableCell>
-          <TableCell align='center'>{"50"}</TableCell>
-          <TableCell align='center'>{"20"}</TableCell>
-          <TableCell align='center'>{"32"}</TableCell>
-          <TableCell align='center'>{"42"}</TableCell>
-          <TableCell align='center'>{"240"}</TableCell>
-          <TableCell align='center'>{"설정없음"}</TableCell>
-          <TableCell align='center'>{"10"}</TableCell>
-          <TableCell align='center'><a>{"시간"}<br/>{"설정값"}</a></TableCell>
-        </TableRow>
+        { devices.map((equi_state, rowID) =>(
+          <TableRow key={rowID} sx={{boxSizing: 'content-box'}}>
+            <TableCell align='center'>{equi_state.equi_num}</TableCell>
+            <TableCell align='center'>{equi_state.address}</TableCell>
+            <TableCell align='center'>{equi_state.lora_id}</TableCell>
+            <TableCell align='center'>{equi_state.sound_text}</TableCell>
+            <TableCell align='center'>{equi_state.occur_time}</TableCell>
+            <TableCell align='center'>{equi_state.state_code}</TableCell>{/* TODO: Based on the state code 0,1,4,6,98 the style changes */}
+            <TableCell align='center'>{equi_state.button_state}</TableCell> {/* TODO: Based on the button state 0,1 the style changes */}
+            <TableCell align='center'>{equi_state.speaker_state}</TableCell> {/* TODO: Based on the speaker state 0,1 the style changes */}
+            <TableCell align='center'>{equi_state.grid}<br/>{equi_state.guidecnt+"/"+equi_state.alertcnt}</TableCell>
+            <TableCell align='center'>{equi_state.light_state}</TableCell> {/* TODO: Based on the light state 0,1 the style changes */}
+            <TableCell align='center'>{equi_state.equiversion}</TableCell>
+            <TableCell align='center'>{equi_state.loraversion}</TableCell>
+            <TableCell align='center'>{equi_state.bleversion}</TableCell>
+            <TableCell align='center'>{equi_state.cover_cnt}</TableCell>
+            <TableCell align='center'>{equi_state.button_cnt}</TableCell>
+            <TableCell align='center'>{equi_state.m358_cnt}</TableCell>
+            <TableCell align='center'>{equi_state.m358i_cnt}</TableCell>
+            <TableCell align='center'>{equi_state.m235_cnt}</TableCell> {/* TODO: Based on the count = 0  style changes */}
+            <TableCell align='center'>{equi_state.rlstate == 1 ? '정상': '이상'}</TableCell>
+            <TableCell align='center'>{equi_state.glstate == 1 ? '정상': '이상'}</TableCell>
+            <TableCell align='center'>{equi_state.ulstate == 1 ? '정상': '이상'}</TableCell>
+            <TableCell align='center'>{equi_state.redsoundcnt}</TableCell>
+            <TableCell align='center'>{equi_state.volume}</TableCell>
+            <TableCell align='center'>{equi_state.bvolume}</TableCell>
+            <TableCell align='center'>{equi_state.mvolume}</TableCell>
+            <TableCell align='center'>{equi_state.nvolume}</TableCell>
+            <TableCell align='center'>{equi_state.svolume}</TableCell>
+            <TableCell align='center'>{equi_state.induce}</TableCell>
+            <TableCell align='center'>{equi_state.signal0}</TableCell>
+            <TableCell align='center'>{equi_state.period}</TableCell>
+            <TableCell align='center'>{equi_state.statewarning}</TableCell>
+            <TableCell align='center'>{equi_state.termofwarning}</TableCell>
+            <TableCell align='center'><a>{"시간"}<br/>{"설정값"}</a></TableCell>
+          </TableRow>
+        )) }
       </TableBody>
     </TableContainer>
   );
