@@ -59,23 +59,36 @@ const ControllerInformation = props => {
     } else {
       console.error('Missing local_area id or controller ID');
     }
+    console.log('called useEffect in ControllerInformation Component ')
     /*const element = document.querySelectorAll("button[title='스카이뷰']")[1]; refButton = element; //refButton.click();*/
   },[]);
 
   useEffect(() => {
+    console.log('called useEffect in ControllerInformation Component on devices ')
     setKakaoInitiated(true);
   },[devices]);
-  useEffect(() => {},[kakaoInitated]);
+
+  useEffect(() => {
+    console.log('called useEffect in ControllerInformation Component on change kakaoInitiated: '+kakaoInitated)
+  },[kakaoInitated]);
   
   //** -- Custom Marker Component */
   const CustomMarkerComponent = props => {
 
-    const {equi_state, rowID} = props;
+    const {equi_state, rowID, controller} = props;
     const [hoverMarker, setHoverMarker] = useState(false);
+    const [iconState, setIconState] = useState('b');
 
+    const prevController = useRef();
+  
     useEffect(()=>{
-      console.log(equi_state.id)
-    },[])
+      prevController.current = controller;
+    })
+    useEffect(()=>{
+      if(equi_state.state_code != 0) {setIconState('o'); console.log('state_code: '+equi_state.state_code)}
+
+      if(prevController.current !== controller) console.log(`${iconState}_${equi_state.equi_num}.png ${prevController.current} - ${controller}`)
+    },[controller])
 
     return (
       <MapMarker 
@@ -94,7 +107,7 @@ const ControllerInformation = props => {
         }}
         clickable = {false}
         image={{
-          src: `/icon/numberMapMarker/b_${equi_state.equi_num}.png`,
+          src: `/icon/numberMapMarker/${iconState}_${equi_state.equi_num}.png`,
           size: {width: 30, height: 30},
           option: {
             spriteSize: { width: 36, height: 98 },
@@ -117,11 +130,11 @@ const ControllerInformation = props => {
             fontSize: 12,
             height: "120px"
             }}>
-          <span>발생일시: 2023-12-12 10:07:53</span>
-          <span>시설물상태: 정상</span>
-          <span>보행등상태: 정상</span>
-          <span>스피커상태: 정상</span>
-          <span>버튼상태: 정상</span>
+          <span>{`발생일시: ${equi_state.occur_time}`}</span>
+          <span>{`시설물상태:`} <CheckStateValue stateValue ={equi_state.state_code}/></span>
+          <span>{`보행등상태:`} <CheckLightStateValue lightState={equi_state.light_state}/></span>
+          <span>{`스피커상태:`} <CheckSpeakeStateValue speakerState={equi_state.speaker_state}/></span>
+          <span>{`버튼상태:`} <CheckButtonStateValue buttonState={equi_state.button_state}/></span>
         </div>}
       </MapMarker>
     )
@@ -198,7 +211,7 @@ const ControllerInformation = props => {
         {
           devices.map((row, rowID) => (
             //*********** */
-            <CustomMarkerComponent key={rowID} equi_state ={row} rowID ={rowID}/>
+            <CustomMarkerComponent controller={controller.local_area_id} key={rowID} equi_state ={row} rowID ={rowID}/>
             ))  
         }
         <MapTypeId type={kakao.maps.MapTypeId.HYBRID} />
@@ -212,6 +225,106 @@ const ControllerInformation = props => {
   )
 }
 
+const CheckStateValue = props => {
+  
+  const {stateValue} = props;
+  var color, text;
+
+  if (stateValue == 0){
+    color = 'green';
+    text = '정상';
+  } else {
+    color = 'red';    
+    switch(stateValue){
+      case 1: {
+        text = '이상';
+        break;
+      }
+      case 88: {
+        text = '통신에러';
+        break;
+      }
+      case 98: {
+        text = '보고중단'
+        break;
+      } 
+      default: { //  TODO: Check '이상' code: 99 ?
+        text = '이상';
+        break;
+      }
+    }
+  }
+
+  return (
+    <span style={{color: color}}>{text}</span>
+  );
+}
+
+const CheckButtonStateValue = props => {
+  const {buttonState} = props;
+  var color, text;
+  if(buttonState == 1){
+    color = 'green';
+    text = '정상';
+  }else {
+    color = 'red';
+    text = '이상';
+  }
+  return (
+    <span style={{color: color}}>{text}</span>
+  );
+}
+
+const CheckSpeakeStateValue = props => {
+  const {speakerState} = props;
+  var color, text;
+  if(speakerState == 1){
+    color = 'green';
+    text = '정상';
+  }else {
+    color = 'red';
+    text = '이상';
+  }
+  return (
+    <span style={{color: color}}>{text}</span>
+  );
+}
+
+const CheckLightStateValue = props => {
+  const {lightState} = props;
+  var color, text;
+
+  switch(lightState){
+    case 1: {
+      color= 'green';
+      text = '정상';
+      break;
+    }
+    case 2: {
+      color= 'red';
+      text = '적색이상';
+      break;
+    }
+    case 4: {
+      color= 'red';
+      text = '녹색이상';
+      break;
+    }
+    case 6: {
+      color= 'red';
+      text = '전원이상';
+      break;
+    }
+    default: {
+      color= 'red';
+      text = '전원이상';
+      break;
+    }
+  }
+  return (
+    <span style={{color: color}}>{text}</span>
+  );
+}
 
 const EquipmentTableDetails = props => {
 
@@ -291,11 +404,11 @@ const EquipmentTableDetails = props => {
             <TableCell align='center'>{equi_state.lora_id}</TableCell>
             <TableCell align='center'>{equi_state.sound_text}</TableCell>
             <TableCell align='center'>{equi_state.occur_time}</TableCell>
-            <TableCell align='center'>{equi_state.state_code}</TableCell>{/* TODO: Based on the state code 0,1,4,6,98 the style changes */}
-            <TableCell align='center'>{equi_state.button_state}</TableCell> {/* TODO: Based on the button state 0,1 the style changes */}
-            <TableCell align='center'>{equi_state.speaker_state}</TableCell> {/* TODO: Based on the speaker state 0,1 the style changes */}
+            <TableCell align='center'><CheckStateValue stateValue={equi_state.state_code}/></TableCell>
+            <TableCell align='center'><CheckButtonStateValue buttonState={equi_state.button_state}/></TableCell>
+            <TableCell align='center'><CheckSpeakeStateValue speakerState={equi_state.speaker_state}/></TableCell>
             <TableCell align='center'>{equi_state.grid}<br/>{equi_state.guidecnt+"/"+equi_state.alertcnt}</TableCell>
-            <TableCell align='center'>{equi_state.light_state}</TableCell> {/* TODO: Based on the light state 0,1 the style changes */}
+            <TableCell align='center'><CheckLightStateValue lightState={equi_state.light_state}/></TableCell>
             <TableCell align='center'>{equi_state.equiversion}</TableCell>
             <TableCell align='center'>{equi_state.loraversion}</TableCell>
             <TableCell align='center'>{equi_state.bleversion}</TableCell>
