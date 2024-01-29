@@ -18,6 +18,10 @@ import { LateralDetailPanel } from '../lateralDetailPanel'
 import { set_ControllerStatusAndLogo, BtLateralMenu,
   filterControllerMapMarkersByType } from '../commons'
 
+// ** Redux
+import { useDispatch, useSelector } from 'react-redux'
+import { rootActions } from 'src/@core/redux/reducer'
+
 const Map_Monitor_Location_Page = () => {
   
   // ** States
@@ -36,6 +40,9 @@ const Map_Monitor_Location_Page = () => {
 
   const [filterMapMarker, setFilterMapMarker] = useState(1);
   
+	// ** Redux
+	const dispatch  = useDispatch();
+
   // ** Hooks
   const router = useRouter();
   
@@ -47,9 +54,20 @@ const Map_Monitor_Location_Page = () => {
       if(response) {
         setLocalArea(response);
         updateCoordinates(parseFloat(response.map_x), parseFloat(response.map_y));
+				
+				// Update Redux Current Local Area
+				dispatch(rootActions.updateCurrentLA_ID(localArea.id));
+				dispatch(rootActions.updateCurrentLA_Name(localArea.local_name));
+				dispatch(rootActions.updateCurrentLA_Logo(localArea.local_logo));
       }
     }).catch(error => { console.error('error: '+error)
-    }).finally(() => setSpinner(false));
+    }).finally(() => {
+			// Update Redux Current Local Area
+			dispatch(rootActions.updateCurrentLA_ID(localArea.id));
+			dispatch(rootActions.updateCurrentLA_Name(localArea.local_name));
+			dispatch(rootActions.updateCurrentLA_Logo(localArea.local_logo));
+			setSpinner(false)}
+		);
   }
 
   async function fetchControllers(){

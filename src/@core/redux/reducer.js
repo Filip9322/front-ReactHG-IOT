@@ -1,4 +1,3 @@
-import { combineReducers } from 'redux';
 import { configureStore, createSlice, combineSlices } from "@reduxjs/toolkit";
 
 export const counterSlice = createSlice ({
@@ -27,14 +26,18 @@ export const currentLocalArea = createSlice ({
     logo: ''
   },
   reducers: {
-    updateCurrentLA_ID: (state) =>{
+    updateCurrentLA_ID: (state, action) =>{
       state.id = action.payload
     },
-    updateCurrentLA_Name: (state) => {
+    updateCurrentLA_Name: (state, action) => {
       state.la_name  = action.payload;
     },
-    updateCurrentLA_Logo: (state) => {
-      state.logo = action.payload
+    updateCurrentLA_Logo: (state, action) => {
+      if(action.payload) {
+        state.logo = action.payload
+      } else {
+        state.logo = '/images/wide-areas/1-서울특별시.png';
+      }
     }
   }
 })
@@ -48,21 +51,9 @@ export const store = configureStore({
   reducer: rootReducer
 })
 
-
-/*export const { 
-    increment, decrement, incrementByAmount ,
-    updateCurrentLA_ID, updateCurrentLA_Name, updateCurrentLA_Logo
-  } = rootReducer.actions; */
-
 export const rootActions = {
   ...counterSlice.actions,
   ...currentLocalArea.actions
 }
 
-//export const { increment, decrement, incrementByAmount } = counterSlice.actions; 
-//export const { updateCurrentLA_ID, updateCurrentLA_Name, updateCurrentLA_Logo } = currentLocalArea.actions;
-
 export default rootReducer;
-
-// const store = createStore(rootReducer);
-// import { combineReducers, createStore } from 'redux';

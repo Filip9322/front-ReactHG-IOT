@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 
 // ** Redux
 import { useDispatch, useSelector } from 'react-redux';
-import { decrement, increment, incrementByAmount, rootActions } from 'src/@core/redux/reducer'
+import { rootActions } from 'src/@core/redux/reducer';
 
 import { Box, Grid, Card, CardContent, CardMedia, Typography } from '@mui/material';
 
@@ -11,19 +11,16 @@ const ControllerMonitorTopMenu = props => {
 
   const {} = props;
 
-  // dull variables
-  //const id = 1;
-  //const la_name = 'test';
-  //const logo = '/images/wide-areas/1-서울특별시.png';
+  // ** Redux Test
+  const { id, la_name, logo } = useSelector(state => state.currentLA);
+  const { count } = useSelector(state => state.counter);
+  const dispatch  = useDispatch();
+
   const clickLogoLocalArea = event => {
     event.preventDefault();
     dispatch(rootActions.increment());
   }
   	 
-  // ** Redux Test
-  const { id, la_name, logo } = useSelector(state => state.currentLA);
-	const { count } = useSelector(state => state.counter);
-	const dispatch  = useDispatch();
 
   return(
     <Box>
@@ -46,13 +43,15 @@ const ControllerMonitorTopMenu = props => {
               alt={`logo`}
             >
               <source
-                srcSet={`${logo.replace('_','-')} 300w, ${logo.replace('_','-')} 768w, ${logo.replace('_','-')} 1280w`}
+                srcSet={`${logo} 300w, 
+                         ${logo} 768w, 
+                         ${logo} 1280w`}
                 sizes={'(max-width: 300px) 300px, (max-width: 768px) 768px, 1280px'}
               />
               <img src={`${logo}`}/>
             </CardMedia>
             <Typography>
-              {logo.name}
+              { la_name }
             </Typography>
           </CardContent>
         </Card>
