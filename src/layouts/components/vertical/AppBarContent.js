@@ -13,6 +13,7 @@ import Magnify from 'mdi-material-ui/Magnify'
 import ModeToggler from 'src/@core/layouts/components/shared-components/ModeToggler'
 import UserDropdown from 'src/@core/layouts/components/shared-components/UserDropdown'
 import NotificationDropdown from 'src/@core/layouts/components/shared-components/NotificationDropdown'
+import ControllerMonitorTopMenu from  'src/pages/map_monitor_location/top_header_menu'
 
 const AppBarContent = props => {
   // ** Props
@@ -45,6 +46,7 @@ const AppBarContent = props => {
           }}
         />
       </Box>
+      <ControllerMonitorTopMenu />
       <Box className='actions-right' sx={{ display: 'flex', alignItems: 'center' }}>
         <ModeToggler settings={settings} saveSettings={saveSettings} />
         <NotificationDropdown />
