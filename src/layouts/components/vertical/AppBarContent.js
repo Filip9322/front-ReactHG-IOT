@@ -1,13 +1,11 @@
 // ** MUI Imports
 import Box from '@mui/material/Box'
-import TextField from '@mui/material/TextField'
 import IconButton from '@mui/material/IconButton'
 import useMediaQuery from '@mui/material/useMediaQuery'
-import InputAdornment from '@mui/material/InputAdornment'
+import Grid from '@mui/material/Grid'
 
 // ** Icons Imports
 import Menu from 'mdi-material-ui/Menu'
-import Magnify from 'mdi-material-ui/Magnify'
 
 // ** Components
 import ModeToggler from 'src/@core/layouts/components/shared-components/ModeToggler'
@@ -23,16 +21,18 @@ const AppBarContent = props => {
   const hiddenSm = useMediaQuery(theme => theme.breakpoints.down('sm'))
 
   return (
-    <Box 
+    <Grid container spacing={1}
       sx={{ 
         width: '100%',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        backgroundColor: '#fff',
+        padding: '10px 10px'
       }}
     >
-      { hidden ? (
-      <Box className='actions-left' sx={{ mr: 2, display: 'flex', alignItems: 'center' }}>
+      <Grid item xs={9} className='actions-left' sx={{ mr: 2, display: 'flex', alignItems: 'center' }}>
+        { hidden ? (
           <IconButton
             color='inherit'
             onClick={toggleNavVisibility}
@@ -40,15 +40,15 @@ const AppBarContent = props => {
           >
             <Menu />
           </IconButton>
-      </Box>
-      ) : null }
-      <ControllerMonitorTopMenu hidden = {hidden} toggleNavVisibility = {toggleNavVisibility} />
-      <Box className='actions-right' sx={{ display: 'flex', alignItems: 'center' }}>
+        ) : null }
+        <ControllerMonitorTopMenu hidden = {hidden} toggleNavVisibility = {toggleNavVisibility} />
+      </Grid>
+      <Grid item xs={2} className='actions-right' sx={{ display: 'flex', alignItems: 'center' }}>
         <ModeToggler settings={settings} saveSettings={saveSettings} />
         <NotificationDropdown />
         <UserDropdown />
-      </Box>
-    </Box>
+      </Grid>
+    </Grid>
   )
 }
 

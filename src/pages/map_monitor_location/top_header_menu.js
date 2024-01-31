@@ -1,5 +1,6 @@
 // ** React Imports
 import { useState, useEffect } from 'react';
+import useMediaQuery from '@mui/material/useMediaQuery'
 
 // ** Redux
 import { useDispatch, useSelector } from 'react-redux';
@@ -21,6 +22,9 @@ const ControllerMonitorTopMenu = props => {
 
   const {hidden, toggleNavVisibility} = props;
 
+  // ** Hook
+  const responsiveMenu = useMediaQuery(theme => theme.breakpoints.down('sm'))
+
   // ** Redux Test
   const { id, la_name, logo } = useSelector(state => state.currentLA);
   const { count } = useSelector(state => state.counter);
@@ -33,34 +37,39 @@ const ControllerMonitorTopMenu = props => {
   	 
 
   return(
-    <Box>
-      <Grid 
+    <Box 
+      sx={{
+        width: '100%'
+      }}
+    >
+      <Grid
         sx={{
           display: 'flex',
           flexDirection: 'row',
           justifyContent: 'space-between',
           '& .MuiCard-root':{
+            minWidth: 130,
+            maxWidth: 220,
             display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
+            ...(responsiveMenu ? {}:{flexDirection: 'column'}),
+            paddingBottom:5,
             alignItems: 'center',
-            padding: '20px 40px'
+            padding: '20px 40px',
+            ':hover':{backgroundColor: '#96d3e433', color: 'blue', cursor: 'pointer'}
           },
           '& .MuiIconButton-root':{
-            color:'#686868',
-            width: 50
-          }
+            color:'#686868'
+          },
+          ...(!responsiveMenu ? {}:{flexDirection: 'column'})
         }}
       >
-        {!hidden ? (
+        {hidden ? (
           <Card
             onClick={ clickLogoLocalArea }
             className={'logo-header-card'}
             data-larea={ id }
             data-title={ la_name }
-            sx={{ width: 'fit-content', height: 'auto', 
-              '&:hover': { backgroundColor: '#96d3e433', color: 'blue', cursor: 'pointer'}
-            }}
+            sx={{ width: 'fit-content', height: 'auto' }}
           >
             <CardContent
               sx={{ minWidth: 50, display: 'flex', flexDirection: 'column', padding: 0 }}
@@ -90,16 +99,20 @@ const ControllerMonitorTopMenu = props => {
             title='신호등 모니토링'
             arial-label='신호등 모니토링'
           >
-            <Monitor />
+            <Monitor sx={{fontSize: '3.5rem'}} />
           </IconButton>
           <Typography sx={{ textAlign: 'center'}}>
             신호등 모니토링 { count }
           </Typography>
         </Card>
         <Card sx={{display:'flex', alignItems:'center',':hover':{cursor: 'pointer'}}}>
-          <Box sx={{ display: 'inline-block', position: 'relative',  width:{xs:'auto', sm :'auto'}, paddingRight:'1rem'}}>
-            <IconManage height={50} max-width={100} color={'#686868'} arial-label="시설관리"/>
-          </Box>
+          <IconButton
+            edge='end'
+            title='시설관리'
+            arial-label='시설관리'
+          >
+            <IconManage height={56} max-width={100} color={'#686868'} arial-label="시설관리"/>
+          </IconButton>
           <Typography sx={{ textAlign: 'center'}}>
             시설관리
           </Typography>
@@ -110,16 +123,20 @@ const ControllerMonitorTopMenu = props => {
             title='이력관리'
             arial-label='이력관리'
           >
-            <ReceiptTextClockOutline />
+            <ReceiptTextClockOutline sx={{fontSize: '3.5rem'}} />
           </IconButton>
           <Typography sx={{ textAlign: 'center'}}>
             이력관리
           </Typography>
         </Card>
         <Card>
-          <Box sx={{ display: 'inline-block', position: 'relative',  width:{xs:'auto', sm :'auto'}, paddingRight:'1rem'}}>
-            <IconReport height={50} max-width={100} color={'#686868'} arial-label="보고서출력"/>
-          </Box>
+          <IconButton
+            edge='end'
+            title='보고서출력'
+            arial-label='보고서출력'
+          >
+            <IconReport height={56} max-width={100} color={'#686868'} arial-label="보고서출력"/>
+          </IconButton>
           <Typography sx={{ textAlign: 'center'}}>
             보고서출력
           </Typography>
@@ -130,7 +147,7 @@ const ControllerMonitorTopMenu = props => {
             title='환경설정'
             arial-label='환경설정'
           >
-            <Cog />
+            <Cog sx={{fontSize: '3.5rem'}} />
           </IconButton>
           <Typography sx={{ textAlign: 'center'}}>
             환경설정
