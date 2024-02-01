@@ -46,8 +46,12 @@ const Drawer = props => {
 
   return (
     <SwipeableDrawer
-      className='layout-vertical-nav'
-      variant={hidden ? 'temporary' : 'permanent'}
+      anchor={'left'}
+      className={'layout-vertical-nav' }
+      variant={hidden ? 'temporary' : 'permanent'} // TODO : Here (Prop `style` did not match. Server: "null" Client: "pointer-events:")
+      ModalProps={{
+        keepMounted: false
+      }}
       {...(hidden ? { ...MobileDrawerProps } : { ...DesktopDrawerProps })}
       PaperProps={{ sx: { width: navWidth } }}
       sx={{

@@ -23,7 +23,7 @@ const CountingBar = props => {
   }
 
   useEffect(() => {
-    console.log(controllers.length)
+    //console.log(controllers.length)
     countByType(controllers)
   },[props])
 

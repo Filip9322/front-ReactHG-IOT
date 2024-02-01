@@ -1,18 +1,17 @@
 // ** MUI Imports
 import Box from '@mui/material/Box'
-import TextField from '@mui/material/TextField'
 import IconButton from '@mui/material/IconButton'
 import useMediaQuery from '@mui/material/useMediaQuery'
-import InputAdornment from '@mui/material/InputAdornment'
+import Grid from '@mui/material/Grid'
 
 // ** Icons Imports
 import Menu from 'mdi-material-ui/Menu'
-import Magnify from 'mdi-material-ui/Magnify'
 
 // ** Components
 import ModeToggler from 'src/@core/layouts/components/shared-components/ModeToggler'
 import UserDropdown from 'src/@core/layouts/components/shared-components/UserDropdown'
 import NotificationDropdown from 'src/@core/layouts/components/shared-components/NotificationDropdown'
+import ControllerMonitorTopMenu from  'src/pages/map_monitor_location/top_header_menu'
 
 const AppBarContent = props => {
   // ** Props
@@ -22,9 +21,18 @@ const AppBarContent = props => {
   const hiddenSm = useMediaQuery(theme => theme.breakpoints.down('sm'))
 
   return (
-    <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-      <Box className='actions-left' sx={{ mr: 2, display: 'flex', alignItems: 'center' }}>
-        {hidden ? (
+    <Grid container spacing={1}
+      sx={{ 
+        width: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        backgroundColor: '#fff',
+        padding: '10px 10px'
+      }}
+    >
+      <Grid item xs={9} className='actions-left' sx={{ mr: 2, display: 'flex', alignItems: 'center' }}>
+        { hidden ? (
           <IconButton
             color='inherit'
             onClick={toggleNavVisibility}
@@ -32,25 +40,15 @@ const AppBarContent = props => {
           >
             <Menu />
           </IconButton>
-        ) : null}
-        <TextField
-          size='small'
-          sx={{ '& .MuiOutlinedInput-root': { borderRadius: 4 } }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position='start'>
-                <Magnify fontSize='small' />
-              </InputAdornment>
-            )
-          }}
-        />
-      </Box>
-      <Box className='actions-right' sx={{ display: 'flex', alignItems: 'center' }}>
+        ) : null }
+        <ControllerMonitorTopMenu hidden = {hidden} toggleNavVisibility = {toggleNavVisibility} />
+      </Grid>
+      <Grid item xs={2} className='actions-right' sx={{ display: 'flex', alignItems: 'center' }}>
         <ModeToggler settings={settings} saveSettings={saveSettings} />
         <NotificationDropdown />
         <UserDropdown />
-      </Box>
-    </Box>
+      </Grid>
+    </Grid>
   )
 }
 

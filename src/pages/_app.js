@@ -30,6 +30,10 @@ import '../../styles/globals.css'
 // ** React-JWT to validate token validity
 import { isExpired, decodeToken } from 'react-jwt';
 
+// ** React Redux
+import { Provider } from 'react-redux';
+import { store } from 'src/@core/redux/reducer'
+
 const clientSideEmotionCache = createEmotionCache()
 
 // ** Pace Loader
@@ -89,10 +93,12 @@ const App = props => {
   // Variables
   const getLayout   = Component.getLayout ?? (page => <UserLayout>{page}</UserLayout>)
 
+
+
   return (
     <CacheProvider value={emotionCache}>
       <Head>
-        <title>{`${themeConfig.templateName} - TODO: Change Dinamically`}</title>
+        <title>{`TODO: Change Dinamically - ${themeConfig.templateName} `}</title>
         <meta
           name='description'
           content={`${themeConfig.templateName} – TODO: Change Dinamically`}
@@ -101,13 +107,15 @@ const App = props => {
         <meta name='viewport' content='initial-scale=1, width=device-width' />
       </Head>
 
-      <SettingsProvider>
-        <SettingsConsumer>
-          {({ settings }) => {
-            return <ThemeComponent settings={settings}>{getLayout(<Component {...pageProps} />)}</ThemeComponent>
-          }}
-        </SettingsConsumer>
-      </SettingsProvider>
+      <Provider store={ store }>
+        <SettingsProvider>
+          <SettingsConsumer>
+            {({ settings }) => {
+              return <ThemeComponent settings={settings}>{getLayout(<Component {...pageProps} />)}</ThemeComponent>
+            }}
+          </SettingsConsumer>
+        </SettingsProvider>
+      </Provider>
     </CacheProvider>
   )
 }
