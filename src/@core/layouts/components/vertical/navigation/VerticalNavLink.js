@@ -7,9 +7,7 @@ import Chip from '@mui/material/Chip'
 import ListItem from '@mui/material/ListItem'
 import { styled } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
-import Box from '@mui/material/Box'
-import ListItemIcon from '@mui/material/ListItemIcon'
-import ListItemButton from '@mui/material/ListItemButton'
+import { List, ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
 
 // ** Configs Import
 import themeConfig from 'src/configs/themeConfig'
@@ -37,7 +35,7 @@ const MenuNavLink = styled(ListItemButton)(({ theme }) => ({
   }
 }))
 
-const MenuItemTextMetaWrapper = styled(Box)({
+const MenuItemTextMetaWrapper = styled(ListItemText)({
   width: '100%',
   display: 'flex',
   alignItems: 'center',
@@ -66,7 +64,7 @@ const VerticalNavLink = ({ item, navVisible, toggleNavVisibility }) => {
       disabled={item.disabled || false}
       sx={{ mt: 1.5, px: '0 !important' }}
     >
-      <Link passHref href={item.path === undefined ? '/' : `${item.path}`}>
+      <List href={item.path === undefined ? '/' : `${item.path}`}>
         <MenuNavLink
           component={'a'}
           className={isNavLinkActive() ? 'active' : ''}
@@ -111,7 +109,7 @@ const VerticalNavLink = ({ item, navVisible, toggleNavVisibility }) => {
             ) : null}
           </MenuItemTextMetaWrapper>
         </MenuNavLink>
-      </Link>
+      </List>
     </ListItem>
   )
 }

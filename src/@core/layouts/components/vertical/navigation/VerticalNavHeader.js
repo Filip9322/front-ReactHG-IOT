@@ -1,6 +1,3 @@
-// ** Next Import
-import Link from 'next/link'
-
 // ** MUI Imports
 import Box from '@mui/material/Box'
 import { styled, useTheme } from '@mui/material/styles'
@@ -45,7 +42,7 @@ const VerticalNavHeader = props => {
       {userVerticalNavMenuBranding ? (
         userVerticalNavMenuBranding(props)
       ) : (
-        <Link href='/' passHref>
+        <Box href='/' >
           <StyledLink>
             <svg
               width={30}
@@ -110,7 +107,7 @@ const VerticalNavHeader = props => {
               {themeConfig.templateName}
             </HeaderTitle>
           </StyledLink>
-        </Link>
+        </Box>
       )}
     </MenuHeaderWrapper>
   )
