@@ -98,7 +98,7 @@ const App = props => {
   return (
     <CacheProvider value={emotionCache}>
       <Head>
-        <title>{`${themeConfig.templateName} - TODO: Change Dinamically`}</title>
+        <title>{`TODO: Change Dinamically - ${themeConfig.templateName} `}</title>
         <meta
           name='description'
           content={`${themeConfig.templateName} – TODO: Change Dinamically`}

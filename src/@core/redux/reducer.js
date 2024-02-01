@@ -1,5 +1,19 @@
 import { configureStore, createSlice, combineSlices } from "@reduxjs/toolkit";
 
+export const currentPageInformation = createSlice ({
+  name: "pageInfo",
+  initialState: {
+    title: '',
+    metaName: '',
+    metaContent: '',
+    keywords: ''
+  },
+  reducers: {
+    
+  }
+
+});
+
 export const counterSlice = createSlice ({
   name: "counter",
   initialState: { 

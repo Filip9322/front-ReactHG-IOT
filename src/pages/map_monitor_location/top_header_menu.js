@@ -96,13 +96,13 @@ const ControllerMonitorTopMenu = props => {
         <Card>
           <IconButton
             edge='end'
-            title='신호등 모니토링'
-            arial-label='신호등 모니토링'
+            title='모니토링'
+            arial-label='모니토링'
           >
             <Monitor sx={{fontSize: '3.5rem'}} />
           </IconButton>
           <Typography sx={{ textAlign: 'center'}}>
-            신호등 모니토링 { count }
+            모니토링 { count }
           </Typography>
         </Card>
         <Card sx={{display:'flex', alignItems:'center',':hover':{cursor: 'pointer'}}}>
