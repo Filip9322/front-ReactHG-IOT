@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 // ** MUI Components
 import Box from '@mui/material/Box'
@@ -18,12 +18,17 @@ import { decodeToken } from 'react-jwt';
 
 const WAreasPage = () => {
   // ** User Authentication
-  const [access_token, user_id, userAuthenticated] = useState(false)
+  const [user_id, setUser_id] = useState([]);
+  const [access_token, setAccess_token] = useState([]);
+  const [userAuthenticated, setUserAuthenticated] = useState([]);
 
   // ** API Responses
   const [wideAreaList, updateWideAreasList] = useState([]);
   const [localAreaList, updateLocalAreaList] = useState([]);
   const [isAdmin, updateIsAdmin] = useState(false);
+
+  // ** UseRef
+  const hasPageBeenRendered = useRef({ effect1: false, effect2: false, effect3: false });
 
   // ** Fetch API
   async function fetchWide_Areas(){
@@ -70,32 +75,51 @@ const WAreasPage = () => {
   // ** Initial Load -> Authenticate
   // TODO! ONLY admins should be able to get here
   useEffect(() => {
-    access_token = localStorage.getItem('accessToken');
-    user_id = getWithExpiry('user_ID');
+    let token = localStorage.getItem('accessToken');
 
-    const myDecodeToken = decodeToken(access_token);
-    console.log(Object.keys(myDecodeToken));
-    if(myDecodeToken.user_ID == user_id){
-      userAuthenticated = true;
-    } else userAuthenticated = false;
+    setAccess_token(token);
+    setUser_id(getWithExpiry('user_ID'));
   },[]);
-  
+
+  // ** Verifying Credentials
+  useEffect(()=>{
+    if(hasPageBeenRendered.current['effect1']) {
+      const myDecodeToken = decodeToken(access_token);
+
+      if( myDecodeToken.user_ID == user_id ){
+        setUserAuthenticated(true);
+      } else {
+        setUserAuthenticated(false);
+      }
+    }
+    
+    hasPageBeenRendered.current['effect1'] = true;
+  }, [access_token])
+
   // ** User Authentication
   useEffect(() => {
-    if(userAuthenticated){
-      //fetchWide_AreasUser();
-      fetchGetUserRoles(user_id);
+    if(hasPageBeenRendered.current['effect2']) {
+      if(userAuthenticated){
+        //fetchWide_AreasUser();
+        fetchGetUserRoles(user_id);
+  
+        if(user_id === 'admin'){
+          fetchWide_Areas();
+          fetchLocal_Areas();
+        }
+      }else console.error('Authentication Error')
+    }
 
-      if(user_id === 'admin'){
-        fetchWide_Areas();
-        fetchLocal_Areas();
-      }
-    }else console.error('Authentication Error')
+    hasPageBeenRendered.current['effect2'] = true;
   },[userAuthenticated])
 
   // ** Group locals in wide area
   useEffect(() => {
-    updateWideAreasList(groupLocals(wideAreaList));
+    if(hasPageBeenRendered.current['effect3']) {
+      updateWideAreasList(groupLocals(wideAreaList));
+    }
+
+    hasPageBeenRendered.current['effect3'] = true;
   },[localAreaList])
 
   let tempInput = '서울';

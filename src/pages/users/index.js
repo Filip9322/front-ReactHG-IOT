@@ -175,7 +175,9 @@ const UsersPage = () => {
 
 
     // ** Fetch
-    const [access_token, user_id, userAuthenticated] = useState([]);
+    const [user_id, setUser_id] = useState([]);
+    const [access_token, setAccess_token] = useState([]);
+    const [userAuthenticated, setUserAuthenticated] = useState([]);
     const fetchUsers = () =>{
         getFetchUsers(
             `${process.env.REACT_APP_APIURL}/api/users`,
@@ -206,14 +208,14 @@ const UsersPage = () => {
     
     // ** Check Authenticity of access token and user_Id 
     useEffect(() => {
-        access_token = localStorage.getItem('accessToken');
-        user_id = getWithExpiry('user_ID');
+        setAccess_token(localStorage.getItem('accessToken'));
+        setUser_id(getWithExpiry('user_ID'));
 
         const myDecodeToken = decodeToken(access_token);
         if(myDecodeToken.user_ID == user_id){
-            userAuthenticated = true;
+            setUserAuthenticated(true);
         }else{
-            userAuthenticated = false;
+            setUserAuthenticated(false);
         }
     },[]);
     

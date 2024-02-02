@@ -64,8 +64,9 @@ const VerticalNavLink = ({ item, navVisible, toggleNavVisibility }) => {
       disabled={item.disabled || false}
       sx={{ mt: 1.5, px: '0 !important' }}
     >
-      <List href={item.path === undefined ? '/' : `${item.path}`}>
+      <List>
         <MenuNavLink
+          href={item.path === undefined ? '/' : `${item.path}`}
           component={'a'}
           className={isNavLinkActive() ? 'active' : ''}
           {...(item.openInNewTab ? { target: '_blank' } : null)}
