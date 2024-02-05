@@ -2,6 +2,9 @@
 import { useState, useEffect } from 'react';
 import useMediaQuery from '@mui/material/useMediaQuery'
 
+// ** Next Import
+import { useRouter } from 'next/router'
+
 // ** Redux
 import { useDispatch, useSelector } from 'react-redux';
 import { rootActions } from 'src/@core/redux/reducer';
@@ -21,6 +24,7 @@ import IconManage from 'public/images/misc/icon_manage.svg'
 const ControllerMonitorTopMenu = props => {
 
   const {hidden, toggleNavVisibility} = props;
+  const [hiddeTopMenu, setHiddeTopMenu] = useState(true);
 
   // ** Hook
   const responsiveMenu = useMediaQuery(theme => theme.breakpoints.down('sm'))
@@ -35,11 +39,20 @@ const ControllerMonitorTopMenu = props => {
     dispatch(rootActions.increment());
   }
   	 
+  const { asPath } = useRouter()
+
+  useEffect(() => {
+    if(asPath.includes('map_monitor_location')){
+      setHiddeTopMenu(false)
+    } else setHiddeTopMenu(true)
+    //{ asPath }
+  },[])
 
   return(
+    !hiddeTopMenu ? (
     <Box 
       sx={{
-        width: '100%'
+        width: '100%',
       }}
     >
       <Grid
@@ -155,6 +168,7 @@ const ControllerMonitorTopMenu = props => {
         </Card>
       </Grid>
     </Box>
+  ): ''
   );
 }
 
