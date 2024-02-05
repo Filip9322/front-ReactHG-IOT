@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import useMediaQuery from '@mui/material/useMediaQuery'
 
 // ** Next Import
+import Link  from 'next/link'
 import { useRouter } from 'next/router'
 
 // ** Redux
@@ -115,7 +116,7 @@ const ControllerMonitorTopMenu = props => {
             <Monitor sx={{fontSize: '3.5rem'}} />
           </IconButton>
           <Typography sx={{ textAlign: 'center'}}>
-            모니토링 { count }
+            <Link href={`${ asPath }monitor`}>모니토링 { count }</Link>
           </Typography>
         </Card>
         <Card sx={{display:'flex', alignItems:'center',':hover':{cursor: 'pointer'}}}>
@@ -127,7 +128,7 @@ const ControllerMonitorTopMenu = props => {
             <IconManage height={56} max-width={100} color={'#686868'} arial-label="시설관리"/>
           </IconButton>
           <Typography sx={{ textAlign: 'center'}}>
-            시설관리
+            <Link href={`${ asPath }management`}>시설관리</Link>
           </Typography>
         </Card>
         <Card>
@@ -139,7 +140,7 @@ const ControllerMonitorTopMenu = props => {
             <ReceiptTextClockOutline sx={{fontSize: '3.5rem'}} />
           </IconButton>
           <Typography sx={{ textAlign: 'center'}}>
-            이력관리
+            <Link href={`${ asPath }history`}>이력관리</Link>
           </Typography>
         </Card>
         <Card>
@@ -151,7 +152,7 @@ const ControllerMonitorTopMenu = props => {
             <IconReport height={56} max-width={100} color={'#686868'} arial-label="보고서출력"/>
           </IconButton>
           <Typography sx={{ textAlign: 'center'}}>
-            보고서출력
+            <Link href={`${ asPath }report`}>보고서출력</Link>
           </Typography>
         </Card>
         <Card>
@@ -163,7 +164,7 @@ const ControllerMonitorTopMenu = props => {
             <Cog sx={{fontSize: '3.5rem'}} />
           </IconButton>
           <Typography sx={{ textAlign: 'center'}}>
-            환경설정
+            <Link href={`${ asPath }preferences`}>환경설정</Link>
           </Typography>
         </Card>
       </Grid>
