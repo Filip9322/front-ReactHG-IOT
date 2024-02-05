@@ -16,6 +16,10 @@ import { getFetchURL } from 'src/@core/utils/fetchHelper'
 import { getWithExpiry } from 'src/@core/layouts/utils';
 import { decodeToken } from 'react-jwt';
 
+// ** Redux
+import { useDispatch } from 'react-redux'
+import { rootActions } from 'src/@core/redux/reducer'
+
 const WAreasPage = () => {
   // ** User Authentication
   const [user_id, setUser_id] = useState([]);
@@ -29,6 +33,9 @@ const WAreasPage = () => {
 
   // ** UseRef
   const hasPageBeenRendered = useRef({ effect1: false, effect2: false, effect3: false });
+
+  // ** Redux
+	const dispatch  = useDispatch();
 
   // ** Fetch API
   async function fetchWide_Areas(){
@@ -75,6 +82,9 @@ const WAreasPage = () => {
   // ** Initial Load -> Authenticate
   // TODO! ONLY admins should be able to get here
   useEffect(() => {
+    // ** Set Page Name and MetaData
+    dispatch(rootActions.updateTitle("전체 구역"));
+    
     let token = localStorage.getItem('accessToken');
 
     setAccess_token(token);

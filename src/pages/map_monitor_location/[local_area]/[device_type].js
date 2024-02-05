@@ -19,11 +19,11 @@ import { set_ControllerStatusAndLogo, BtLateralMenu,
   filterControllerMapMarkersByType } from '../commons'
 
 // ** Redux
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { rootActions } from 'src/@core/redux/reducer'
 
 const Map_Monitor_Location_Page = () => {
-  
+
   // ** States
   const [spinner, setSpinner] = useState(true);
   const [localArea, setLocalArea] = useState({lat:0, lng:0});
@@ -148,8 +148,10 @@ const Map_Monitor_Location_Page = () => {
   
   // ** Update Triggers useEffect
   useEffect(() => {
+    // ** Set Page Name and MetaData
+    dispatch(rootActions.updateTitle("모니토링"));
+
     setSpinner(true);
-    setKakaoInitiated(true);
     SetOpenDrawerSelController(false);
   },[])
   
@@ -194,6 +196,8 @@ const Map_Monitor_Location_Page = () => {
       //** Apply filter on Map Markers */
       let filteredMapMarkers = filterControllerMapMarkersByType( controllers, filterMapMarker );
       updateFilteredControllers(filteredMapMarkers);
+
+      setKakaoInitiated(true);
     }
 
     hasPageBeenRendered.current['effect4'] = true;

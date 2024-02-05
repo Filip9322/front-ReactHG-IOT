@@ -4,6 +4,10 @@ import { useState, useRef, useEffect } from "react";
 //** Next Imports */
 import Link from 'next/link'
 
+// ** Redux
+import { useDispatch } from 'react-redux'
+import { rootActions } from 'src/@core/redux/reducer'
+
 //** MUI Components */
 import Tab from '@mui/material/Tab'
 import Box from '@mui/material/Box'
@@ -66,6 +70,9 @@ const WideAreasPage = () => {
 
   // ** UseRef
   const hasPageBeenRendered = useRef({ effect1: false, effect2: false });
+
+  // ** Redux
+	const dispatch  = useDispatch();
 
   // ** MiniMap Colors
   const color1  = '#a09f9f';
@@ -183,10 +190,12 @@ const WideAreasPage = () => {
       console.log(response)
     }).catch(error => console.error('error: ' + error));
   }
-
   
   // ** Start Initialization
   useEffect(() => {
+    // ** Set Page Name and MetaData
+    dispatch(rootActions.updateTitle("지도"));
+
     let token = localStorage.getItem('accessToken');
 
     setAccess_token(token);

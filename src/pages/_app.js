@@ -31,7 +31,7 @@ import '../../styles/globals.css'
 import { isExpired, decodeToken } from 'react-jwt';
 
 // ** React Redux
-import { Provider } from 'react-redux';
+import { Provider, useSelector } from 'react-redux';
 import { store } from 'src/@core/redux/reducer'
 
 const clientSideEmotionCache = createEmotionCache()
@@ -51,7 +51,26 @@ if (themeConfig.routingLoader) {
 
 
 // ** Configure JSS & ClassName
+const AppHead = props =>{
+
+  // ** PageInfo 
+  const { title, metaName, metaContent, keywords } = useSelector(state => state.pageinfo);
+
+  return (
+    <Head>
+      <title>{`${title} - ${themeConfig.templateName} `}</title>
+      <meta
+        name='description'
+        content={`${themeConfig.templateName} – TODO: Change Dinamically`}
+      />
+      <meta name='keywords' content='TODO: Change Dinamically' />
+      <meta name='viewport' content='initial-scale=1, width=device-width' />
+    </Head>
+  )
+}
+
 const App = props => {
+
   // Verify User AccessToken
   const verifyAccessToken = async () => {
     const token = localStorage.getItem('accessToken');
@@ -97,17 +116,9 @@ const App = props => {
 
   return (
     <CacheProvider value={emotionCache}>
-      <Head>
-        <title>{`TODO: Change Dinamically - ${themeConfig.templateName} `}</title>
-        <meta
-          name='description'
-          content={`${themeConfig.templateName} – TODO: Change Dinamically`}
-        />
-        <meta name='keywords' content='TODO: Change Dinamically' />
-        <meta name='viewport' content='initial-scale=1, width=device-width' />
-      </Head>
-
       <Provider store={ store }>
+        <AppHead />
+
         <SettingsProvider>
           <SettingsConsumer>
             {({ settings }) => {

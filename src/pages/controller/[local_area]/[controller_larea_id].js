@@ -12,17 +12,19 @@ import { getFetchURL } from 'src/@core/utils/fetchHelper';
 
 const ControllerInformation = props => {
 
-  const refButton = useRef(null);
-
+  
   const { controller, openEquiState, setOpenEquiStatus } = props;
-
+  
+  const [lat, setLat] = useState(controller.map_x);
+  const [lng, setLng] = useState(controller.map_y);
   const [spinner, setSpinner] = useState(true);
   const [devices, setDevices] = useState([]);
   const [deviceLocations, setDevicesLocations] = useState([]);
-  const [lat, setLat] = useState(controller.map_x);
-  const [lng, setLng] = useState(controller.map_y);
-
+  
   const [kakaoInitated, setKakaoInitiated] = useState(false);
+  
+  // ** UseRef
+  const hasPageBeenRendered = useRef({ effect1: false, effect2: false });
 
   async function fetchEquiState(){
     setSpinner(true);
@@ -49,7 +51,7 @@ const ControllerInformation = props => {
     }).catch(error => {
       console.error('error: '+ error);
     }).finally(() => {
-      setSpinner(false);
+      setSpinner(true);
     })
   }
 
@@ -59,18 +61,27 @@ const ControllerInformation = props => {
     } else {
       console.error('Missing local_area id or controller ID');
     }
-    console.log('called useEffect in ControllerInformation Component ')
     /*const element = document.querySelectorAll("button[title='스카이뷰']")[1]; refButton = element; //refButton.click();*/
   },[]);
 
   useEffect(() => {
-    console.log('called useEffect in ControllerInformation Component on devices ')
-    setKakaoInitiated(true);
+    if(hasPageBeenRendered.current['effect1']) {
+      setKakaoInitiated(true);
+
+      setLat(controller.map_x);
+      setLng(controller.map_y);
+    }
+
+    hasPageBeenRendered.current['effect1'] = true;
   },[devices]);
 
   useEffect(() => {
-    console.log('called useEffect in ControllerInformation Component on change kakaoInitiated: '+kakaoInitated)
-  },[kakaoInitated]);
+    if(hasPageBeenRendered.current['effect2']) {
+      setSpinner(false);
+    }
+
+    hasPageBeenRendered.current['effect2'] = true;
+  },[kakaoInitated, lat, lng]);
   
   //** -- Custom Marker Component */
   const CustomMarkerComponent = props => {
@@ -83,7 +94,7 @@ const ControllerInformation = props => {
   
     useEffect(()=>{
       prevController.current = controller;
-    })
+    },[])
     useEffect(()=>{
       if(equi_state.state_code != 0) {setIconState('o'); console.log('state_code: '+equi_state.state_code)}
 
@@ -194,7 +205,7 @@ const ControllerInformation = props => {
           }
         }}
       >
-      { (kakaoInitated && !spinner ) ? (
+      { (kakaoInitated && !spinner && devices.length ) ? (
       <Map
         center={{ lat: lat, lng: lng }}
         style={{

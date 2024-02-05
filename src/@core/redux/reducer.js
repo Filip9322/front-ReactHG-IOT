@@ -9,7 +9,18 @@ export const currentPageInformation = createSlice ({
     keywords: ''
   },
   reducers: {
-    
+    updateTitle: (state, action) => {
+      state.title = action.payload
+    },
+    updateMetaName: (state, action) => {
+      state.metaName = action.payload
+    },
+    updateMetaContent: (state, action) => {
+      state.metaContent = action.payload
+    },
+    updateKeywords: (state, action) => {
+      state.keywords = action.payload
+    }
   }
 
 });
@@ -56,7 +67,8 @@ export const currentLocalArea = createSlice ({
   }
 })
 
-const rootReducer = combineSlices({ 
+const rootReducer = combineSlices({
+    pageinfo: currentPageInformation.reducer,
     counter: counterSlice.reducer,
     currentLA: currentLocalArea.reducer
 });
@@ -66,6 +78,7 @@ export const store = configureStore({
 })
 
 export const rootActions = {
+  ...currentPageInformation.actions,
   ...counterSlice.actions,
   ...currentLocalArea.actions
 }

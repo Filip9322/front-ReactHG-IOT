@@ -1,6 +1,10 @@
 // ** React Imports
 import { useState, useEffect } from 'react'
 
+// ** Redux
+import { useDispatch } from 'react-redux'
+import { rootActions } from 'src/@core/redux/reducer'
+
 // ** MUI Components
 import Box from '@mui/material/Box'
 import Link from '@mui/material/Link'
@@ -30,6 +34,9 @@ import VoiceGuidance from 'public/images/misc/hangil-voice-guidance.svg'
 
 const TableWideAreas =  props => {
 
+  // ** Redux
+	const dispatch  = useDispatch();
+
   // ** Props *
   const {wareas, lareas} = props;
   const [wareasList,updateWareasList] = useState([])
@@ -50,6 +57,17 @@ const TableWideAreas =  props => {
     
     console.log(action+' '+warea+ ' '+device);
   }
+
+  useEffect(() => {
+    // ** Set Page Name and MetaData
+    dispatch(rootActions.updateTitle("목록"));
+  },[])
+  
+  useEffect(() => {
+    // As takes times to arragne warea.locals, trigger adittional update after updating locals NOT wareas
+    updateWareasList(wareas);
+  },[lareas])
+
 
   const Row = props => {
     const { row, listID } = props;
@@ -238,12 +256,7 @@ const TableWideAreas =  props => {
     );
   }
 
-  // As takes times to arragne warea.locals, trigger adittional 
-  // update after updating locals NOT wareas
-  useEffect(() => {
-    updateWareasList(wareas);
-  },[lareas])
-
+  
   return(
   <TableContainer component={ Paper }>
     <Table wareas={wareasList} aria-label='List all Provincies'>
