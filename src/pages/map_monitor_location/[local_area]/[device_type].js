@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { Map, MarkerClusterer, 
 	MapTypeControl, ZoomControl } from "react-kakao-maps-sdk";
@@ -19,11 +19,11 @@ import { set_ControllerStatusAndLogo, BtLateralMenu,
   filterControllerMapMarkersByType } from '../commons'
 
 // ** Redux
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { rootActions } from 'src/@core/redux/reducer'
 
 const Map_Monitor_Location_Page = () => {
-  
+
   // ** States
   const [spinner, setSpinner] = useState(true);
   const [localArea, setLocalArea] = useState({lat:0, lng:0});
@@ -40,6 +40,14 @@ const Map_Monitor_Location_Page = () => {
 
   const [filterMapMarker, setFilterMapMarker] = useState(1);
   
+  // ** UseRef
+  const hasPageBeenRendered = useRef({ 
+      effect1: false, 
+      effect2: false ,
+      effect3: false,
+      effect4: false
+  });
+
 	// ** Redux
 	const dispatch  = useDispatch();
 
@@ -140,39 +148,59 @@ const Map_Monitor_Location_Page = () => {
   
   // ** Update Triggers useEffect
   useEffect(() => {
+    // ** Set Page Name and MetaData
+    dispatch(rootActions.updateTitle("모니토링"));
+
     setSpinner(true);
-    setKakaoInitiated(true);
     SetOpenDrawerSelController(false);
   },[])
   
   useEffect(() => {
-    if(router.query.local_area) {
-      fetchLocalAreaByID();
-      fetchControllers();
+    if(hasPageBeenRendered.current['effect1']) {
+      if(router.query.local_area) {
+        fetchLocalAreaByID();
+        fetchControllers();
+      }
     }
+
+    hasPageBeenRendered.current['effect1'] = true;
   },[router])
 
   useEffect(()=> {
-    // ** Arrange names for easy look up on the autocomplete textfield
-    let names = [];
-    controllers.map(controller => {
-      // Creatte Array of controllers with name
-      let controllerName = set_ControllerName(controller);
-      names.push(controllerName);
-    });
-    SetControllerNames(names);
+    if(hasPageBeenRendered.current['effect2']) {
+      // ** Arrange names for easy look up on the autocomplete textfield
+      let names = [];
+      controllers.map(controller => {
+        // Creatte Array of controllers with name
+        let controllerName = set_ControllerName(controller);
+        names.push(controllerName);
+      });
+      SetControllerNames(names);
+    }
+
+    hasPageBeenRendered.current['effect2'] = true;
   },[controllers])
 
   useEffect(() =>{
-    setLng(controllerSelected.map_y);
-    setLat(controllerSelected.map_x);
-    SetOpenDrawerSelController(true);
+    if(hasPageBeenRendered.current['effect3']) {
+      setLng(controllerSelected.map_y);
+      setLat(controllerSelected.map_x);
+      SetOpenDrawerSelController(true);
+    }
+
+    hasPageBeenRendered.current['effect3'] = true;
   },[controllerSelected])
 
   useEffect (() => {
-    //** Apply filter on Map Markers */
-    let filteredMapMarkers = filterControllerMapMarkersByType( controllers, filterMapMarker );
-    updateFilteredControllers(filteredMapMarkers);
+    if(hasPageBeenRendered.current['effect4']) {
+      //** Apply filter on Map Markers */
+      let filteredMapMarkers = filterControllerMapMarkersByType( controllers, filterMapMarker );
+      updateFilteredControllers(filteredMapMarkers);
+
+      setKakaoInitiated(true);
+    }
+
+    hasPageBeenRendered.current['effect4'] = true;
   },[filterMapMarker]);
 
   useEffect(() => {},[kakaoInitated]);

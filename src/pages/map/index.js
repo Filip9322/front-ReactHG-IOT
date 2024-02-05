@@ -1,8 +1,12 @@
 //** React Imports */
-import { useState,  useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 
 //** Next Imports */
 import Link from 'next/link'
+
+// ** Redux
+import { useDispatch } from 'react-redux'
+import { rootActions } from 'src/@core/redux/reducer'
 
 //** MUI Components */
 import Tab from '@mui/material/Tab'
@@ -39,7 +43,9 @@ import { padding } from "@mui/system";
 const WideAreasPage = () => {
   // ** Check Authenticity of access token and user_Id
   // -- Fetch Status
-  const [access_token, user_id, userAuthenticated] = useState([]);
+  const [user_id, setUser_id] = useState([]);
+  const [access_token, setAccess_token] = useState(null);
+  const [userAuthenticated, setUserAuthenticated] = useState(null);
   // -- Tabs Status
   const [valueTab, setValueTab] = useState('0');
   // -- Map Status
@@ -61,7 +67,13 @@ const WideAreasPage = () => {
   const [wideAreasAccessList, setWideAreasAccessList] = useState(initialWideArea);
   const [localAreasAccessList, setLocalAreasAccessList] = useState([]);
   const [localAreasPerWA, updateLocalAreasPerWA] = useState([]);
-    
+
+  // ** UseRef
+  const hasPageBeenRendered = useRef({ effect1: false, effect2: false });
+
+  // ** Redux
+	const dispatch  = useDispatch();
+
   // ** MiniMap Colors
   const color1  = '#a09f9f';
   const color2  = '#434343';
@@ -178,27 +190,44 @@ const WideAreasPage = () => {
       console.log(response)
     }).catch(error => console.error('error: ' + error));
   }
-
+  
   // ** Start Initialization
   useEffect(() => {
-    access_token = localStorage.getItem('accessToken');
-    user_id = getWithExpiry('user_ID');
-        
-    const myDecodeToken = decodeToken(access_token);
-    if(myDecodeToken.user_ID == user_id){
-      userAuthenticated = true;
-    }else{
-      userAuthenticated = false;
-    }
+    // ** Set Page Name and MetaData
+    dispatch(rootActions.updateTitle("지도"));
+
+    let token = localStorage.getItem('accessToken');
+
+    setAccess_token(token);
+    setUser_id(getWithExpiry('user_ID'));
   },[]);
+
+  // ** Verifying Credentials
+  useEffect(()=>{
+    if(hasPageBeenRendered.current['effect1']) {
+      const myDecodeToken = decodeToken(access_token);
+
+      if( myDecodeToken.user_ID == user_id ){
+        setUserAuthenticated(true);
+      } else {
+        setUserAuthenticated(false);
+      }
+    }
+    
+    hasPageBeenRendered.current['effect1'] = true;
+  }, [access_token])
 
   // ** IF Authenticated in order trigger Fetch
   useEffect(() => {
-    if(userAuthenticated){
-      fetchMap_User_Access();
-      fetchWide_Areas();
-      fetchLAreas_Device_Subscriptions();
-    }else {console.error('Authentication Error');}
+    if(hasPageBeenRendered.current['effect2'] && userAuthenticated){
+      if(userAuthenticated){
+        fetchMap_User_Access();
+        fetchWide_Areas();
+        fetchLAreas_Device_Subscriptions();
+      } else {console.error('Authentication Error');}
+    }
+
+    hasPageBeenRendered.current['effect2'] = true;
   }, [userAuthenticated]);
 
   // ** Updated base on Area selected in the map

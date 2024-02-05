@@ -40,6 +40,10 @@ import FooterIllustrationsV1 from 'src/views/pages/auth/FooterIllustration'
 import { getWithExpiry } from 'src/@core/layouts/utils'
 import { postFetchURL } from 'src/@core/utils/fetchHelper'
 
+// ** Redux
+import { useDispatch } from 'react-redux'
+import { rootActions } from 'src/@core/redux/reducer'
+
 const now = new Date();
 
 // ** Styled Components
@@ -84,6 +88,9 @@ const LoginPage = () => {
   // ** Hook
   const theme = useTheme()
   const router = useRouter()
+
+  // ** Redux
+	const dispatch  = useDispatch();
 
   const submitForm =  () => {
     postFetchURL(
@@ -171,6 +178,11 @@ const LoginPage = () => {
   const store_userID =(event) => {  
     setValues({ ...values, saveUserID: !event.target.checked })
   }
+
+  useEffect(() =>{
+    // ** Set Page Name and MetaData
+    dispatch(rootActions.updateTitle("로그인"));
+  },[])
 
   useEffect(() => {
     if (isSubmitting){
