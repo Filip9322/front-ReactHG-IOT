@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { rootActions } from 'src/@core/redux/reducer';
 
 // ** MUI Components
-import { Box, Grid, Card, CardContent, CardMedia, Typography, IconButton } from '@mui/material';
+import { Box, Button, Grid, Card, CardContent, CardMedia, Typography, IconButton } from '@mui/material';
 
 // ** Icons Imports
 import Monitor from 'mdi-material-ui/Monitor'
@@ -34,18 +34,28 @@ const ControllerMonitorTopMenu = props => {
   const { count } = useSelector(state => state.counter);
   const dispatch  = useDispatch();
 
+  // ** Hooks
+  const router = useRouter();
+  const basePath = `/map_monitor_location/${router.query.local_area}/${router.query.device_type}/`;
+
   const clickLogoLocalArea = event => {
     event.preventDefault();
     dispatch(rootActions.increment());
   }
-  	 
-  const { asPath } = useRouter()
+
+  const clickMenuIcon = event => {
+    //event.preventDefault();
+
+    let button = event.currentTarget;
+    let href = button.getAttribute('data-href');
+
+    console.log(href);
+  }
 
   useEffect(() => {
-    if(asPath.includes('map_monitor_location')){
+    if(basePath.includes('map_monitor_location')){
       setHiddeTopMenu(false)
     } else setHiddeTopMenu(true)
-    //{ asPath }
   },[])
 
   return(
@@ -60,7 +70,7 @@ const ControllerMonitorTopMenu = props => {
           display: 'flex',
           flexDirection: 'row',
           justifyContent: 'space-between',
-          '& .MuiCard-root':{
+          '& .MuiButton-root':{
             minWidth: 130,
             maxWidth: 220,
             display: 'flex',
@@ -106,7 +116,11 @@ const ControllerMonitorTopMenu = props => {
             </CardContent>
           </Card>
         ): null }
-        <Card>
+        <Button
+          href={`${ basePath }`}
+          data-href={`${ basePath }`}
+          onClick={ clickMenuIcon }
+        >
           <IconButton
             edge='end'
             title='모니토링'
@@ -115,10 +129,15 @@ const ControllerMonitorTopMenu = props => {
             <Monitor sx={{fontSize: '3.5rem'}} />
           </IconButton>
           <Typography sx={{ textAlign: 'center'}}>
-            모니토링 { count }
+             모니토링
           </Typography>
-        </Card>
-        <Card sx={{display:'flex', alignItems:'center',':hover':{cursor: 'pointer'}}}>
+        </Button>
+        <Button 
+          sx={{display:'flex', alignItems:'center',':hover':{cursor: 'pointer'}}}
+          href={`${ basePath }management`}
+          data-href={`${ basePath }management`}
+          onClick={ clickMenuIcon }
+         >
           <IconButton
             edge='end'
             title='시설관리'
@@ -129,8 +148,12 @@ const ControllerMonitorTopMenu = props => {
           <Typography sx={{ textAlign: 'center'}}>
             시설관리
           </Typography>
-        </Card>
-        <Card>
+        </Button>
+        <Button
+          href={`${ basePath }history`}
+          data-href={`${ basePath }history`}
+          onClick={ clickMenuIcon }
+        >
           <IconButton
             edge='end'
             title='이력관리'
@@ -141,8 +164,12 @@ const ControllerMonitorTopMenu = props => {
           <Typography sx={{ textAlign: 'center'}}>
             이력관리
           </Typography>
-        </Card>
-        <Card>
+        </Button>
+        <Button
+          href={`${ basePath }report`}
+          data-href={`${ basePath }report`}
+          onClick={ clickMenuIcon }
+        >
           <IconButton
             edge='end'
             title='보고서출력'
@@ -153,8 +180,12 @@ const ControllerMonitorTopMenu = props => {
           <Typography sx={{ textAlign: 'center'}}>
             보고서출력
           </Typography>
-        </Card>
-        <Card>
+        </Button>
+        <Button
+          href={`${ basePath }preferences`}
+          data-href={`${ basePath }preferences`}
+          onClick={ clickMenuIcon }
+        >
           <IconButton
             edge='end'
             title='환경설정'
@@ -165,7 +196,7 @@ const ControllerMonitorTopMenu = props => {
           <Typography sx={{ textAlign: 'center'}}>
             환경설정
           </Typography>
-        </Card>
+        </Button>
       </Grid>
     </Box>
   ): ''

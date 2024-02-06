@@ -228,7 +228,7 @@ const DrawerListControllers = props => {
           }
         </Drawer>
       </Box>
-    ):('Here')
+    ):('기기들 찾기 실패 되었습니다')
   );
 }
 
