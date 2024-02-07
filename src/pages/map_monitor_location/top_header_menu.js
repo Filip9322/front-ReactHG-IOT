@@ -10,7 +10,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { rootActions } from 'src/@core/redux/reducer';
 
 // ** MUI Components
-import { Box, Button, Grid, Card, CardContent, CardMedia, Typography, IconButton } from '@mui/material';
+import { Box, Button, Grid, Card, CardContent, CardMedia, Popover, 
+         Typography, IconButton, Paper, Menu, MenuItem } from '@mui/material';
+import { ClickAwayListener } from '@mui/base'
 
 // ** Icons Imports
 import Monitor from 'mdi-material-ui/Monitor'
@@ -23,8 +25,11 @@ import IconManage from 'public/images/misc/icon_manage.svg'
 
 const ControllerMonitorTopMenu = props => {
 
-  const {hidden, toggleNavVisibility} = props;
-  const [hiddeTopMenu, setHiddeTopMenu] = useState(true);
+  const { hidden, toggleNavVisibility } = props;
+
+  //** React UseState 
+  const [ hiddeTopMenu, setHiddeTopMenu ] = useState(true);
+  const [ openMenu, setOpenMenu ] = useState(false);
 
   // ** Hook
   const responsiveMenu = useMediaQuery(theme => theme.breakpoints.down('sm'))
@@ -36,6 +41,7 @@ const ControllerMonitorTopMenu = props => {
 
   // ** Hooks
   const router = useRouter();
+  const { asPath } = useRouter()
   const basePath = `/map_monitor_location/${router.query.local_area}/${router.query.device_type}/`;
 
   const clickLogoLocalArea = event => {
@@ -43,8 +49,9 @@ const ControllerMonitorTopMenu = props => {
     dispatch(rootActions.increment());
   }
 
+  // ** Click Event Functions
   const clickMenuIcon = event => {
-    //event.preventDefault();
+    event.preventDefault();
 
     let button = event.currentTarget;
     let href = button.getAttribute('data-href');
@@ -52,10 +59,80 @@ const ControllerMonitorTopMenu = props => {
     console.log(href);
   }
 
+  //** --------------> SubComponent */
+  const MenuComponent = props =>{
+    
+    //** React UseState
+    const [ anchorEl, setAnchorEl ] = useState(null);
+    
+    const handleClickAway = () => {
+      setOpenMenu(false);
+    }
+    
+    const handleClickTitleSubMenu = event => {
+      event.preventDefault();
+      
+      setOpenMenu(!openMenu);
+      setAnchorEl(event.currentTarget);
+    }
+    
+    const handleCloseSubMenu = () => {
+      //handleClickAway();
+      setAnchorEl(null);
+    }
+
+    return (
+      <ClickAwayListener
+        onClickAway={handleClickAway}
+          >
+            <Button 
+              sx={{display:'flex', position: 'relative', alignItems:'center',':hover':{cursor: 'pointer'}}}
+              href={`${ basePath }management`}
+              data-href={`${ basePath }management`}
+              onClick={ handleClickTitleSubMenu }
+            >
+              <IconButton
+                edge='end'
+                title='시설관리'
+                arial-label='시설관리'
+                aria-haspopup='true'
+                aria-controls={ openMenu ? 'long-menu' : undefined }
+                aria-expanded={ openMenu ? 'true' : undefined }
+              >
+                <IconManage height={56} max-width={100} color={'#686868'} arial-label="시설관리"/>
+              </IconButton>
+              <Typography sx={{ textAlign: 'center'}}>
+                시설관리
+              </Typography>
+              {openMenu ?
+              (<Menu
+                elevation= {0}
+                open={openMenu}
+                anchorEl={anchorEl}
+                onClose={handleCloseSubMenu}
+              >
+                <MenuItem>교차로등록</MenuItem>
+                <MenuItem>신호등 구역등록</MenuItem>
+                <MenuItem>이벤트관리</MenuItem>
+                <MenuItem>일괄등록</MenuItem>
+                <MenuItem>운영제어</MenuItem>
+                <MenuItem>교차로별 운영제어</MenuItem>
+                <MenuItem>망연동관리</MenuItem>
+              </Menu>) :''
+              }
+            </Button>
+          </ClickAwayListener>
+    );
+  }
+
+  //** React Use Effect
   useEffect(() => {
-    if(basePath.includes('map_monitor_location')){
+    setOpenMenu(false);
+
+    if(asPath.includes('map_monitor_location')){
       setHiddeTopMenu(false)
     } else setHiddeTopMenu(true)
+    
   },[])
 
   return(
@@ -70,6 +147,10 @@ const ControllerMonitorTopMenu = props => {
           display: 'flex',
           flexDirection: 'row',
           justifyContent: 'space-between',
+          '& .MuiPaper-root':{
+            width: '100%',
+            margin: '0 5px'
+          },
           '& .MuiButton-root':{
             minWidth: 130,
             maxWidth: 220,
@@ -116,87 +197,81 @@ const ControllerMonitorTopMenu = props => {
             </CardContent>
           </Card>
         ): null }
-        <Button
-          href={`${ basePath }`}
-          data-href={`${ basePath }`}
-          onClick={ clickMenuIcon }
-        >
-          <IconButton
-            edge='end'
-            title='모니토링'
-            arial-label='모니토링'
+        <Paper elevation={6}>
+          <Button
+            href={`${ basePath }`}
+            data-href={`${ basePath }`}
+            onClick={ clickMenuIcon }
           >
-            <Monitor sx={{fontSize: '3.5rem'}} />
-          </IconButton>
-          <Typography sx={{ textAlign: 'center'}}>
-             모니토링
-          </Typography>
-        </Button>
-        <Button 
-          sx={{display:'flex', alignItems:'center',':hover':{cursor: 'pointer'}}}
-          href={`${ basePath }management`}
-          data-href={`${ basePath }management`}
-          onClick={ clickMenuIcon }
-         >
-          <IconButton
-            edge='end'
-            title='시설관리'
-            arial-label='시설관리'
+            <IconButton
+              edge='end'
+              title='모니토링'
+              arial-label='모니토링'
+            >
+              <Monitor sx={{fontSize: '3.5rem'}} />
+            </IconButton>
+            <Typography sx={{ textAlign: 'center'}}>
+              모니토링
+            </Typography>
+          </Button>
+        </Paper>
+        <Paper elevation={6}>
+          <MenuComponent />
+        </Paper>
+        <Paper elevation={6}>
+          <Button
+            href={`${ basePath }history`}
+            data-href={`${ basePath }history`}
+            onClick={ clickMenuIcon }
           >
-            <IconManage height={56} max-width={100} color={'#686868'} arial-label="시설관리"/>
-          </IconButton>
-          <Typography sx={{ textAlign: 'center'}}>
-            시설관리
-          </Typography>
-        </Button>
-        <Button
-          href={`${ basePath }history`}
-          data-href={`${ basePath }history`}
-          onClick={ clickMenuIcon }
-        >
-          <IconButton
-            edge='end'
-            title='이력관리'
-            arial-label='이력관리'
+            <IconButton
+              edge='end'
+              title='이력관리'
+              arial-label='이력관리'
+            >
+              <ReceiptTextClockOutline sx={{fontSize: '3.5rem'}} />
+            </IconButton>
+            <Typography sx={{ textAlign: 'center'}}>
+              이력관리
+            </Typography>
+          </Button>
+        </Paper>
+        <Paper elevation={6}>
+          <Button
+            href={`${ basePath }report`}
+            data-href={`${ basePath }report`}
+            onClick={ clickMenuIcon }
           >
-            <ReceiptTextClockOutline sx={{fontSize: '3.5rem'}} />
-          </IconButton>
-          <Typography sx={{ textAlign: 'center'}}>
-            이력관리
-          </Typography>
-        </Button>
-        <Button
-          href={`${ basePath }report`}
-          data-href={`${ basePath }report`}
-          onClick={ clickMenuIcon }
-        >
-          <IconButton
-            edge='end'
-            title='보고서출력'
-            arial-label='보고서출력'
+            <IconButton
+              edge='end'
+              title='보고서출력'
+              arial-label='보고서출력'
+            >
+              <IconReport height={56} max-width={100} color={'#686868'} arial-label="보고서출력"/>
+            </IconButton>
+            <Typography sx={{ textAlign: 'center'}}>
+              보고서출력
+            </Typography>
+          </Button>
+        </Paper>
+        <Paper elevation={6}>
+          <Button
+            href={`${ basePath }preferences`}
+            data-href={`${ basePath }preferences`}
+            onClick={ clickMenuIcon }
           >
-            <IconReport height={56} max-width={100} color={'#686868'} arial-label="보고서출력"/>
-          </IconButton>
-          <Typography sx={{ textAlign: 'center'}}>
-            보고서출력
-          </Typography>
-        </Button>
-        <Button
-          href={`${ basePath }preferences`}
-          data-href={`${ basePath }preferences`}
-          onClick={ clickMenuIcon }
-        >
-          <IconButton
-            edge='end'
-            title='환경설정'
-            arial-label='환경설정'
-          >
-            <Cog sx={{fontSize: '3.5rem'}} />
-          </IconButton>
-          <Typography sx={{ textAlign: 'center'}}>
-            환경설정
-          </Typography>
-        </Button>
+            <IconButton
+              edge='end'
+              title='환경설정'
+              arial-label='환경설정'
+            >
+              <Cog sx={{fontSize: '3.5rem'}} />
+            </IconButton>
+            <Typography sx={{ textAlign: 'center'}}>
+              환경설정
+            </Typography>
+          </Button>
+        </Paper>
       </Grid>
     </Box>
   ): ''
