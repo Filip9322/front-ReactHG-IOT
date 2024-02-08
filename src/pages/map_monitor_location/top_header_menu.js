@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import useMediaQuery from '@mui/material/useMediaQuery'
 
 // ** Next Import
@@ -24,6 +24,80 @@ import IconReport from 'public/images/misc/icon_report.svg'
 import IconManage from 'public/images/misc/icon_manage.svg'
 
 const ControllerMonitorTopMenu = props => {
+
+  //** --------------> SubComponent START -------------------------------------------------------- */
+  const MenuComponent = props =>{
+    
+    const { link, title } = props;
+
+    const buttonRef= useRef();
+
+    //** React UseState
+    const [ anchorEl, setAnchorEl ] = useState(null);
+    
+    const handleClickAway = () => {
+      setOpenMenu(false);
+    }
+    
+    const handleClickTitleSubMenu = event => {
+      event.preventDefault();
+
+      setOpenMenu(!openMenu);
+      setAnchorEl(buttonRef.current);
+    }
+    
+    const handleCloseSubMenu = () => {
+      handleClickAway();
+      setAnchorEl(null);
+    }
+
+    useEffect(() =>{
+      setAnchorEl(buttonRef.current);
+    },[])
+
+    return (
+      <ClickAwayListener onClickAway={handleClickAway} >
+        <Button 
+          sx = {{ display:'flex', position: 'relative', alignItems:'center',':hover':{cursor: 'pointer'}}}
+          href = {`${ basePath }${ link }`}
+          data-href = {`${ basePath }${ link }`}
+          onClick = { handleClickTitleSubMenu }
+          ref = { buttonRef }
+        >
+          <IconButton
+            edge='end'
+            title={ title }
+            arial-label={ title }
+            aria-haspopup='true'
+            aria-controls={ openMenu ? 'long-menu' : undefined }
+            aria-expanded={ openMenu ? 'true' : undefined }
+          >
+            <IconManage height={56} max-width={100} color={'#686868'} arial-label={ title }/>
+          </IconButton>
+          <Typography sx={{ textAlign: 'center'}}>
+            {title}
+          </Typography>
+          {openMenu ?
+            (<Menu
+              elevation = { 0 }
+              open = { openMenu }
+              anchorEl = { anchorEl }
+              onClose  = { handleCloseSubMenu }
+            >
+              <MenuItem>교차로등록</MenuItem>
+              <MenuItem>신호등 구역등록</MenuItem>
+              <MenuItem>이벤트관리</MenuItem>
+              <MenuItem>일괄등록</MenuItem>
+              <MenuItem>운영제어</MenuItem>
+              <MenuItem>교차로별 운영제어</MenuItem>
+              <MenuItem>망연동관리</MenuItem>
+            </Menu>) :''
+          }
+        </Button>
+      </ClickAwayListener>
+    );
+  }
+  //** --------------> SubComponent END ------------------------------------------------ */
 
   const { hidden, toggleNavVisibility } = props;
 
@@ -59,80 +133,11 @@ const ControllerMonitorTopMenu = props => {
     console.log(href);
   }
 
-  //** --------------> SubComponent */
-  const MenuComponent = props =>{
-    
-    //** React UseState
-    const [ anchorEl, setAnchorEl ] = useState(null);
-    
-    const handleClickAway = () => {
-      setOpenMenu(false);
-    }
-    
-    const handleClickTitleSubMenu = event => {
-      event.preventDefault();
-      
-      setOpenMenu(!openMenu);
-      setAnchorEl(event.currentTarget);
-    }
-    
-    const handleCloseSubMenu = () => {
-      //handleClickAway();
-      setAnchorEl(null);
-    }
-
-    return (
-      <ClickAwayListener
-        onClickAway={handleClickAway}
-          >
-            <Button 
-              sx={{display:'flex', position: 'relative', alignItems:'center',':hover':{cursor: 'pointer'}}}
-              href={`${ basePath }management`}
-              data-href={`${ basePath }management`}
-              onClick={ handleClickTitleSubMenu }
-            >
-              <IconButton
-                edge='end'
-                title='시설관리'
-                arial-label='시설관리'
-                aria-haspopup='true'
-                aria-controls={ openMenu ? 'long-menu' : undefined }
-                aria-expanded={ openMenu ? 'true' : undefined }
-              >
-                <IconManage height={56} max-width={100} color={'#686868'} arial-label="시설관리"/>
-              </IconButton>
-              <Typography sx={{ textAlign: 'center'}}>
-                시설관리
-              </Typography>
-              {openMenu ?
-              (<Menu
-                elevation= {0}
-                open={openMenu}
-                anchorEl={anchorEl}
-                onClose={handleCloseSubMenu}
-              >
-                <MenuItem>교차로등록</MenuItem>
-                <MenuItem>신호등 구역등록</MenuItem>
-                <MenuItem>이벤트관리</MenuItem>
-                <MenuItem>일괄등록</MenuItem>
-                <MenuItem>운영제어</MenuItem>
-                <MenuItem>교차로별 운영제어</MenuItem>
-                <MenuItem>망연동관리</MenuItem>
-              </Menu>) :''
-              }
-            </Button>
-          </ClickAwayListener>
-    );
-  }
-
   //** React Use Effect
   useEffect(() => {
-    setOpenMenu(false);
-
     if(asPath.includes('map_monitor_location')){
       setHiddeTopMenu(false)
     } else setHiddeTopMenu(true)
-    
   },[])
 
   return(
@@ -216,7 +221,7 @@ const ControllerMonitorTopMenu = props => {
           </Button>
         </Paper>
         <Paper elevation={6}>
-          <MenuComponent />
+          <MenuComponent link={'management'} title={'시설관리'} hasSubmenu={true} />
         </Paper>
         <Paper elevation={6}>
           <Button
