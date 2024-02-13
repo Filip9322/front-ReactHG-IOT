@@ -28,11 +28,13 @@ const ControllerMonitorTopMenu = props => {
   //** --------------> SubComponent START -------------------------------------------------------- */
   const MenuComponent = props =>{
     
-    const { link, title } = props;
+    const { id, link, title, hasSubmenu, submenu } = props;
 
+    
     const buttonRef= useRef();
-
+    
     //** React UseState
+    const [ openMenu, setOpenMenu ] = useState(false);
     const [ anchorEl, setAnchorEl ] = useState(null);
     
     const handleClickAway = () => {
@@ -72,25 +74,35 @@ const ControllerMonitorTopMenu = props => {
             aria-controls={ openMenu ? 'long-menu' : undefined }
             aria-expanded={ openMenu ? 'true' : undefined }
           >
-            <IconManage height={56} max-width={100} color={'#686868'} arial-label={ title }/>
+            {id == 'monitoring'?(
+              <Monitor sx={{fontSize: '3.5rem'}} />
+            ):''}
+            {id == 'management'?(
+              <IconManage height={56} max-width={100} color={'#686868'} arial-label={ title }/>
+            ):''}
+            {id == 'history'?(
+              <ReceiptTextClockOutline sx={{fontSize: '3.5rem'}} />
+            ):''}
+            {id == 'reports'?(
+              <IconReport height={56} max-width={100} color={'#686868'} arial-label="보고서출력"/>
+            ):''}
+            {id == 'preferences'?(
+              <Cog sx={{fontSize: '3.5rem'}} />
+            ):''}
           </IconButton>
           <Typography sx={{ textAlign: 'center'}}>
             {title}
           </Typography>
-          {openMenu ?
+          { hasSubmenu && openMenu ?
             (<Menu
               elevation = { 0 }
               open = { openMenu }
               anchorEl = { anchorEl }
               onClose  = { handleCloseSubMenu }
             >
-              <MenuItem>교차로등록</MenuItem>
-              <MenuItem>신호등 구역등록</MenuItem>
-              <MenuItem>이벤트관리</MenuItem>
-              <MenuItem>일괄등록</MenuItem>
-              <MenuItem>운영제어</MenuItem>
-              <MenuItem>교차로별 운영제어</MenuItem>
-              <MenuItem>망연동관리</MenuItem>
+              { submenu.map(( subItem, row )=>(
+                <MenuItem key={ row } href={ subItem.link } >{ subItem.name }</MenuItem>
+              ))}
             </Menu>) :''
           }
         </Button>
@@ -101,9 +113,56 @@ const ControllerMonitorTopMenu = props => {
 
   const { hidden, toggleNavVisibility } = props;
 
+  const subMenuManagement = 
+  [
+    {id: 1, name: '교차로등록' , link: ''},
+    {id: 2, name: '신호등 구역등록' , link: ''},
+    {id: 3, name: '이벤트관리' , link: ''},
+    {id: 4, name: '일괄등록' , link: ''},
+    {id: 5, name: '운영제어' , link: ''},
+    {id: 6, name: '교차로별 운영제어' , link: ''},
+    {id: 7, name: '망연동관리' , link: ''}
+  ]
+
+  const subMenuHistory = 
+  [
+    {id: 1, name: '이벤트이력' , link: ''},
+    {id: 2, name: '시설물이력' , link: ''},
+    {id: 3, name: '주기정보이력' , link: ''},
+    {id: 4, name: '민원등록이력' , link: ''},
+    {id: 5, name: '이벤트전파이력' , link: ''},
+    {id: 6, name: '운영제어이력' , link: ''},
+    {id: 7, name: '시스켐접속이력' , link: ''},
+    {id: 8, name: '주기정보백업' , link: ''}
+  ]
+
+  const subMenuReports = 
+  [
+    {id: 1, name: '교차로별 시설물현황' , link: ''},
+    {id: 2, name: '이벤트발생 집계' , link: ''},
+    {id: 3, name: '주기보고발생 집계' , link: ''},
+    {id: 4, name: '민원발생 현황' , link: ''},
+    {id: 5, name: '상황전파 현황' , link: ''},
+    {id: 6, name: '운영제어 현황' , link: ''},
+    {id: 7, name: '교차로별 시설물수령집계' , link: ''},
+    {id: 8, name: '이상발생 현황' , link: ''},
+    {id: 9, name: '전체 이상발생 현황' , link: ''},
+    {id: 10, name: 'IOT/BLE정보 찾기' , link: ''},
+    {id: 11, name: '보고중단 내역' , link: ''}
+  ]
+
+  const subMenuPreferences = 
+  [
+    {id: 1, name: '협력시관리' , link: ''},
+    {id: 2, name: '협력사직원관리' , link: ''},
+    {id: 3, name: '사용자관리' , link: ''},
+    {id: 4, name: '환경설정' , link: ''},
+    {id: 5, name: '지자체관리' , link: ''},
+    {id: 6, name: '코드관리' , link: ''}
+  ]
+
   //** React UseState 
   const [ hiddeTopMenu, setHiddeTopMenu ] = useState(true);
-  const [ openMenu, setOpenMenu ] = useState(false);
 
   // ** Hook
   const responsiveMenu = useMediaQuery(theme => theme.breakpoints.down('sm'))
@@ -203,79 +262,19 @@ const ControllerMonitorTopMenu = props => {
           </Card>
         ): null }
         <Paper elevation={6}>
-          <Button
-            href={`${ basePath }`}
-            data-href={`${ basePath }`}
-            onClick={ clickMenuIcon }
-          >
-            <IconButton
-              edge='end'
-              title='모니토링'
-              arial-label='모니토링'
-            >
-              <Monitor sx={{fontSize: '3.5rem'}} />
-            </IconButton>
-            <Typography sx={{ textAlign: 'center'}}>
-              모니토링
-            </Typography>
-          </Button>
+          <MenuComponent id={'monitoring'} link={''} title={'모니토링'} hasSubmenu={false} />
         </Paper>
         <Paper elevation={6}>
-          <MenuComponent link={'management'} title={'시설관리'} hasSubmenu={true} />
+          <MenuComponent id={'management'} link={'management'} title={'시설관리'} hasSubmenu={true} submenu={subMenuManagement} />
         </Paper>
         <Paper elevation={6}>
-          <Button
-            href={`${ basePath }history`}
-            data-href={`${ basePath }history`}
-            onClick={ clickMenuIcon }
-          >
-            <IconButton
-              edge='end'
-              title='이력관리'
-              arial-label='이력관리'
-            >
-              <ReceiptTextClockOutline sx={{fontSize: '3.5rem'}} />
-            </IconButton>
-            <Typography sx={{ textAlign: 'center'}}>
-              이력관리
-            </Typography>
-          </Button>
+          <MenuComponent id={'history'} link={'history'} title={'이력관리'} hasSubmenu={true} submenu={subMenuHistory} />
         </Paper>
         <Paper elevation={6}>
-          <Button
-            href={`${ basePath }report`}
-            data-href={`${ basePath }report`}
-            onClick={ clickMenuIcon }
-          >
-            <IconButton
-              edge='end'
-              title='보고서출력'
-              arial-label='보고서출력'
-            >
-              <IconReport height={56} max-width={100} color={'#686868'} arial-label="보고서출력"/>
-            </IconButton>
-            <Typography sx={{ textAlign: 'center'}}>
-              보고서출력
-            </Typography>
-          </Button>
+          <MenuComponent id={'reports'} link={'reports'} title={'보고서출력'} hasSubmenu={true} submenu={subMenuReports} />
         </Paper>
         <Paper elevation={6}>
-          <Button
-            href={`${ basePath }preferences`}
-            data-href={`${ basePath }preferences`}
-            onClick={ clickMenuIcon }
-          >
-            <IconButton
-              edge='end'
-              title='환경설정'
-              arial-label='환경설정'
-            >
-              <Cog sx={{fontSize: '3.5rem'}} />
-            </IconButton>
-            <Typography sx={{ textAlign: 'center'}}>
-              환경설정
-            </Typography>
-          </Button>
+          <MenuComponent id={'preferences'} link={'preferences'} title={'환경설정'} hasSubmenu={true} submenu={subMenuPreferences} />
         </Paper>
       </Grid>
     </Box>
