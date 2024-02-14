@@ -133,12 +133,12 @@ const ControllerMonitorTopMenu = props => {
   const subMenuManagement = 
   [
     {id: 1, name: '교차로등록' , link: 'Intersection_Registration'},
-    {id: 2, name: '신호등 구역등록' , link: 'TrafficLightZone_Registration'},
+    {id: 2, name: '신호등 구역등록' , link: 'TrafficLight_Registration'},
     {id: 3, name: '이벤트관리' , link: 'EventManagement'},
     {id: 4, name: '일괄등록' , link: 'BatchRegistration'},
-    {id: 5, name: '운영제어' , link: 'OperationControl'},
-    {id: 6, name: '교차로별 운영제어' , link: 'OperationControl_byIntersection'},
-    {id: 7, name: '망연동관리' , link: 'Network_Management'}
+    {id: 5, name: '운영제어' , link: 'ControlOperation'},
+    {id: 6, name: '교차로별 운영제어' , link: 'ControlOperation_Intersection'},
+    {id: 7, name: '망연동관리' , link: 'Lora_Management'}
   ]
 
   const subMenuHistory = 
@@ -146,24 +146,24 @@ const ControllerMonitorTopMenu = props => {
     {id: 1, name: '이벤트이력' , link: 'Event_History'},
     {id: 2, name: '시설물이력' , link: 'Facility_History'},
     {id: 3, name: '주기정보이력' , link: 'PeriodicInformation_History'},
-    {id: 4, name: '민원등록이력' , link: 'CivilComplaintRegistration_History'},
+    {id: 4, name: '민원등록이력' , link: 'ComplaintRegistration_History'},
     {id: 5, name: '이벤트전파이력' , link: 'EventPropagation_History'},
-    {id: 6, name: '운영제어이력' , link: 'OperationControl_History'},
+    {id: 6, name: '운영제어이력' , link: 'ControlOperation_History'},
     {id: 7, name: '시스켐접속이력' , link: 'SystemConnection_History'},
-    {id: 8, name: '주기정보백업' , link: 'PeriodicInformation_Backup'}
+    {id: 8, name: '주기정보백업' , link: 'PeriodInformation_Backup'}
   ]
 
   const subMenuReports = 
   [
-    {id: 1, name: '교차로별 시설물현황' , link: 'FacilityStatus_byIntersection'},
-    {id: 2, name: '이벤트발생 집계' , link: 'Aggregation_EventOccurrences'},
-    {id: 3, name: '주기보고발생 집계' , link: 'Aggregation_ReportOccurrences'},
+    {id: 1, name: '교차로별 시설물현황' , link: 'FacilityStatus_Intersection'},
+    {id: 2, name: '이벤트발생 집계' , link: 'Total_EventOccurrences'},
+    {id: 3, name: '주기보고발생 집계' , link: 'Total_ReportOccurrences'},
     {id: 4, name: '민원발생 현황' , link: 'CurrentStatus_CivilComplaint'},
     {id: 5, name: '상황전파 현황' , link: 'SituationSpread_Status'},
     {id: 6, name: '운영제어 현황' , link: 'OperationControl_Status'},
-    {id: 7, name: '교차로별 시설물수량집계' , link: 'QuantityFacilities_byIntersection'},
-    {id: 8, name: '이상발생 현황' , link: 'AbnormalOccurrence_Status'},
-    {id: 9, name: '전체 이상발생 현황' , link: 'TotalAbnormalities_Status'},
+    {id: 7, name: '교차로별 시설물수량집계' , link: 'QuantityFacilities_Intersection'},
+    {id: 8, name: '이상발생 현황' , link: 'ErrorOccurrence_Status'},
+    {id: 9, name: '전체 이상발생 현황' , link: 'TotalError_Status'},
     {id: 10, name: 'IOT/BLE정보 찾기' , link: 'IOTBLE_Information'},
     {id: 11, name: '보고중단 내역' , link: 'ReportSuspension'}
   ]
