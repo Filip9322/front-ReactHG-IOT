@@ -4,13 +4,14 @@ import useMediaQuery from '@mui/material/useMediaQuery'
 
 // ** Next Import
 import { useRouter } from 'next/router'
+import Link from 'next/link'
 
 // ** Redux
 import { useDispatch, useSelector } from 'react-redux';
 import { rootActions } from 'src/@core/redux/reducer';
 
 // ** MUI Components
-import { Box, Button, Grid, Card, CardContent, CardMedia, Popover, 
+import { Box, Button, Grid, Card, CardContent, CardMedia, 
          Typography, IconButton, Paper, Menu, MenuItem } from '@mui/material';
 import { ClickAwayListener } from '@mui/base'
 
@@ -41,11 +42,20 @@ const ControllerMonitorTopMenu = props => {
       setOpenMenu(false);
     }
     
+    // ** Click Event Functions
     const handleClickTitleSubMenu = event => {
       event.preventDefault();
 
       setOpenMenu(!openMenu);
       setAnchorEl(buttonRef.current);
+    }
+
+    const handleClickSubMenItem = event => {
+      //event.preventDefault();
+
+      let button = event.currentTarget;
+      let href = button.getAttribute('data-href');
+      console.log(href);
     }
     
     const handleCloseSubMenu = () => {
@@ -101,7 +111,14 @@ const ControllerMonitorTopMenu = props => {
               onClose  = { handleCloseSubMenu }
             >
               { submenu.map(( subItem, row )=>(
-                <MenuItem key={ row } href={ subItem.link } >{ subItem.name }</MenuItem>
+                <MenuItem key={ row } 
+                  onClick={ handleClickSubMenItem } 
+                  data-href={ `${ basePath }${ link }/${ subItem.link }` }
+                >
+                  <Link href={ `${ basePath }${ link }/${ subItem.link }` }>
+                    { subItem.name }
+                  </Link>
+                </MenuItem>
               ))}
             </Menu>) :''
           }
@@ -115,50 +132,50 @@ const ControllerMonitorTopMenu = props => {
 
   const subMenuManagement = 
   [
-    {id: 1, name: '교차로등록' , link: ''},
-    {id: 2, name: '신호등 구역등록' , link: ''},
-    {id: 3, name: '이벤트관리' , link: ''},
-    {id: 4, name: '일괄등록' , link: ''},
-    {id: 5, name: '운영제어' , link: ''},
-    {id: 6, name: '교차로별 운영제어' , link: ''},
-    {id: 7, name: '망연동관리' , link: ''}
+    {id: 1, name: '교차로등록' , link: 'Intersection_Registration'},
+    {id: 2, name: '신호등 구역등록' , link: 'TrafficLightZone_Registration'},
+    {id: 3, name: '이벤트관리' , link: 'EventManagement'},
+    {id: 4, name: '일괄등록' , link: 'BatchRegistration'},
+    {id: 5, name: '운영제어' , link: 'OperationControl'},
+    {id: 6, name: '교차로별 운영제어' , link: 'OperationControl_byIntersection'},
+    {id: 7, name: '망연동관리' , link: 'Network_Management'}
   ]
 
   const subMenuHistory = 
   [
-    {id: 1, name: '이벤트이력' , link: ''},
-    {id: 2, name: '시설물이력' , link: ''},
-    {id: 3, name: '주기정보이력' , link: ''},
-    {id: 4, name: '민원등록이력' , link: ''},
-    {id: 5, name: '이벤트전파이력' , link: ''},
-    {id: 6, name: '운영제어이력' , link: ''},
-    {id: 7, name: '시스켐접속이력' , link: ''},
-    {id: 8, name: '주기정보백업' , link: ''}
+    {id: 1, name: '이벤트이력' , link: 'Event_History'},
+    {id: 2, name: '시설물이력' , link: 'Facility_History'},
+    {id: 3, name: '주기정보이력' , link: 'PeriodicInformation_History'},
+    {id: 4, name: '민원등록이력' , link: 'CivilComplaintRegistration_History'},
+    {id: 5, name: '이벤트전파이력' , link: 'EventPropagation_History'},
+    {id: 6, name: '운영제어이력' , link: 'OperationControl_History'},
+    {id: 7, name: '시스켐접속이력' , link: 'SystemConnection_History'},
+    {id: 8, name: '주기정보백업' , link: 'PeriodicInformation_Backup'}
   ]
 
   const subMenuReports = 
   [
-    {id: 1, name: '교차로별 시설물현황' , link: ''},
-    {id: 2, name: '이벤트발생 집계' , link: ''},
-    {id: 3, name: '주기보고발생 집계' , link: ''},
-    {id: 4, name: '민원발생 현황' , link: ''},
-    {id: 5, name: '상황전파 현황' , link: ''},
-    {id: 6, name: '운영제어 현황' , link: ''},
-    {id: 7, name: '교차로별 시설물수령집계' , link: ''},
-    {id: 8, name: '이상발생 현황' , link: ''},
-    {id: 9, name: '전체 이상발생 현황' , link: ''},
-    {id: 10, name: 'IOT/BLE정보 찾기' , link: ''},
-    {id: 11, name: '보고중단 내역' , link: ''}
+    {id: 1, name: '교차로별 시설물현황' , link: 'FacilityStatus_byIntersection'},
+    {id: 2, name: '이벤트발생 집계' , link: 'Aggregation_EventOccurrences'},
+    {id: 3, name: '주기보고발생 집계' , link: 'Aggregation_ReportOccurrences'},
+    {id: 4, name: '민원발생 현황' , link: 'CurrentStatus_CivilComplaint'},
+    {id: 5, name: '상황전파 현황' , link: 'SituationSpread_Status'},
+    {id: 6, name: '운영제어 현황' , link: 'OperationControl_Status'},
+    {id: 7, name: '교차로별 시설물수량집계' , link: 'QuantityFacilities_byIntersection'},
+    {id: 8, name: '이상발생 현황' , link: 'AbnormalOccurrence_Status'},
+    {id: 9, name: '전체 이상발생 현황' , link: 'TotalAbnormalities_Status'},
+    {id: 10, name: 'IOT/BLE정보 찾기' , link: 'IOTBLE_Information'},
+    {id: 11, name: '보고중단 내역' , link: 'ReportSuspension'}
   ]
 
   const subMenuPreferences = 
   [
-    {id: 1, name: '협력시관리' , link: ''},
-    {id: 2, name: '협력사직원관리' , link: ''},
-    {id: 3, name: '사용자관리' , link: ''},
-    {id: 4, name: '환경설정' , link: ''},
-    {id: 5, name: '지자체관리' , link: ''},
-    {id: 6, name: '코드관리' , link: ''}
+    {id: 1, name: '협력사관리' , link: 'Partner_Management'},
+    {id: 2, name: '협력사직원관리' , link: 'PartnerEmployee_Management'},
+    {id: 3, name: '사용자관리' , link: 'User_Management'},
+    {id: 4, name: '환경설정' , link: 'Preferences'},
+    {id: 5, name: '지자체관리' , link: 'LocalGoverment_Management'},
+    {id: 6, name: '코드관리' , link: 'Code_Management'}
   ]
 
   //** React UseState 
@@ -180,16 +197,6 @@ const ControllerMonitorTopMenu = props => {
   const clickLogoLocalArea = event => {
     event.preventDefault();
     dispatch(rootActions.increment());
-  }
-
-  // ** Click Event Functions
-  const clickMenuIcon = event => {
-    event.preventDefault();
-
-    let button = event.currentTarget;
-    let href = button.getAttribute('data-href');
-
-    console.log(href);
   }
 
   //** React Use Effect

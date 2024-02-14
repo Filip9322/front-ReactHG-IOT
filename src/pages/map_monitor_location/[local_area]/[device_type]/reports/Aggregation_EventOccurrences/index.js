@@ -17,6 +17,7 @@ const EquiManagement = () => {
   return(
     <Typography>
       {router.query.local_area} +  {router.query.device_type}
+      이벤트발생 집계
     </Typography>
   );
 }

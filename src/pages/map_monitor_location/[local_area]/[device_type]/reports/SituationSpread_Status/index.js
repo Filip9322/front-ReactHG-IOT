@@ -17,6 +17,7 @@ const EquiManagement = () => {
   return(
     <Typography>
       {router.query.local_area} +  {router.query.device_type}
+      상황전파 현황
     </Typography>
   );
 }
