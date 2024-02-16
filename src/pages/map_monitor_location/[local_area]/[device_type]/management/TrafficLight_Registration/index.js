@@ -1,6 +1,9 @@
 // ** React Imports
-// ** React Imports
 import { useState, useEffect } from 'react'
+
+// ** Redux
+import { useDispatch } from 'react-redux'
+import { rootActions } from 'src/@core/redux/reducer'
 
 // ** Next Import
 import { useRouter } from 'next/router'
@@ -10,9 +13,16 @@ import { Typography } from '@mui/material'
 
 
 
-const EquiManagement = () => {
+const TrafficLightRegistration = () => {
   // ** Hooks
-  const router = useRouter(); 
+  const router = useRouter();
+   // ** Redux
+	const dispatch  = useDispatch();
+
+  useEffect(() => {
+    // ** Set Page Name and MetaData
+    dispatch(rootActions.updateTitle("신호등 구역등록"));
+  },[]);
 
   return(
     <Typography>
@@ -22,4 +32,4 @@ const EquiManagement = () => {
   );
 }
 
-export default EquiManagement;
+export default TrafficLightRegistration;

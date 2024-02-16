@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { TextField, Autocomplete } from '@mui/material';
 
 const SearchBar = props => {
-  const { controllersNames, updateSearchedController } = props;
+  const { controllersNames, updateSearchedController, title } = props;
   
   useEffect(()=>{
     //console.log(controllersNames.length);
@@ -14,7 +14,7 @@ const SearchBar = props => {
   const textFieldInput = params => {
     return (
       <TextField {...params} 
-        label='제우기 검색:' 
+        label={`${title}: `}
         variant='outlined'
         sx={{
           '& fieldset.MuiOutlinedInput-notchedOutline':{

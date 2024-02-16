@@ -42,10 +42,10 @@ const Map_Monitor_Location_Page = () => {
   
   // ** UseRef
   const hasPageBeenRendered = useRef({ 
-      effect1: false, 
-      effect2: false ,
-      effect3: false,
-      effect4: false
+    effect1: false, 
+    effect2: false ,
+    effect3: false,
+    effect4: false
   });
 
 	// ** Redux
@@ -70,10 +70,6 @@ const Map_Monitor_Location_Page = () => {
       }
     }).catch(error => { console.error('error: '+error)
     }).finally(() => {
-			// Update Redux Current Local Area
-			dispatch(rootActions.updateCurrentLA_ID(localArea.id));
-			dispatch(rootActions.updateCurrentLA_Name(localArea.local_name));
-			dispatch(rootActions.updateCurrentLA_Logo(localArea.local_logo));
 			setSpinner(false)}
 		);
   }
@@ -98,7 +94,7 @@ const Map_Monitor_Location_Page = () => {
     }).finally(() => {
       setSpinner(false);
     });
-   }
+  }
   
   // ** Custom Functions
   const updateCoordinates = (x = 2.1 ,y = 2.1) => {
@@ -214,7 +210,8 @@ const Map_Monitor_Location_Page = () => {
           alignItems: 'flex-end'
         }}
       >
-        <SearchBar 
+        <SearchBar
+          title={ '제우기 검색' }
           controllersNames = {controllersNames} 
           updateSearchedController = { updateSearchedController }
         />

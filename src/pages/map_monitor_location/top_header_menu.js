@@ -4,6 +4,7 @@ import useMediaQuery from '@mui/material/useMediaQuery'
 
 // ** Next Import
 import { useRouter } from 'next/router'
+import Router from 'next/router'
 import Link from 'next/link'
 
 // ** Redux
@@ -23,6 +24,8 @@ import Cog from 'mdi-material-ui/Cog'
 //** SVG Imports */
 import IconReport from 'public/images/misc/icon_report.svg'
 import IconManage from 'public/images/misc/icon_manage.svg'
+import classNames from 'classnames';
+import { ClassNames } from '@emotion/react';
 
 const ControllerMonitorTopMenu = props => {
 
@@ -44,18 +47,14 @@ const ControllerMonitorTopMenu = props => {
     
     // ** Click Event Functions
     const handleClickTitleSubMenu = event => {
-      event.preventDefault();
-
       setOpenMenu(!openMenu);
       setAnchorEl(buttonRef.current);
     }
 
     const handleClickSubMenItem = event => {
-      //event.preventDefault();
-
       let button = event.currentTarget;
       let href = button.getAttribute('data-href');
-      console.log(href);
+      Router.push(href);
     }
     
     const handleCloseSubMenu = () => {
@@ -71,7 +70,8 @@ const ControllerMonitorTopMenu = props => {
       <ClickAwayListener onClickAway={handleClickAway} >
         <Button 
           sx = {{ display:'flex', position: 'relative', alignItems:'center',':hover':{cursor: 'pointer'}}}
-          href = {`${ basePath }${ link }`}
+          href = {id == 'monitoring'?(`${ basePath }${ link }`): ''}
+          component={id == 'monitoring'?('a'): 'div'}
           data-href = {`${ basePath }${ link }`}
           onClick = { handleClickTitleSubMenu }
           ref = { buttonRef }
@@ -109,13 +109,23 @@ const ControllerMonitorTopMenu = props => {
               open = { openMenu }
               anchorEl = { anchorEl }
               onClose  = { handleCloseSubMenu }
+              sx={{
+                '& .MuiMenuItem-root:hover':{
+                  backgroundColor: '#f14a4a',
+                  '& a.MenuLink': { color: '#fff' }
+                },
+                '& .MuiMenuItem-root a.MenuLink':{
+                  textDecoration: 'none',
+                  color: '#3a3541de'
+                }
+              }}
             >
               { submenu.map(( subItem, row )=>(
                 <MenuItem key={ row } 
                   onClick={ handleClickSubMenItem } 
                   data-href={ `${ basePath }${ link }/${ subItem.link }` }
                 >
-                  <Link href={ `${ basePath }${ link }/${ subItem.link }` }>
+                  <Link href={ `${ basePath }${ link }/${ subItem.link }`}  className={'MenuLink'}>
                     { subItem.name }
                   </Link>
                 </MenuItem>
