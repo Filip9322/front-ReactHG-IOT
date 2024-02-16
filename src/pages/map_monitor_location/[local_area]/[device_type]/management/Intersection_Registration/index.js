@@ -9,7 +9,8 @@ import { rootActions } from 'src/@core/redux/reducer'
 import { useRouter } from 'next/router'
 
 // ** MUI Components
-import { Box, Typography, CircularProgress, Tooltip, Button, IconButton } from '@mui/material'
+import { Box, Typography, CircularProgress, Tooltip, Button, IconButton, Checkbox } from '@mui/material'
+import { TableContainer, Table, TableHead, TableBody, TableRow, TableCell } from '@mui/material'
 import { Plus } from 'mdi-material-ui'
 
 // ** Utils
@@ -83,12 +84,7 @@ const IntersectionRegistration = () => {
        `${process.env.REACT_APP_APIURL}/map_controllers/${router.query.local_area}/${router.query.device_type}`
     ).then(response => {
       if(response) {
-        
         setControllers(response);
-
-        setFilterMapMarker(parseInt(0));
-
-        console.log(response)
       }
     }).catch(error=> { console.error('error: '+ error)
     }).finally(() => {
@@ -184,6 +180,31 @@ const IntersectionRegistration = () => {
         </Tooltip>
       </Box>
       )}
+      <TableContainer>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell><Checkbox  /></TableCell>
+              <TableCell>관리번호</TableCell>
+              <TableCell>교차로명</TableCell>
+              <TableCell>교차로명형태</TableCell>
+              <TableCell>도로형태</TableCell>
+              <TableCell>제어기 No.</TableCell>
+              <TableCell>관리부서</TableCell>
+              <TableCell>주소</TableCell>
+              <TableCell>좌표 X</TableCell>
+              <TableCell>좌표 Y</TableCell>
+              <TableCell>상태</TableCell>
+              <TableCell>비고</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+          <TableRow>
+              <TableCell>Body Cell</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </TableContainer>
     </Box>
   );
 }
