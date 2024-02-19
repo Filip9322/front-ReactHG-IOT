@@ -36,11 +36,20 @@ const IntersectionRegistration = () => {
 	const dispatch  = useDispatch();
 
   // ** Custom Functions
-  const updateSearchedController = controllerID => {
+  const updateSearchedController = (controllerID, fieldName) => {
 
     const controller_s = controllers.find(controller => 
       controller.id == controllerID
     );
+
+    if(fieldName == 'field1'){
+      setCleanSearchField1(true);
+      setCleanSearchField2(false);
+    }
+    if(fieldName == 'field2'){
+      setCleanSearchField1(false);
+      setCleanSearchField2(true);
+    }
     
     setControllerSelected(controller_s);
     setSearchedController(controllerID);
@@ -143,15 +152,15 @@ const IntersectionRegistration = () => {
             title={ '관리번호 / 교차로면' }
             controllersNames = {controllersNames} 
             updateSearchedController = { updateSearchedController }
-            forceClean = {cleanSearchField1}
-            data-field={'field1'}
+            cleanField = {cleanSearchField1}
+            fieldName={'field1'}
           />
           <SearchBar
             title={ '설치장소' }
             controllersNames = {controllersDirections} 
             updateSearchedController = { updateSearchedController }
-            forceClean = {cleanSearchField2}
-            data-field={'field2'}
+            cleanField = {cleanSearchField2}
+            fieldName={'field2'}
           />
         </Box>
         <Tooltip title={"추가"}>

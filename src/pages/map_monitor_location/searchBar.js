@@ -1,19 +1,29 @@
 // ** React Imports
-import { useState, useEffect } from 'react';
+import { useRef, useState, useEffect } from 'react';
 
 // **  Material Components Imports
 import { TextField, Autocomplete } from '@mui/material';
 
 const SearchBar = props => {
-  const { controllersNames, updateSearchedController, title, forceClean } = props;
+  // ** Props
+  const { controllersNames, updateSearchedController, title, cleanField, fieldName } = props;
+  
+  // ** Hooks
+  const autoCompleteRef = useRef(null);
   
   useEffect(()=>{
     //console.log(controllersNames.length);
   },[props]);
+
+
+  useEffect(() => {
+  }, [cleanField])
+  
   
   const textFieldInput = params => {
+
     return (
-      <TextField {...params} 
+      <TextField {...params}
         label={`${title}: `}
         variant='outlined'
         sx={{
@@ -36,9 +46,9 @@ const SearchBar = props => {
       clearOnBlur
       autoHighlight
       onChange={(event, newValue) => {
-        console.log(newValue);
+        //console.log(newValue);
         if(newValue){
-          updateSearchedController(newValue.id);
+          updateSearchedController(newValue.id, fieldName);
         }
         //setTimeout(() => { debugger; }, 5000);
       }}

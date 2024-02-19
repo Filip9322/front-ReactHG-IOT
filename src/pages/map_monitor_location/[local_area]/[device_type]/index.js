@@ -214,6 +214,7 @@ const Map_Monitor_Location_Page = () => {
           title={ '제우기 검색' }
           controllersNames = {controllersNames} 
           updateSearchedController = { updateSearchedController }
+          fieldName = {'searchBar_EquiStateMap'}
         />
         <CountingBar controllers={controllers} filterMapType={filterMapType}/>
       </Box>
