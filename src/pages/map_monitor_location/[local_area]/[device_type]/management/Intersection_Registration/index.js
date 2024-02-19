@@ -22,32 +22,29 @@ const IntersectionRegistration = () => {
   // ** States
   const [spinner, setSpinner] = useState(true);
   const [controllers, setControllers] = useState([]);
+  const [filteredControllers, setFilteredControllers] = useState([]);
   const [controllersNames, SetControllersNames] = useState([{id: 1, name: 'test'}]);
   const [controllersDirections, SetcontrollersDirections] = useState([{id: 1, name: 'test'}]);
   const [controllerSelected, setControllerSelected] = useState({});
   const [searchedController, setSearchedController] = useState({});
+  const [cleanSearchField1, setCleanSearchField1] = useState(false);
+  const [cleanSearchField2, setCleanSearchField2] = useState(false);
 
   // ** Hooks
   const router = useRouter();
   // ** Redux
 	const dispatch  = useDispatch();
 
-  // ** UseRef
-  const hasPageBeenRendered = useRef({ 
-    effect1: false, 
-    effect2: false ,
-    effect3: false,
-    effect4: false
-  });
-
   // ** Custom Functions
   const updateSearchedController = controllerID => {
+
     const controller_s = controllers.find(controller => 
       controller.id == controllerID
     );
     
     setControllerSelected(controller_s);
     setSearchedController(controllerID);
+    setFilteredControllers([controller_s]);
   }
 
   const set_ControllerName = controller =>{
@@ -100,37 +97,30 @@ const IntersectionRegistration = () => {
   
 
   useEffect(() => {
-    if(hasPageBeenRendered.current['effect1']) {
-      if(router.query.local_area) {
-        fetchControllers();
-      }
+    if(router.query.local_area) {
+      fetchControllers();
     }
-
-    hasPageBeenRendered.current['effect1'] = true;
   },[router])
 
   useEffect(()=> {
-    if(hasPageBeenRendered.current['effect2']) {
-      // ** Arrange names for easy look up on the autocomplete textfield
-      let names = [];
-      let numbers = [];
+    // ** Arrange names for easy look up on the autocomplete textfield
+    let names = [];
+    let numbers = [];
 
-      controllers.map(controller => {
-        // Creatte Array of controllers with name
-        let controllerName = set_ControllerName(controller);
-        let controllerNumber = set_controllersDirections(controller);
+    controllers.map(controller => {
+      // Creatte Array of controllers with name
+      let controllerName = set_ControllerName(controller);
+      let controllerNumber = set_controllersDirections(controller);
 
-        names.push(controllerName);
-        numbers.push(controllerNumber)
-      });
+      names.push(controllerName);
+      numbers.push(controllerNumber)
+    });
 
-      SetControllersNames(names);
-      SetcontrollersDirections(numbers);
-
-      setSpinner(false);
-    }
-
-    hasPageBeenRendered.current['effect2'] = true;
+    SetControllersNames(names);
+    SetcontrollersDirections(numbers);
+    setFilteredControllers(controllers);
+    setSpinner(false);
+    
   },[controllers])
 
   return(
@@ -143,25 +133,33 @@ const IntersectionRegistration = () => {
         sx= {{
           display: 'flex',
           flexDirection: 'row',
-          justifyContent: 'space-around',
-          width: '50%'
+          justifyContent: 'space-between',
+          width: '100%',
+          padding: '20px 10px 20px 0'
         }}
       >
-        <SearchBar
-          title={ '관리번호 / 교차로면' }
-          controllersNames = {controllersNames} 
-          updateSearchedController = { updateSearchedController }
-        />
-        <SearchBar
-          title={ '설치장소' }
-          controllersNames = {controllersDirections} 
-          updateSearchedController = { updateSearchedController }
-        />
+        <Box sx={{ display: 'flex'}}>
+          <SearchBar
+            title={ '관리번호 / 교차로면' }
+            controllersNames = {controllersNames} 
+            updateSearchedController = { updateSearchedController }
+            forceClean = {cleanSearchField1}
+            data-field={'field1'}
+          />
+          <SearchBar
+            title={ '설치장소' }
+            controllersNames = {controllersDirections} 
+            updateSearchedController = { updateSearchedController }
+            forceClean = {cleanSearchField2}
+            data-field={'field2'}
+          />
+        </Box>
         <Tooltip title={"추가"}>
          <Button 
           sx = {{ 
             display:'flex',
             position: 'relative',
+            alignSelf: 'flex-end',
             alignItems:'center',
             boxShadow: '0 2px 10px 0 rgba(58, 53, 65, 0.1)',
             border: 'solid 1px rgba(58, 53, 65, 0.22)',
@@ -180,28 +178,77 @@ const IntersectionRegistration = () => {
         </Tooltip>
       </Box>
       )}
-      <TableContainer>
-        <Table>
+      <TableContainer
+        sx={{
+          maxHeight: 800,
+          '& .MuiTableCell':{
+            boxSizing: 'content-box'
+          },
+          '& .TableCellMinimun':{
+            width: '5rem'
+          },
+          '& .TableCellSmall':{
+            width: '18rem'
+          },
+          '& .TableCellMedium':{
+            
+          }
+        }}
+      >
+        <Table stickyHeader >
           <TableHead>
             <TableRow>
               <TableCell><Checkbox  /></TableCell>
-              <TableCell>관리번호</TableCell>
+              <TableCell className={'TableCellMinimun'}>관리번호</TableCell>
               <TableCell>교차로명</TableCell>
-              <TableCell>교차로명형태</TableCell>
-              <TableCell>도로형태</TableCell>
-              <TableCell>제어기 No.</TableCell>
-              <TableCell>관리부서</TableCell>
+              <TableCell className={'TableCellMinimun'}>교차로명형태</TableCell>
+              <TableCell className={'TableCellMinimun'}>도로형태</TableCell>
+              <TableCell className={'TableCellMinimun'}>제어기 No.</TableCell>
+              <TableCell className={'TableCellMinimun'}>관리부서</TableCell>
               <TableCell>주소</TableCell>
-              <TableCell>좌표 X</TableCell>
-              <TableCell>좌표 Y</TableCell>
-              <TableCell>상태</TableCell>
-              <TableCell>비고</TableCell>
+              <TableCell className={'TableCellMinimun'}>좌표 X</TableCell>
+              <TableCell className={'TableCellMinimun'}>좌표 Y</TableCell>
+              <TableCell className={'TableCellMinimun'}>상태</TableCell>
+              <TableCell className={'TableCellSmall'}>비고</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-          <TableRow>
-              <TableCell>Body Cell</TableCell>
-            </TableRow>
+            {filteredControllers.map((controller, rowKey) => {
+              let controllerStatus = '';
+              let controllerStatusColor = '';
+
+              if(!controller.is_active || !controller.is_installed){
+                controllerStatus = '비활성';
+                controllerStatusColor = '#666';
+              } else {
+                if(controller.has_abnormalities){
+                  controllerStatus = '이상';
+                  controllerStatusColor = '#d02020';
+                } else {
+                  controllerStatus = '정상';
+                  controllerStatusColor = '#005826';
+                }
+              }
+              return(
+              <TableRow key={rowKey} 
+                sx={{
+                  '& td.MuiTableCell-root.ControllerStatus': {color: controllerStatusColor}
+                }}
+              >
+                <TableCell><Checkbox  /></TableCell>
+                <TableCell className={'TableCellMinimun'}>{controller.local_area_controller_number}</TableCell>
+                <TableCell>{controller.controller_name}</TableCell>
+                <TableCell className={'TableCellMinimun'}>{controller.controller_type_name}</TableCell>
+                <TableCell className={'TableCellMinimun'}>4</TableCell>
+                <TableCell className={'TableCellMinimun'}>{controller.local_goverment_controller_number}</TableCell>
+                <TableCell className={'TableCellMinimun'}>{controller.controller_management_department}</TableCell>
+                <TableCell>{controller.controller_address}</TableCell>
+                <TableCell className={'TableCellMinimun'}><Tooltip title={controller.map_x}>{parseFloat(controller.map_x).toFixed(3)}</Tooltip></TableCell>
+                <TableCell className={'TableCellMinimun'}><Tooltip title={controller.map_y}>{parseFloat(controller.map_y).toFixed(3)}</Tooltip></TableCell>
+                <TableCell className={'TableCellMinimun ControllerStatus'}>{controllerStatus}</TableCell>
+                <TableCell className={'TableCellSmall'}>{controller.bigo}</TableCell>
+              </TableRow>
+            )})}
           </TableBody>
         </Table>
       </TableContainer>

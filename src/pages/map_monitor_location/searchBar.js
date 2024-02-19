@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { TextField, Autocomplete } from '@mui/material';
 
 const SearchBar = props => {
-  const { controllersNames, updateSearchedController, title } = props;
+  const { controllersNames, updateSearchedController, title, forceClean } = props;
   
   useEffect(()=>{
     //console.log(controllersNames.length);
