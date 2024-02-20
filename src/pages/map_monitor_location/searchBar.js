@@ -11,16 +11,18 @@ const SearchBar = props => {
   // ** Hooks
   const autoCompleteRef = useRef(null);
   
-  useEffect(()=>{
-    //console.log(controllersNames.length);
-  },[props]);
-
-
-  useEffect(() => {
-  }, [cleanField])
   
+  
+  useEffect(() => {
+    //console.log(fieldName + ': ' + controllersNames.length);
+  }, [controllersNames])
+  
+  useEffect(()=>{
+    
+  },[cleanField]);
   
   const textFieldInput = params => {
+    
 
     return (
       <TextField {...params}
@@ -37,18 +39,21 @@ const SearchBar = props => {
   
   return (
     <Autocomplete
-      id='searchField'
+      id={fieldName}
       sx={{
         width: 300, 
         zIndex: 2 ,
         backgroundColor: 'white'
       }}
-      clearOnBlur
+      open={cleanField}
+      clearOnBlur ={false}
+      clearText={'지우기'}
+      openText={'선택'}
       autoHighlight
       onChange={(event, newValue) => {
         //console.log(newValue);
         if(newValue){
-          updateSearchedController(newValue.id, fieldName);
+          updateSearchedController(newValue.value, fieldName);
         }
         //setTimeout(() => { debugger; }, 5000);
       }}
@@ -59,7 +64,7 @@ const SearchBar = props => {
       options={controllersNames.map(controller => controller)}
       renderInput={params => (textFieldInput(params))}
       renderOption={(props, controller) => (
-        <li {...props} key={controller.id} value={controller.id}>{controller.name}</li>
+        <li {...props} key={controller.id} value={controller.value}>{controller.name}</li>
       )}
     />
   );

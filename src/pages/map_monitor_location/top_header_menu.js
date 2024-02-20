@@ -24,8 +24,6 @@ import Cog from 'mdi-material-ui/Cog'
 //** SVG Imports */
 import IconReport from 'public/images/misc/icon_report.svg'
 import IconManage from 'public/images/misc/icon_manage.svg'
-import classNames from 'classnames';
-import { ClassNames } from '@emotion/react';
 
 const ControllerMonitorTopMenu = props => {
 
@@ -34,7 +32,6 @@ const ControllerMonitorTopMenu = props => {
     
     const { id, link, title, hasSubmenu, submenu } = props;
 
-    
     const buttonRef= useRef();
     
     //** React UseState

@@ -11,7 +11,7 @@ import { useRouter } from 'next/router'
 // ** MUI Components
 import { Box, Typography, CircularProgress, Tooltip, Button, IconButton, Checkbox } from '@mui/material'
 import { TableContainer, Table, TableHead, TableBody, TableRow, TableCell } from '@mui/material'
-import { Plus } from 'mdi-material-ui'
+import { Reload, Plus } from 'mdi-material-ui'
 
 // ** Utils
 import { getFetchURL }  from 'src/@core/utils/fetchHelper'
@@ -21,14 +21,18 @@ import { SearchBar } from 'src/pages/map_monitor_location/searchBar'
 const IntersectionRegistration = () => {
   // ** States
   const [spinner, setSpinner] = useState(true);
+  const [spinner1, setSpinner1] = useState(true);
+  const [spinner2, setSpinner2] = useState(true);
   const [controllers, setControllers] = useState([]);
   const [filteredControllers, setFilteredControllers] = useState([]);
   const [controllersNames, SetControllersNames] = useState([{id: 1, name: 'test'}]);
   const [controllersDirections, SetcontrollersDirections] = useState([{id: 1, name: 'test'}]);
   const [controllerSelected, setControllerSelected] = useState({});
-  const [searchedController, setSearchedController] = useState({});
-  const [cleanSearchField1, setCleanSearchField1] = useState(false);
-  const [cleanSearchField2, setCleanSearchField2] = useState(false);
+  const [cleanSearchField1, setCleanSearchField1] = useState(0);
+  const [cleanSearchField2, setCleanSearchField2] = useState(2);
+
+  var names = [];
+  var numbers = [];
 
   // ** Hooks
   const router = useRouter();
@@ -43,16 +47,13 @@ const IntersectionRegistration = () => {
     );
 
     if(fieldName == 'field1'){
-      setCleanSearchField1(true);
-      setCleanSearchField2(false);
+      setCleanSearchField2(cleanSearchField1+1);
     }
     if(fieldName == 'field2'){
-      setCleanSearchField1(false);
-      setCleanSearchField2(true);
+      setCleanSearchField1(cleanSearchField2+1);
     }
     
     setControllerSelected(controller_s);
-    setSearchedController(controllerID);
     setFilteredControllers([controller_s]);
   }
 
@@ -60,7 +61,7 @@ const IntersectionRegistration = () => {
     let body = {};
     let name = controller.local_area_controller_number+'범 - '+ controller.controller_name;
 
-    Object.assign(body, {id: controller.id });
+    Object.assign(body, {value: controller.id });
     Object.assign(body, {number: controller.local_area_controller_number});
     Object.assign(body, {name: name });
 
@@ -70,17 +71,43 @@ const IntersectionRegistration = () => {
   const set_controllersDirections = controller =>{
     let body = {};
 
-    Object.assign(body, {id: controller.id });
+    Object.assign(body, {value: controller.id });
     Object.assign(body, {number: controller.local_area_controller_number});
     Object.assign(body, {name: controller.controller_address });
 
     return body; 
   }
 
+  const BuildArraySearchBars = () => {
+    // ** Arrange names for easy look up on the autocomplete textfield
+    if(names.length == 0 || numbers.length == 0){
+      controllers.map(controller => {
+        // Creatte Array of controllers with name
+        let controllerName = set_ControllerName(controller);
+        let controllerNumber = set_controllersDirections(controller);
+  
+        names.push(controllerName);
+        numbers.push(controllerNumber)
+      });
+    }
+
+    SetControllersNames(names);
+    SetcontrollersDirections(numbers);
+    setFilteredControllers(controllers);
+    setSpinner(false);
+  }
+
   // ** Handler Functions
-  const handleClickAdd = () => {
+  const handleClickAdd = event => {
     event.preventDefault();
     
+  }
+
+  const handleClickClear = event => {
+    event.preventDefault();
+    BuildArraySearchBars();
+    setCleanSearchField1(cleanSearchField2+1);
+    setCleanSearchField2(cleanSearchField1+1);
   }
 
   // ** Async Functions
@@ -112,25 +139,12 @@ const IntersectionRegistration = () => {
   },[router])
 
   useEffect(()=> {
-    // ** Arrange names for easy look up on the autocomplete textfield
-    let names = [];
-    let numbers = [];
-
-    controllers.map(controller => {
-      // Creatte Array of controllers with name
-      let controllerName = set_ControllerName(controller);
-      let controllerNumber = set_controllersDirections(controller);
-
-      names.push(controllerName);
-      numbers.push(controllerNumber)
-    });
-
-    SetControllersNames(names);
-    SetcontrollersDirections(numbers);
-    setFilteredControllers(controllers);
-    setSpinner(false);
-    
+    BuildArraySearchBars();
   },[controllers])
+
+  useEffect(() =>{
+    setSpinner(false);
+  },[cleanSearchField1,cleanSearchField2])
 
   return(
     <Box>
@@ -152,16 +166,38 @@ const IntersectionRegistration = () => {
             title={ '관리번호 / 교차로면' }
             controllersNames = {controllersNames} 
             updateSearchedController = { updateSearchedController }
-            cleanField = {cleanSearchField1}
+            key = {cleanSearchField1}
             fieldName={'field1'}
           />
           <SearchBar
             title={ '설치장소' }
             controllersNames = {controllersDirections} 
             updateSearchedController = { updateSearchedController }
-            cleanField = {cleanSearchField2}
+            key = {cleanSearchField2}
             fieldName={'field2'}
           />
+          <Tooltip title={"지우기"}>
+            <Button 
+              sx = {{ 
+                display:'flex',
+                marginLeft: '10px',
+                position: 'relative',
+                alignItems:'center',
+                border: 'solid 1px #aaa',
+                backgroundColor: '#fff',
+                ':hover':{ cursor: 'pointer', backgroundColor: 'rgba(241, 74, 74, 0.9)'}
+              }}
+              onClick = { handleClickClear }
+            >
+                <IconButton
+                    className={'IconButtonSVG'}
+                    title={ '지우기' }
+                    arial-label={ '지우기' }
+                  >
+                  <Reload />
+                </IconButton>
+              </Button>
+          </Tooltip>
         </Box>
         <Tooltip title={"추가"}>
          <Button 
@@ -171,13 +207,14 @@ const IntersectionRegistration = () => {
             alignSelf: 'flex-end',
             alignItems:'center',
             boxShadow: '0 2px 10px 0 rgba(58, 53, 65, 0.1)',
-            border: 'solid 1px rgba(58, 53, 65, 0.22)',
+            border: 'solid 1px #aaa',
             backgroundColor: '#fff',
             ':hover':{ cursor: 'pointer', backgroundColor: 'rgba(241, 74, 74, 0.9)'}
           }}
           onClick = { handleClickAdd }
         >
             <IconButton
+                className={'IconButtonSVG'}
                 title={ '추가' }
                 arial-label={ '추가' }
               >
