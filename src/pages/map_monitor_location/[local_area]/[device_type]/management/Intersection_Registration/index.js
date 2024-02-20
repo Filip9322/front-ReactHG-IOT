@@ -158,7 +158,17 @@ const IntersectionRegistration = () => {
           flexDirection: 'row',
           justifyContent: 'space-between',
           width: '100%',
-          padding: '20px 10px 20px 0'
+          padding: '20px 10px 20px 0',
+          '& button.IconButtonSVG':{
+            display:'flex',
+                marginLeft: '10px',
+                position: 'relative',
+                alignItems:'center',
+                border: 'solid 1px #aaa',
+                boxShadow: '0 2px 10px 0 rgba(58, 53, 65, 0.1)',
+                backgroundColor: '#fff',
+                ':hover':{ cursor: 'pointer', backgroundColor: 'rgba(241, 74, 74, 0.9)'}
+          }
         }}
       >
         <Box sx={{ display: 'flex'}}>
@@ -178,48 +188,19 @@ const IntersectionRegistration = () => {
           />
           <Tooltip title={"지우기"}>
             <Button 
-              sx = {{ 
-                display:'flex',
-                marginLeft: '10px',
-                position: 'relative',
-                alignItems:'center',
-                border: 'solid 1px #aaa',
-                backgroundColor: '#fff',
-                ':hover':{ cursor: 'pointer', backgroundColor: 'rgba(241, 74, 74, 0.9)'}
-              }}
+              className={'IconButtonSVG'}
               onClick = { handleClickClear }
             >
-                <IconButton
-                    className={'IconButtonSVG'}
-                    title={ '지우기' }
-                    arial-label={ '지우기' }
-                  >
-                  <Reload />
-                </IconButton>
-              </Button>
+              <Reload />
+            </Button>
           </Tooltip>
         </Box>
         <Tooltip title={"추가"}>
-         <Button 
-          sx = {{ 
-            display:'flex',
-            position: 'relative',
-            alignSelf: 'flex-end',
-            alignItems:'center',
-            boxShadow: '0 2px 10px 0 rgba(58, 53, 65, 0.1)',
-            border: 'solid 1px #aaa',
-            backgroundColor: '#fff',
-            ':hover':{ cursor: 'pointer', backgroundColor: 'rgba(241, 74, 74, 0.9)'}
-          }}
-          onClick = { handleClickAdd }
-        >
-            <IconButton
-                className={'IconButtonSVG'}
-                title={ '추가' }
-                arial-label={ '추가' }
-              >
-              <Plus />
-            </IconButton>
+          <Button 
+            onClick = { handleClickAdd }
+            className={'IconButtonSVG'}
+          >
+            <Plus />
           </Button>
         </Tooltip>
       </Box>
@@ -289,8 +270,8 @@ const IntersectionRegistration = () => {
                 <TableCell className={'TableCellMinimun'}>{controller.local_goverment_controller_number}</TableCell>
                 <TableCell className={'TableCellMinimun'}>{controller.controller_management_department}</TableCell>
                 <TableCell>{controller.controller_address}</TableCell>
-                <TableCell className={'TableCellMinimun'}><Tooltip title={controller.map_x}>{parseFloat(controller.map_x).toFixed(3)}</Tooltip></TableCell>
-                <TableCell className={'TableCellMinimun'}><Tooltip title={controller.map_y}>{parseFloat(controller.map_y).toFixed(3)}</Tooltip></TableCell>
+                <TableCell className={'TableCellMinimun'}><Tooltip title={controller.map_x}><span>{parseFloat(controller.map_x).toFixed(3)}</span></Tooltip></TableCell>
+                <TableCell className={'TableCellMinimun'}><Tooltip title={controller.map_y}><span>{parseFloat(controller.map_y).toFixed(3)}</span></Tooltip></TableCell>
                 <TableCell className={'TableCellMinimun ControllerStatus'}>{controllerStatus}</TableCell>
                 <TableCell className={'TableCellSmall'}>{controller.bigo}</TableCell>
               </TableRow>
