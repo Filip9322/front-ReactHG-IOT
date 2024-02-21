@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 
 // ** Redux
 import { useDispatch } from 'react-redux'
@@ -84,7 +84,7 @@ const headCells = [
     classes: 'TableCellMinimun'
   },
   {
-    id: 'controllerStatus',
+    id: 'filteredState',
     numeric: false,
     disablePadding: false,
     label: '상태',
@@ -163,6 +163,21 @@ const IntersectionRegistration = () => {
   const [orderBy, setOrderBy] = useState('local_area_controller_number');
   const [rowsSelected, setRowsSelected] = useState([]);
 
+  const descendingComparator = (a, b, orderBy) => {
+    if (b[orderBy] < a[orderBy]) { return -1; }
+    if (b[orderBy] > a[orderBy]) { return 1;  }
+    return 0;
+  }
+
+  const getComparator = (order, orderBy) => {
+    return order === 'desc'
+            ? (a, b) => descendingComparator(a, b, orderBy)
+            : (a, b) => -descendingComparator(a, b, orderBy);
+  }
+
+  var visibleRows = useMemo(()=>filteredControllers.slice().sort(getComparator(order, orderBy)),[order,orderBy]);
+
+  // ** Variables that change
   var names = [];
   var numbers = [];
 
@@ -189,6 +204,7 @@ const IntersectionRegistration = () => {
     
     setControllerSelected(controller_s);
     setFilteredControllers([controller_s]);
+    visibleRows = [controller_s];
   }
 
   const set_ControllerName = controller =>{
@@ -228,6 +244,7 @@ const IntersectionRegistration = () => {
     SetControllersNames(names);
     SetcontrollersDirections(numbers);
     setFilteredControllers(controllers);
+    visibleRows = controllers;
     setSpinner(false);
   }
 
@@ -276,6 +293,25 @@ const IntersectionRegistration = () => {
     ).then(response => {
       if(response) {
         setControllers(response);
+        response.map((controller) => {
+          let controllerStatus = '';
+          let controllerStatusColor = '';
+
+          if(!controller.is_active || !controller.is_installed){
+            controllerStatus = '비활성';
+            controllerStatusColor = '#666';
+          } else {
+            if(controller.has_abnormalities){
+              controllerStatus = '이상';
+              controllerStatusColor = '#d02020';
+            } else {
+              controllerStatus = '정상';
+              controllerStatusColor = '#005826';
+            }
+          }
+          Object.assign(controller,{filteredState: controllerStatus});
+          Object.assign(controller,{filteredStateColor: controllerStatusColor});
+        });
       }
     }).catch(error=> { console.error('error: '+ error)
     }).finally(() => {
@@ -398,26 +434,12 @@ const IntersectionRegistration = () => {
             rowCount={controllers.length}
           />
           <TableBody>
-            {filteredControllers.map((controller, rowKey) => {
-              let controllerStatus = '';
-              let controllerStatusColor = '';
-
-              if(!controller.is_active || !controller.is_installed){
-                controllerStatus = '비활성';
-                controllerStatusColor = '#666';
-              } else {
-                if(controller.has_abnormalities){
-                  controllerStatus = '이상';
-                  controllerStatusColor = '#d02020';
-                } else {
-                  controllerStatus = '정상';
-                  controllerStatusColor = '#005826';
-                }
-              }
+            {visibleRows.map((controller, rowKey) => {
+              
               return(
               <TableRow key={rowKey} 
                 sx={{
-                  '& td.MuiTableCell-root.ControllerStatus': {color: controllerStatusColor}
+                  '& td.MuiTableCell-root.ControllerStatus': {color: controller.filteredStateColor}
                 }}
               >
                 <TableCell><Checkbox  onChange={ handleChangeCheckBoxItem } value={controller.id}/></TableCell>
@@ -430,7 +452,7 @@ const IntersectionRegistration = () => {
                 <TableCell>{controller.controller_address}</TableCell>
                 <TableCell className={'TableCellMinimun'}><Tooltip title={controller.map_x}><span>{parseFloat(controller.map_x).toFixed(3)}</span></Tooltip></TableCell>
                 <TableCell className={'TableCellMinimun'}><Tooltip title={controller.map_y}><span>{parseFloat(controller.map_y).toFixed(3)}</span></Tooltip></TableCell>
-                <TableCell className={'TableCellMinimun ControllerStatus'}>{controllerStatus}</TableCell>
+                <TableCell className={'TableCellMinimun ControllerStatus'}>{controller.filteredState}</TableCell>
                 <TableCell className={'TableCellMedium'}>{controller.bigo}</TableCell>
               </TableRow>
             )})}
