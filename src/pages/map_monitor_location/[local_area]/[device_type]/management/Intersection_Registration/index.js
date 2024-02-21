@@ -9,20 +9,147 @@ import { rootActions } from 'src/@core/redux/reducer'
 import { useRouter } from 'next/router'
 
 // ** MUI Components
-import { Box, Typography, CircularProgress, Tooltip, Button, IconButton, Checkbox } from '@mui/material'
-import { TableContainer, Table, TableHead, TableBody, TableRow, TableCell } from '@mui/material'
-import { Reload, Plus } from 'mdi-material-ui'
+import { Box, Typography, CircularProgress, Tooltip, Button, Checkbox } from '@mui/material'
+import { TableContainer, Table, TableHead, TableBody, TableRow, TableCell, TableSortLabel } from '@mui/material'
+import { Reload, Plus, MicrosoftExcel } from 'mdi-material-ui'
 
 // ** Utils
 import { getFetchURL }  from 'src/@core/utils/fetchHelper'
 import { SearchBar } from 'src/pages/map_monitor_location/searchBar'
+import { visuallyHidden } from '@mui/utils'
 
+
+const headCells = [
+  {
+    id: 'local_area_controller_number',
+    numeric: true,
+    disablePadding: true,
+    label: '관리번호',
+    classes: 'TableCellSmall'
+  },
+  {
+    id: 'controller_name',
+    numeric: false,
+    disablePadding: false,
+    label: '교차로명',
+    classes: ''
+  },
+  {
+    id: 'controller_type_name',
+    numeric: false,
+    disablePadding: false,
+    label: '교차로명형태',
+    classes: 'TableCellMinimun'
+  },
+  {
+    id: 'inse_type',
+    numeric: false,
+    disablePadding: false,
+    label: '도로형태',
+    classes: 'TableCellMinimun'
+  },
+  {
+    id: 'local_goverment_controller_number',
+    numeric: false,
+    disablePadding: false,
+    label: '제어기 No.',
+    classes: 'TableCellMinimun'
+  },
+  {
+    id: 'controller_management_department',
+    numeric: false,
+    disablePadding: false,
+    label: '관리부서',
+    classes: 'TableCellMinimun'
+  },
+  {
+    id: 'controller_address',
+    numeric: false,
+    disablePadding: false,
+    label: '주소',
+    classes: 'TableCellMedium'
+  },
+  {
+    id: 'map_x',
+    numeric: false,
+    disablePadding: false,
+    label: '좌표 X',
+    classes: 'TableCellMinimun'
+  },
+  {
+    id: 'map_y',
+    numeric: false,
+    disablePadding: false,
+    label: '좌표 Y',
+    classes: 'TableCellMinimun'
+  },
+  {
+    id: 'controllerStatus',
+    numeric: false,
+    disablePadding: false,
+    label: '상태',
+    classes: 'TableCellMinimun'
+  },
+  {
+    id: 'bigo',
+    numeric: false,
+    disablePadding: false,
+    label: '비고',
+    classes: 'TableCellSmall'
+  }
+]
+
+const EnhancedTableHead = props => {
+  const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
+
+  const createSortHandler = property => (event) => {
+    onRequestSort(event, property);
+  }
+
+  return (
+    <TableHead>
+      <TableRow>
+        <TableCell padding='checkbox'>
+          <Checkbox 
+            color = {'primary'}
+            //indeterminate = { }
+            checked = { false }
+            onChange = {onSelectAllClick}
+            inputProps = {{
+              'aria-label': '모드 기기 선택'
+            }}
+          />
+        </TableCell>
+        { headCells.map((headCell) => (
+          <TableCell
+            key={headCell.id}
+            align={headCell.numeric ? 'right' : 'left'}
+            padding={headCell.disablePadding ? 'none' : 'normal'}
+            sortDirection={orderBy === headCell.id ? order : false }
+            className={headCell.classes?headCell.classes:'notFOUND'}
+          >
+            <TableSortLabel
+              active={orderBy === headCell.id}
+              direction={orderBy === headCell.id ? order : 'asc'}
+              onClick={createSortHandler(headCell.id)}
+            >
+              {headCell.label}
+              {orderBy === headCell.id ? (
+                <Box component={'span'} sx={visuallyHidden}>
+                  {order === 'desc' ? 'sorted descending': 'sorted ascending'}
+                </Box>
+              ):null}
+            </TableSortLabel>
+          </TableCell>
+        ))}
+      </TableRow>
+    </TableHead>
+  );
+}
 
 const IntersectionRegistration = () => {
   // ** States
   const [spinner, setSpinner] = useState(true);
-  const [spinner1, setSpinner1] = useState(true);
-  const [spinner2, setSpinner2] = useState(true);
   const [controllers, setControllers] = useState([]);
   const [filteredControllers, setFilteredControllers] = useState([]);
   const [controllersNames, SetControllersNames] = useState([{id: 1, name: 'test'}]);
@@ -30,12 +157,19 @@ const IntersectionRegistration = () => {
   const [controllerSelected, setControllerSelected] = useState({});
   const [cleanSearchField1, setCleanSearchField1] = useState(0);
   const [cleanSearchField2, setCleanSearchField2] = useState(2);
+  
+  // ** Table States
+  const [order, setOrder] = useState('asc');
+  const [orderBy, setOrderBy] = useState('local_area_controller_number');
+  const [rowsSelected, setRowsSelected] = useState([]);
 
   var names = [];
   var numbers = [];
 
   // ** Hooks
   const router = useRouter();
+  const checBoxMaster = useRef();
+
   // ** Redux
 	const dispatch  = useDispatch();
 
@@ -110,6 +244,30 @@ const IntersectionRegistration = () => {
     setCleanSearchField2(cleanSearchField1+1);
   }
 
+  const handleClickExcelDownload = event => {
+    event.preventDefault();
+  }
+
+  const handleChangeCheckBoxItem = event => {
+    event.preventDefault();
+    console.log(event.currentTarget)
+  }
+
+  const handleSelectAllClick = event => {
+    if (event.target.checked) {
+      //const newSelected = controllers.map((n) => n.id);
+      //setControllerSelected(n)
+      return;
+    }
+    setRowsSelected([])
+  }
+
+  const handleRequestSort = (event, property) => {
+    const isAsc = orderBy === property && order === 'asc';
+    setOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(property);
+  }
+
   // ** Async Functions
   async function fetchControllers(){
     setSpinner(true);
@@ -143,7 +301,6 @@ const IntersectionRegistration = () => {
   },[controllers])
 
   useEffect(() =>{
-    setSpinner(false);
   },[cleanSearchField1,cleanSearchField2])
 
   return(
@@ -161,13 +318,14 @@ const IntersectionRegistration = () => {
           padding: '20px 10px 20px 0',
           '& button.IconButtonSVG':{
             display:'flex',
-                marginLeft: '10px',
-                position: 'relative',
-                alignItems:'center',
-                border: 'solid 1px #aaa',
-                boxShadow: '0 2px 10px 0 rgba(58, 53, 65, 0.1)',
-                backgroundColor: '#fff',
-                ':hover':{ cursor: 'pointer', backgroundColor: 'rgba(241, 74, 74, 0.9)'}
+            marginLeft: '10px',
+            position: 'relative',
+            alignItems:'center',
+            border: 'solid 1px #aaa',
+            boxShadow: '0 2px 10px 0 rgba(58, 53, 65, 0.1)',
+            backgroundColor: '#fff',
+            ':hover':{ cursor: 'pointer', backgroundColor: 'rgba(241, 74, 74, 0.9)', '& svg':{ color: '#fff'}},
+            '& svg':{ color: '#777'}
           }
         }}
       >
@@ -194,6 +352,14 @@ const IntersectionRegistration = () => {
               <Reload />
             </Button>
           </Tooltip>
+          <Tooltip title={"설정값 엑셀다운"}>
+            <Button 
+              className={'IconButtonSVG'}
+              onClick = { handleClickExcelDownload }
+            >
+              <MicrosoftExcel />
+            </Button>
+          </Tooltip>
         </Box>
         <Tooltip title={"추가"}>
           <Button 
@@ -208,37 +374,29 @@ const IntersectionRegistration = () => {
       <TableContainer
         sx={{
           maxHeight: 800,
-          '& .MuiTableCell':{
+          '& th.MuiTableCell-head':{
             boxSizing: 'content-box'
           },
-          '& .TableCellMinimun':{
+          '& th.TableCellMinimun':{
             width: '5rem'
           },
-          '& .TableCellSmall':{
+          '& th.TableCellMedium':{
             width: '18rem'
           },
-          '& .TableCellMedium':{
-            
+          '& th.TableCellMedium':{
+            width: '30rem'
           }
         }}
       >
         <Table stickyHeader >
-          <TableHead>
-            <TableRow>
-              <TableCell><Checkbox  /></TableCell>
-              <TableCell className={'TableCellMinimun'}>관리번호</TableCell>
-              <TableCell>교차로명</TableCell>
-              <TableCell className={'TableCellMinimun'}>교차로명형태</TableCell>
-              <TableCell className={'TableCellMinimun'}>도로형태</TableCell>
-              <TableCell className={'TableCellMinimun'}>제어기 No.</TableCell>
-              <TableCell className={'TableCellMinimun'}>관리부서</TableCell>
-              <TableCell>주소</TableCell>
-              <TableCell className={'TableCellMinimun'}>좌표 X</TableCell>
-              <TableCell className={'TableCellMinimun'}>좌표 Y</TableCell>
-              <TableCell className={'TableCellMinimun'}>상태</TableCell>
-              <TableCell className={'TableCellSmall'}>비고</TableCell>
-            </TableRow>
-          </TableHead>
+          <EnhancedTableHead
+            numSelected ={0} // TODO: Update
+            order ={order}
+            orderBy={orderBy}
+            onSelectAllClick={handleSelectAllClick}
+            onRequestSort={handleRequestSort}
+            rowCount={controllers.length}
+          />
           <TableBody>
             {filteredControllers.map((controller, rowKey) => {
               let controllerStatus = '';
@@ -262,7 +420,7 @@ const IntersectionRegistration = () => {
                   '& td.MuiTableCell-root.ControllerStatus': {color: controllerStatusColor}
                 }}
               >
-                <TableCell><Checkbox  /></TableCell>
+                <TableCell><Checkbox  onChange={ handleChangeCheckBoxItem } value={controller.id}/></TableCell>
                 <TableCell className={'TableCellMinimun'}>{controller.local_area_controller_number}</TableCell>
                 <TableCell>{controller.controller_name}</TableCell>
                 <TableCell className={'TableCellMinimun'}>{controller.controller_type_name}</TableCell>
@@ -273,7 +431,7 @@ const IntersectionRegistration = () => {
                 <TableCell className={'TableCellMinimun'}><Tooltip title={controller.map_x}><span>{parseFloat(controller.map_x).toFixed(3)}</span></Tooltip></TableCell>
                 <TableCell className={'TableCellMinimun'}><Tooltip title={controller.map_y}><span>{parseFloat(controller.map_y).toFixed(3)}</span></Tooltip></TableCell>
                 <TableCell className={'TableCellMinimun ControllerStatus'}>{controllerStatus}</TableCell>
-                <TableCell className={'TableCellSmall'}>{controller.bigo}</TableCell>
+                <TableCell className={'TableCellMedium'}>{controller.bigo}</TableCell>
               </TableRow>
             )})}
           </TableBody>

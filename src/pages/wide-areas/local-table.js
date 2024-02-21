@@ -9,7 +9,6 @@ import MapMarkerRadiusOutline from 'mdi-material-ui/MapMarkerRadiusOutline'
 
 // ** Material UI Import
 import { DataGrid, GridRow, GridColumnHeaders, GridTollbar } from '@mui/x-data-grid'
-import { object } from "prop-types";
 import { Typography } from "@mui/material";
 import { IconButton } from "@mui/material";
 
