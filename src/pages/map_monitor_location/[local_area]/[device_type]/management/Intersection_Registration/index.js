@@ -175,7 +175,7 @@ const IntersectionRegistration = () => {
             : (a, b) => -descendingComparator(a, b, orderBy);
   }
 
-  var visibleRows = useMemo(()=>filteredControllers.slice().sort(getComparator(order, orderBy)),[order,orderBy]);
+  var visibleRows = useMemo(()=>filteredControllers.slice().sort(getComparator(order, orderBy)),[order,orderBy,filteredControllers]);
 
   // ** Variables that change
   var names = [];
