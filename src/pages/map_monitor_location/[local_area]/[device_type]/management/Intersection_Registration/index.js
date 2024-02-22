@@ -1,5 +1,6 @@
 // ** React Imports
 import { useState, useEffect, useRef, useMemo } from 'react'
+import { MapTypeControl } from "react-kakao-maps-sdk";
 
 // ** Redux
 import { useDispatch } from 'react-redux'
@@ -11,12 +12,14 @@ import { useRouter } from 'next/router'
 // ** MUI Components
 import { Box, Typography, CircularProgress, Tooltip, Button, Checkbox } from '@mui/material'
 import { TableContainer, Table, TableHead, TableBody, TableRow, TableCell, TableSortLabel } from '@mui/material'
-import { Reload, Plus, MicrosoftExcel } from 'mdi-material-ui'
+import { Reload, Plus, MicrosoftExcel, PencilOutline } from 'mdi-material-ui'
 
 // ** Utils
+import { visuallyHidden } from '@mui/utils'
+import { KakaoInit } from 'src/@core/utils/kakao_map_api'
 import { getFetchURL }  from 'src/@core/utils/fetchHelper'
 import { SearchBar } from 'src/pages/map_monitor_location/searchBar'
-import { visuallyHidden } from '@mui/utils'
+import { LateralDetailPanel } from 'src/pages/map_monitor_location/lateralDetailPanel'
 
 
 const headCells = [
@@ -25,7 +28,7 @@ const headCells = [
     numeric: true,
     disablePadding: true,
     label: '관리번호',
-    classes: 'TableCellSmall'
+    classes: ''
   },
   {
     id: 'controller_name',
@@ -39,28 +42,28 @@ const headCells = [
     numeric: false,
     disablePadding: false,
     label: '교차로명형태',
-    classes: 'TableCellMinimun'
+    classes: 'TableCellMedium'
   },
   {
     id: 'inse_type',
     numeric: false,
     disablePadding: false,
     label: '도로형태',
-    classes: 'TableCellMinimun'
+    classes: 'TableCellSmall'
   },
   {
     id: 'local_goverment_controller_number',
     numeric: false,
     disablePadding: false,
     label: '제어기 No.',
-    classes: 'TableCellMinimun'
+    classes: 'TableCellSmall'
   },
   {
     id: 'controller_management_department',
     numeric: false,
     disablePadding: false,
     label: '관리부서',
-    classes: 'TableCellMinimun'
+    classes: 'TableCellSmall'
   },
   {
     id: 'controller_address',
@@ -74,21 +77,21 @@ const headCells = [
     numeric: false,
     disablePadding: false,
     label: '좌표 X',
-    classes: 'TableCellMinimun'
+    classes: 'TableCellSmall'
   },
   {
     id: 'map_y',
     numeric: false,
     disablePadding: false,
     label: '좌표 Y',
-    classes: 'TableCellMinimun'
+    classes: 'TableCellSmall'
   },
   {
     id: 'filteredState',
     numeric: false,
     disablePadding: false,
     label: '상태',
-    classes: 'TableCellMinimun'
+    classes: 'TableCellSmall'
   },
   {
     id: 'bigo',
@@ -96,9 +99,16 @@ const headCells = [
     disablePadding: false,
     label: '비고',
     classes: 'TableCellSmall'
+  },
+  {
+    id: 'edit',
+    numeric: false,
+    disablePadding: false,
+    label: '설정',
+    classes: 'TableCellSmall'
   }
 ]
-
+// ** Enhanced Table Head ------------
 const EnhancedTableHead = props => {
   const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
 
@@ -147,6 +157,7 @@ const EnhancedTableHead = props => {
   );
 }
 
+// ** Main COMPONENT: IntersectionRegistration -----------------------------------
 const IntersectionRegistration = () => {
   // ** States
   const [spinner, setSpinner] = useState(true);
@@ -162,6 +173,9 @@ const IntersectionRegistration = () => {
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('local_area_controller_number');
   const [rowsSelected, setRowsSelected] = useState([]);
+
+  // ** Drawer States
+  const [openDrawerSelController, SetOpenDrawerSelController] = useState(false);
 
   const descendingComparator = (a, b, orderBy) => {
     if (b[orderBy] < a[orderBy]) { return -1; }
@@ -248,6 +262,10 @@ const IntersectionRegistration = () => {
     setSpinner(false);
   }
 
+  const changeOpenDrawerController = setOpen => {
+    SetOpenDrawerSelController(setOpen);
+  }
+
   // ** Handler Functions
   const handleClickAdd = event => {
     event.preventDefault();
@@ -259,6 +277,19 @@ const IntersectionRegistration = () => {
     BuildArraySearchBars();
     setCleanSearchField1(cleanSearchField2+1);
     setCleanSearchField2(cleanSearchField1+1);
+  }
+
+  const handleClickEdit = event => {
+    event.preventDefault();
+    let id = event.currentTarget.getAttribute('data-id');
+    let row = event.currentTarget.getAttribute('data-row');
+
+    let controllerToEdit = controllers.find(controller => controller.id == id);
+    setControllerSelected(controllerToEdit);
+    console.log(controllerToEdit);
+    //console.log('controller ID: ' + id +' And Row: '+ row);
+
+    SetOpenDrawerSelController(true);
   }
 
   const handleClickExcelDownload = event => {
@@ -341,6 +372,7 @@ const IntersectionRegistration = () => {
 
   return(
     <Box>
+      <KakaoInit />
       <Typography variant="h3" sx={{ fontSize: '20pt !important' }}>
         { '교차로등록' }
       </Typography>
@@ -416,8 +448,8 @@ const IntersectionRegistration = () => {
           '& th.TableCellMinimun':{
             width: '5rem'
           },
-          '& th.TableCellMedium':{
-            width: '18rem'
+          '& th.TableCellSmall':{
+            width: '20rem'
           },
           '& th.TableCellMedium':{
             width: '30rem'
@@ -454,11 +486,31 @@ const IntersectionRegistration = () => {
                 <TableCell className={'TableCellMinimun'}><Tooltip title={controller.map_y}><span>{parseFloat(controller.map_y).toFixed(3)}</span></Tooltip></TableCell>
                 <TableCell className={'TableCellMinimun ControllerStatus'}>{controller.filteredState}</TableCell>
                 <TableCell className={'TableCellMedium'}>{controller.bigo}</TableCell>
+                <TableCell className={'TableCellMedium'}>
+                  <Tooltip title={"설정"}>
+                    <Button 
+                      className={'IconButtonSVG'}
+                      onClick = { handleClickEdit }
+                      data-row ={rowKey}
+                      data-id = {controller.id}
+                    >
+                      <PencilOutline />
+                    </Button>
+                  </Tooltip>
+                </TableCell>
               </TableRow>
             )})}
           </TableBody>
         </Table>
       </TableContainer>
+      { 
+        // -- LateralDetailPanel Component 
+      }
+      <LateralDetailPanel 
+        controller={controllerSelected}
+        openDrawer={openDrawerSelController}
+        setOpenDrawer={changeOpenDrawerController}
+      />
     </Box>
   );
 }

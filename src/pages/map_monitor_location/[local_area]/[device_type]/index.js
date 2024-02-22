@@ -277,7 +277,7 @@ const Map_Monitor_Location_Page = () => {
       </Box>
         <LateralDetailPanel 
           controller = {controllerSelected} 
-          openDrawer={openDrawerSelController}
+          openDrawer = {openDrawerSelController}
           setOpenDrawer={changeOpenDrawerController}
         />
       <BtLateralMenu />

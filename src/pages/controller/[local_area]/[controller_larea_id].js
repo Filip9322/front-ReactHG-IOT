@@ -225,7 +225,7 @@ const ControllerInformation = props => {
             <CustomMarkerComponent controller={controller.local_area_id} key={rowID} equi_state ={row} rowID ={rowID}/>
             ))  
         }
-        <MapTypeId type={kakao.maps.MapTypeId.HYBRID} />
+        <MapTypeId type={kakao.maps.MapTypeId ? kakao.maps.MapTypeId.HYBRID : ''} />
       </Map>
       ):
       <CircularProgress /> 
