@@ -110,7 +110,7 @@ const headCells = [
 ]
 // ** Enhanced Table Head ------------
 const EnhancedTableHead = props => {
-  const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
+  const { onSelectAllClick, order, orderBy, indeterminateMCheckbox, rowCount, onRequestSort } = props;
 
   const createSortHandler = property => (event) => {
     onRequestSort(event, property);
@@ -122,7 +122,7 @@ const EnhancedTableHead = props => {
         <TableCell padding='checkbox'>
           <Checkbox 
             color = {'primary'}
-            //indeterminate = { }
+            indeterminate = {indeterminateMCheckbox}
             checked = { false }
             onChange = {onSelectAllClick}
             inputProps = {{
@@ -176,6 +176,7 @@ const IntersectionRegistration = () => {
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('local_area_controller_number');
   const [rowsSelected, setRowsSelected] = useState([]);
+  const [indeterminateMCheckbox, setIndeterminateMCheckbox] = useState();
 
   // ** Drawer States
   const [openDrawerSelController, SetOpenDrawerSelController] = useState(false);
@@ -301,7 +302,33 @@ const IntersectionRegistration = () => {
 
   const handleChangeCheckBoxItem = event => {
     event.preventDefault();
-    console.log(event.currentTarget)
+  }
+
+  const handleClickCheckBoxItem = event => {
+    event.preventDefault();
+    let id = event.currentTarget.getAttribute('data-id');
+
+    if (!event.currentTarget.checked){
+      if (rowsSelected.length == 0){
+        setRowsSelected([id]);
+      } else {
+        let copyOfRows = rowsSelected;
+        copyOfRows.push(id);
+  
+        setRowsSelected(copyOfRows);
+      }
+    } else {
+      let index = rowsSelected.map((n,row) => n.id? row:null);
+      if(index){
+        let newArray = rowsSelected.splice(index,1);
+        setRowsSelected(newArray);
+      } else {
+        console.error(" Index from Element NOT Found!");
+      }
+    }
+    
+    console.log(rowsSelected);
+    event.currentTarget.checked = !event.currentTarget.checked;
   }
 
   const handleSelectAllClick = event => {
@@ -463,6 +490,7 @@ const IntersectionRegistration = () => {
       >
         <Table stickyHeader >
           <EnhancedTableHead
+            indeterminateMCheckbox ={indeterminateMCheckbox}
             numSelected ={0} // TODO: Update
             order ={order}
             orderBy={orderBy}
@@ -479,7 +507,15 @@ const IntersectionRegistration = () => {
                   '& td.MuiTableCell-root.ControllerStatus': {color: controller.filteredStateColor}
                 }}
               >
-                <TableCell><Checkbox  onChange={ handleChangeCheckBoxItem } value={controller.id}/></TableCell>
+                <TableCell>
+                  <Checkbox 
+                    data-id = {controller.id}
+                    onClick={handleClickCheckBoxItem}
+                    onChange={ handleChangeCheckBoxItem }
+                    value={controller.id}
+                    defaultChecked={false}
+                  />
+                </TableCell>
                 <TableCell className={'TableCellMinimun'}>{controller.local_area_controller_number}</TableCell>
                 <TableCell>{controller.controller_name}</TableCell>
                 <TableCell className={'TableCellMinimun'}>{controller.controller_type_name}</TableCell>
