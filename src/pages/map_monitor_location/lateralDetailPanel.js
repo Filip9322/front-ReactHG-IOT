@@ -518,7 +518,8 @@ const LateralDetailPanel = props => {
             </Box>
           </form>
           <Box
-            hidden={!openEquiStatus}
+            //hidden={!openEquiStatus}
+            sx={{display:openEquiStatus?'':'none'}}
           >
             <ControllerInformation 
               controller={ controller }

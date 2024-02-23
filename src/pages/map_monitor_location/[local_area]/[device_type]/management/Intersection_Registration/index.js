@@ -16,7 +16,7 @@ import { Reload, Plus, MicrosoftExcel, PencilOutline } from 'mdi-material-ui'
 
 // ** Utils
 import { visuallyHidden } from '@mui/utils'
-import { KakaoInit } from 'src/@core/utils/kakao_map_api'
+import { useKakaoLoader } from 'src/@core/utils/kakao_map_api'
 import { getFetchURL }  from 'src/@core/utils/fetchHelper'
 import { SearchBar } from 'src/pages/map_monitor_location/searchBar'
 import { LateralDetailPanel } from 'src/pages/map_monitor_location/lateralDetailPanel'
@@ -159,6 +159,9 @@ const EnhancedTableHead = props => {
 
 // ** Main COMPONENT: IntersectionRegistration -----------------------------------
 const IntersectionRegistration = () => {
+  // ** Load Kakao Maps SDK
+  const [loading, error] = useKakaoLoader();
+
   // ** States
   const [spinner, setSpinner] = useState(true);
   const [controllers, setControllers] = useState([]);
@@ -354,8 +357,7 @@ const IntersectionRegistration = () => {
   useEffect(() => {
     // ** Set Page Name and MetaData
     dispatch(rootActions.updateTitle("교차로등록"));
-  },[]);
-  
+  },[]);  
 
   useEffect(() => {
     if(router.query.local_area) {
@@ -370,9 +372,12 @@ const IntersectionRegistration = () => {
   useEffect(() =>{
   },[cleanSearchField1,cleanSearchField2])
 
+  useEffect(() =>{
+    console.log('Loaded KakaoMap SDK: '+ loading)
+  },[error])
+
   return(
     <Box>
-      <KakaoInit />
       <Typography variant="h3" sx={{ fontSize: '20pt !important' }}>
         { '교차로등록' }
       </Typography>

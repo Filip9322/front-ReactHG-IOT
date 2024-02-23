@@ -9,12 +9,15 @@ import { Paper, Table, TableHead, TableBody, TableRow, TableCell, TableContainer
 
 // ** Utils
 import { getFetchURL } from 'src/@core/utils/fetchHelper';
+import { useKakaoLoader } from 'src/@core/utils/kakao_map_api'
 
 const ControllerInformation = props => {
-
+  // ** Load Kakao Maps SDK
+  const [loading, error] = useKakaoLoader();
   
   const { controller, openEquiState, setOpenEquiStatus } = props;
   
+  const [mapKey, setMapKey] = useState(0);
   const [lat, setLat] = useState(controller.map_x);
   const [lng, setLng] = useState(controller.map_y);
   const [spinner, setSpinner] = useState(true);
@@ -67,21 +70,35 @@ const ControllerInformation = props => {
   useEffect(() => {
     if(hasPageBeenRendered.current['effect1']) {
       setKakaoInitiated(true);
-
+      
       setLat(controller.map_x);
       setLng(controller.map_y);
     }
-
+    
     hasPageBeenRendered.current['effect1'] = true;
   },[devices]);
-
+  
   useEffect(() => {
     if(hasPageBeenRendered.current['effect2']) {
       setSpinner(false);
     }
-
+    setMapKey(mapKey+1);
+    
     hasPageBeenRendered.current['effect2'] = true;
   },[kakaoInitated, lat, lng]);
+  
+  useEffect(() =>{
+    if(loading){
+      setSpinner(false);
+    }
+    setMapKey(mapKey+1);
+    console.log('Loaded KakaoMap SDK: '+ loading)
+  },[error])
+
+  useEffect(() => {
+    
+    console.log('checking state when opening the map tab in the drawer');
+  },[openEquiState, controller])
   
   //** -- Custom Marker Component */
   const CustomMarkerComponent = props => {
@@ -209,12 +226,14 @@ const ControllerInformation = props => {
       <Map
         center={{ lat: lat, lng: lng }}
         style={{
+          minWidth: "1240px",
           width: "1240px",
           height: "505px",
           border: 'solid 1px #aaa'
         }}
         draggable = {false}
         level={1}
+        key={mapKey}
       >
         <MapTypeControl />
         <ZoomControl />

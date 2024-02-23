@@ -8,7 +8,7 @@ import { Map, MarkerClusterer,
 import { Box, CircularProgress } from '@mui/material'
 
 // ** Utils
-import { KakaoInit } from 'src/@core/utils/kakao_map_api'
+import { useKakaoLoader } from 'src/@core/utils/kakao_map_api'
 import { getFetchURL }  from 'src/@core/utils/fetchHelper'
 import { MapDeviceMarker } from '../../mapDeviceMarker'
 import { SearchBar } from '../../searchBar'
@@ -23,7 +23,9 @@ import { useDispatch } from 'react-redux'
 import { rootActions } from 'src/@core/redux/reducer'
 
 const Map_Monitor_Location_Page = () => {
-
+  // ** Load Kakao Maps SDK
+  useKakaoLoader();
+  
   // ** States
   const [spinner, setSpinner] = useState(true);
   const [localArea, setLocalArea] = useState({lat:0, lng:0});
@@ -264,7 +266,6 @@ const Map_Monitor_Location_Page = () => {
       ): 
         <CircularProgress />
       }
-      <KakaoInit />
       <Box
         sx={{
           display: 'flex',
