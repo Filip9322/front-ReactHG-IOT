@@ -116,6 +116,10 @@ const EnhancedTableHead = props => {
     onRequestSort(event, property);
   }
 
+  useEffect(() =>{
+
+  },[rowCount])
+
   return (
     <TableHead>
       <TableRow>
@@ -157,6 +161,33 @@ const EnhancedTableHead = props => {
   );
 }
 
+const ChecboxListItem = props => {
+  const { dataID, handleChangeCheckBoxItem, cleanAllCheckbox } = props;
+  const [ checkState, setCheckState ] = useState(false);
+
+  const handleClickCheckBoxItem = event =>{
+    event.preventDefault();
+    
+    console.log('subComponent: '+checkState);
+    handleChangeCheckBoxItem(event, !checkState);
+    
+    setCheckState(!checkState);
+  }
+
+  useEffect(()=>{
+    setCheckState(false);
+  },[cleanAllCheckbox])
+
+  return (
+    <Checkbox 
+      data-id = { dataID }
+      onClick={ handleClickCheckBoxItem }
+      checked={ checkState }
+      value={ dataID }
+    />
+  );
+}
+
 // ** Main COMPONENT: IntersectionRegistration -----------------------------------
 const IntersectionRegistration = () => {
   // ** Load Kakao Maps SDK
@@ -171,6 +202,7 @@ const IntersectionRegistration = () => {
   const [controllerSelected, setControllerSelected] = useState({});
   const [cleanSearchField1, setCleanSearchField1] = useState(0);
   const [cleanSearchField2, setCleanSearchField2] = useState(2);
+  const [cleanAllCheckbox, setCleanAllCheckbox] = useState(false);
   
   // ** Table States
   const [order, setOrder] = useState('asc');
@@ -220,6 +252,9 @@ const IntersectionRegistration = () => {
       setCleanSearchField1(cleanSearchField2+1);
     }
     
+    setRowsSelected([]);
+    setCleanAllCheckbox(true);
+
     setControllerSelected(controller_s);
     setFilteredControllers([controller_s]);
     visibleRows = [controller_s];
@@ -278,7 +313,9 @@ const IntersectionRegistration = () => {
 
   const handleClickClear = event => {
     event.preventDefault();
+    setRowsSelected([]);
     BuildArraySearchBars();
+    setCleanAllCheckbox(true);
     setCleanSearchField1(cleanSearchField2+1);
     setCleanSearchField2(cleanSearchField1+1);
   }
@@ -300,35 +337,36 @@ const IntersectionRegistration = () => {
     event.preventDefault();
   }
 
-  const handleChangeCheckBoxItem = event => {
+  const handleChangeCheckBoxItem =( event,checked) => {
     event.preventDefault();
-  }
 
-  const handleClickCheckBoxItem = event => {
-    event.preventDefault();
     let id = event.currentTarget.getAttribute('data-id');
+    let copyOfRows = rowsSelected;
+    // Find Index and clear Array  
+    let index = copyOfRows.findIndex(element => element == id)
+    console.log( index + ' - index in array')
 
-    if (!event.currentTarget.checked){
-      if (rowsSelected.length == 0){
-        setRowsSelected([id]);
-      } else {
-        let copyOfRows = rowsSelected;
+    if (checked){
+      // Exist or Not in the Array
+      if(index = -1){
         copyOfRows.push(id);
-  
-        setRowsSelected(copyOfRows);
       }
     } else {
-      let index = rowsSelected.map((n,row) => n.id? row:null);
-      if(index){
-        let newArray = rowsSelected.splice(index,1);
-        setRowsSelected(newArray);
+      if(index >= 0){
+        copyOfRows.splice(index,1);
       } else {
         console.error(" Index from Element NOT Found!");
       }
     }
     
-    console.log(rowsSelected);
-    event.currentTarget.checked = !event.currentTarget.checked;
+    if(copyOfRows.length > 0){
+      setIndeterminateMCheckbox(true);
+    } else {
+      setIndeterminateMCheckbox(false);
+    }
+
+    setRowsSelected(copyOfRows);
+    console.log(copyOfRows);
   }
 
   const handleSelectAllClick = event => {
@@ -402,6 +440,10 @@ const IntersectionRegistration = () => {
   useEffect(() =>{
     console.log('Loaded KakaoMap SDK: '+ loading)
   },[error])
+
+  useEffect(() => {
+    if(rowsSelected.length == 0 ) setCleanAllCheckbox(false);
+  },[rowsSelected])
 
   return(
     <Box>
@@ -496,24 +538,23 @@ const IntersectionRegistration = () => {
             orderBy={orderBy}
             onSelectAllClick={handleSelectAllClick}
             onRequestSort={handleRequestSort}
-            rowCount={controllers.length}
+            rowCount={rowsSelected.length}
           />
           <TableBody>
             {visibleRows.map((controller, rowKey) => {
               
               return(
-              <TableRow key={rowKey} 
+              <TableRow key={rowKey+'-'+controller.id} 
                 sx={{
                   '& td.MuiTableCell-root.ControllerStatus': {color: controller.filteredStateColor}
                 }}
               >
                 <TableCell>
-                  <Checkbox 
-                    data-id = {controller.id}
-                    onClick={handleClickCheckBoxItem}
-                    onChange={ handleChangeCheckBoxItem }
-                    value={controller.id}
-                    defaultChecked={false}
+                  <ChecboxListItem
+                    key={rowKey}
+                    cleanAllCheckbox = {cleanAllCheckbox}
+                    handleChangeCheckBoxItem ={ handleChangeCheckBoxItem }
+                    dataID = {controller.id}
                   />
                 </TableCell>
                 <TableCell className={'TableCellMinimun'}>{controller.local_area_controller_number}</TableCell>
