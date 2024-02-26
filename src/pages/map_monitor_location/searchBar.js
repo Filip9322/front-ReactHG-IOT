@@ -61,10 +61,10 @@ const SearchBar = props => {
       getOptionLabel={(option) => {
         return option.name;
       }}
-      options={controllersNames.map(controller => controller)}
+      options={controllersNames.map(controller => controller.name)}
       renderInput={params => (textFieldInput(params))}
       renderOption={(props, controller) => (
-        <li {...props} key={controller.id} value={controller.value}>{controller.name}</li>
+        <li {...props} key={controller.value+'_'+title} value={controller.value}>{controller.name}</li>
       )}
     />
   );

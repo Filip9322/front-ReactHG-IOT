@@ -25,7 +25,7 @@ import { rootActions } from 'src/@core/redux/reducer'
 const Map_Monitor_Location_Page = () => {
   // ** Load Kakao Maps SDK
   useKakaoLoader();
-  
+
   // ** States
   const [spinner, setSpinner] = useState(true);
   const [localArea, setLocalArea] = useState({lat:0, lng:0});
@@ -113,7 +113,7 @@ const Map_Monitor_Location_Page = () => {
     const controller_s = controllers.find(controller => 
       controller.id == controllerID
     );
-    
+    console.log(controller_s);
     setControllerSelected(controller_s);
     setSearchedController(controllerID);
   }
@@ -122,7 +122,7 @@ const Map_Monitor_Location_Page = () => {
     let body = {};
     let name = controller.local_area_controller_number+'범 '+ controller.controller_name;
 
-    Object.assign(body, {id: controller.id });
+    Object.assign(body, {value: controller.id });
     Object.assign(body, {number: controller.local_area_controller_number});
     Object.assign(body, {name: name });
 
@@ -171,8 +171,9 @@ const Map_Monitor_Location_Page = () => {
       controllers.map(controller => {
         // Creatte Array of controllers with name
         let controllerName = set_ControllerName(controller);
-        names.push(controllerName);
+        names.push({id:controller.id, name:controllerName });
       });
+
       SetControllerNames(names);
     }
 

@@ -110,15 +110,17 @@ const headCells = [
 ]
 // ** Enhanced Table Head ------------
 const EnhancedTableHead = props => {
-  const { onSelectAllClick, order, orderBy, indeterminateMCheckbox, rowCount, onRequestSort } = props;
+  
+  const { onSelectAllClick, order, orderBy, indeterminateMCheckbox, rowCount, onRequestSort, masterCheckBoxChecked } = props;
+  const [stateMCheckBox, setStateMCheckBox] = useState(false);
 
   const createSortHandler = property => (event) => {
     onRequestSort(event, property);
   }
 
   useEffect(() =>{
-
-  },[rowCount])
+    setStateMCheckBox(masterCheckBoxChecked);
+  },[masterCheckBoxChecked])
 
   return (
     <TableHead>
@@ -127,8 +129,8 @@ const EnhancedTableHead = props => {
           <Checkbox 
             color = {'primary'}
             indeterminate = {indeterminateMCheckbox}
-            checked = { false }
-            onChange = {onSelectAllClick}
+            checked={stateMCheckBox}
+            onClick = {onSelectAllClick}
             inputProps = {{
               'aria-label': '모드 기기 선택'
             }}
@@ -162,7 +164,7 @@ const EnhancedTableHead = props => {
 }
 
 const ChecboxListItem = props => {
-  const { dataID, handleChangeCheckBoxItem, cleanAllCheckbox } = props;
+  const { dataID, handleChangeCheckBoxItem, cleanAllCheckbox, masterCheckBoxChecked } = props;
   const [ checkState, setCheckState ] = useState(false);
 
   const handleClickCheckBoxItem = event =>{
@@ -176,7 +178,11 @@ const ChecboxListItem = props => {
 
   useEffect(()=>{
     setCheckState(false);
-  },[cleanAllCheckbox])
+  },[cleanAllCheckbox]);
+
+  useEffect(() =>{
+    setCheckState(masterCheckBoxChecked);
+  },[masterCheckBoxChecked]);
 
   return (
     <Checkbox 
@@ -202,13 +208,14 @@ const IntersectionRegistration = () => {
   const [controllerSelected, setControllerSelected] = useState({});
   const [cleanSearchField1, setCleanSearchField1] = useState(0);
   const [cleanSearchField2, setCleanSearchField2] = useState(2);
-  const [cleanAllCheckbox, setCleanAllCheckbox] = useState(false);
   
   // ** Table States
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('local_area_controller_number');
   const [rowsSelected, setRowsSelected] = useState([]);
-  const [indeterminateMCheckbox, setIndeterminateMCheckbox] = useState();
+  const [cleanAllCheckbox, setCleanAllCheckbox] = useState(false);
+  const [indeterminateMCheckbox, setIndeterminateMCheckbox] = useState(false);
+  const [masterCheckBoxChecked, setMasterCheckBoxChecked] = useState(false);
 
   // ** Drawer States
   const [openDrawerSelController, SetOpenDrawerSelController] = useState(false);
@@ -254,6 +261,8 @@ const IntersectionRegistration = () => {
     
     setRowsSelected([]);
     setCleanAllCheckbox(true);
+    setIndeterminateMCheckbox(false);
+    setMasterCheckBoxChecked(false);
 
     setControllerSelected(controller_s);
     setFilteredControllers([controller_s]);
@@ -289,8 +298,8 @@ const IntersectionRegistration = () => {
         let controllerName = set_ControllerName(controller);
         let controllerNumber = set_controllersDirections(controller);
   
-        names.push(controllerName);
-        numbers.push(controllerNumber)
+        names.push({id: controller.id, name: controllerName});
+        numbers.push({id: controller.id, name: controllerNumber});
       });
     }
 
@@ -316,6 +325,8 @@ const IntersectionRegistration = () => {
     setRowsSelected([]);
     BuildArraySearchBars();
     setCleanAllCheckbox(true);
+    setIndeterminateMCheckbox(false);
+    setMasterCheckBoxChecked(false);
     setCleanSearchField1(cleanSearchField2+1);
     setCleanSearchField2(cleanSearchField1+1);
   }
@@ -371,11 +382,13 @@ const IntersectionRegistration = () => {
 
   const handleSelectAllClick = event => {
     if (event.target.checked) {
-      //const newSelected = controllers.map((n) => n.id);
-      //setControllerSelected(n)
-      return;
+      setIndeterminateMCheckbox(false);
+      setRowsSelected(filteredControllers.map(controller=>controller.id));
+      setMasterCheckBoxChecked(true);
+    }else{
+      setMasterCheckBoxChecked(false);
+      setRowsSelected([]);
     }
-    setRowsSelected([])
   }
 
   const handleRequestSort = (event, property) => {
@@ -539,6 +552,7 @@ const IntersectionRegistration = () => {
             onSelectAllClick={handleSelectAllClick}
             onRequestSort={handleRequestSort}
             rowCount={rowsSelected.length}
+            masterCheckBoxChecked = {masterCheckBoxChecked}
           />
           <TableBody>
             {visibleRows.map((controller, rowKey) => {
@@ -555,6 +569,7 @@ const IntersectionRegistration = () => {
                     cleanAllCheckbox = {cleanAllCheckbox}
                     handleChangeCheckBoxItem ={ handleChangeCheckBoxItem }
                     dataID = {controller.id}
+                    masterCheckBoxChecked = {masterCheckBoxChecked}
                   />
                 </TableCell>
                 <TableCell className={'TableCellMinimun'}>{controller.local_area_controller_number}</TableCell>
