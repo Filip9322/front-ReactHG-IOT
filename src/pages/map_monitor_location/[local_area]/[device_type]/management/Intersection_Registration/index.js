@@ -20,6 +20,7 @@ import { useKakaoLoader } from 'src/@core/utils/kakao_map_api'
 import { getFetchURL }  from 'src/@core/utils/fetchHelper'
 import { SearchBar } from 'src/pages/map_monitor_location/searchBar'
 import { LateralDetailPanel } from 'src/pages/map_monitor_location/lateralDetailPanel'
+import { LateralCreateControllerPanel } from 'src/pages/map_monitor_location/lateralCreatePanel'
 
 
 const headCells = [
@@ -219,6 +220,7 @@ const IntersectionRegistration = () => {
 
   // ** Drawer States
   const [openDrawerSelController, SetOpenDrawerSelController] = useState(false);
+  const [openDrawerCreateController, setOpenDrawerCreateCrontroller] = useState(false);
 
   const descendingComparator = (a, b, orderBy) => {
     if (b[orderBy] < a[orderBy]) { return -1; }
@@ -318,6 +320,7 @@ const IntersectionRegistration = () => {
   const handleClickAdd = event => {
     event.preventDefault();
     
+    
   }
 
   const handleClickClear = event => {
@@ -339,12 +342,15 @@ const IntersectionRegistration = () => {
     let controllerToEdit = controllers.find(controller => controller.id == id);
     setControllerSelected(controllerToEdit);
     console.log(controllerToEdit);
-    //console.log('controller ID: ' + id +' And Row: '+ row);
 
     SetOpenDrawerSelController(true);
   }
 
   const handleClickExcelDownload = event => {
+    event.preventDefault();
+  }
+
+  const handleCheckedRowsAction = event => {
     event.preventDefault();
   }
 
@@ -355,8 +361,7 @@ const IntersectionRegistration = () => {
     let copyOfRows = rowsSelected;
     // Find Index and clear Array  
     let index = copyOfRows.findIndex(element => element == id)
-    console.log( index + ' - index in array')
-
+    
     if (checked){
       // Exist or Not in the Array
       if(index = -1){
@@ -451,7 +456,7 @@ const IntersectionRegistration = () => {
   },[cleanSearchField1,cleanSearchField2])
 
   useEffect(() =>{
-    console.log('Loaded KakaoMap SDK: '+ loading)
+    //console.log('Loaded KakaoMap SDK: '+ loading) //Cecking loader from reac-map-sdk hook call
   },[error])
 
   useEffect(() => {
@@ -471,7 +476,7 @@ const IntersectionRegistration = () => {
           justifyContent: 'space-between',
           width: '100%',
           padding: '20px 10px 20px 0',
-          '& button.IconButtonSVG':{
+          '& button.IconButtonSVG, & button.CBActionButton':{
             display:'flex',
             marginLeft: '10px',
             position: 'relative',
@@ -601,11 +606,15 @@ const IntersectionRegistration = () => {
         </Table>
       </TableContainer>
       { 
-        // -- LateralDetailPanel Component 
+        // -- LateralDetailPanel  && LateralCreateControllerPanel Component 
       }
       <LateralDetailPanel 
         controller={controllerSelected}
         openDrawer={openDrawerSelController}
+        setOpenDrawer={changeOpenDrawerController}
+      />
+      <LateralCreateControllerPanel
+        openDrawer={openDrawerCreateController}
         setOpenDrawer={changeOpenDrawerController}
       />
     </Box>

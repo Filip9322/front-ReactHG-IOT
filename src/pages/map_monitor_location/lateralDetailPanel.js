@@ -14,7 +14,7 @@ import Server from 'mdi-material-ui/Server'
 
 // ** Utils
 import { putFetchURL } from 'src/@core/utils/fetchHelper'
-import { ControllerInformation } from '../controller/[local_area]/[controller_larea_id]'
+import { ControllerInformation } from 'src/pages/controller/[local_area]/[controller_larea_id]'
 
 // ** Forward React Reference
 /*const Alert = forwardRef( function Alert(props, ref ) {
@@ -139,7 +139,7 @@ const LateralDetailPanel = props => {
     try{
       setOpenEquiStatus(true);
       
-      console.log('open left drawer');
+      console.log('open left drawe - edit');
     }catch(error){
       if(error !== undefined ) console.log(error);
     }
