@@ -220,7 +220,7 @@ const IntersectionRegistration = () => {
 
   // ** Drawer States
   const [openDrawerSelController, SetOpenDrawerSelController] = useState(false);
-  const [openDrawerCreateController, setOpenDrawerCreateCrontroller] = useState(false);
+  const [openDrawerCreateController, SetOpenDrawerCreateCrontroller] = useState(false);
 
   const descendingComparator = (a, b, orderBy) => {
     if (b[orderBy] < a[orderBy]) { return -1; }
@@ -316,11 +316,15 @@ const IntersectionRegistration = () => {
     SetOpenDrawerSelController(setOpen);
   }
 
+  const changeOpenCreateDrawerController = setOpen => {
+    SetOpenDrawerCreateCrontroller(setOpen);
+  }
+
   // ** Handler Functions
   const handleClickAdd = event => {
     event.preventDefault();
     
-    
+    changeOpenCreateDrawerController(true);
   }
 
   const handleClickClear = event => {
@@ -615,7 +619,7 @@ const IntersectionRegistration = () => {
       />
       <LateralCreateControllerPanel
         openDrawer={openDrawerCreateController}
-        setOpenDrawer={changeOpenDrawerController}
+        setOpenDrawer={changeOpenCreateDrawerController}
       />
     </Box>
   );

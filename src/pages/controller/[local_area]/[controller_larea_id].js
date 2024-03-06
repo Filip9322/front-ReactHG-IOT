@@ -362,109 +362,111 @@ const EquipmentTableDetails = props => {
 
   return (
     <TableContainer component={ Paper }>
-      <TableHead sx={{ 
-        '& tr th.MuiTableCell-head, & tr th.MuiTableCell-head:first-of-type':{
-          fontSize: 12, 
-          height: 29, 
-          color: '#444', 
-          fontWeight: '700', 
-          border: '1px solid #9d9d9d', 
-          padding: '2px 4px'
-        }
-      }}>
-        <TableRow>
-          <TableCell align='center' rowSpan={2}>{"부착"}<br/>{"번호"}</TableCell>
-          <TableCell align='center' colSpan={5}>{"제품정보"}</TableCell>
-          <TableCell align='center' colSpan={4}>{"제품상태"}</TableCell>
-          <TableCell align='center' colSpan={3}>{"펌웨어정보"}</TableCell>
-          <TableCell align='center' rowSpan={2}>{"상판"}<br/>{"열림"}<br/>{"횟수"}</TableCell>
-          <TableCell align='center' rowSpan={2}>{"버튼"}<br/>{"동작"}<br/>{"횟수"}</TableCell>
-          <TableCell align='center' colSpan={3}>{"통신상태"}</TableCell>
-          <TableCell align='center' colSpan={3}>{"보행등상태"}</TableCell>
-          <TableCell align='center' colSpan={6}>{"볼륨 및 소리 설정"}</TableCell>
-          <TableCell align='center' colSpan={2}>{"신호세기"}</TableCell>
-          <TableCell align='center' rowSpan={2}>{"주기"}</TableCell>
-          <TableCell align='center' rowSpan={2}>{"스쿨존"}<br/>{"안전"}<br/>{"경고"}<br/>{"사용"}<br/>{"상태"}</TableCell>
-          <TableCell align='center' rowSpan={2}>{"안전"}<br/>{"경고"}<br/>{"간격"}</TableCell>
-          <TableCell align='center' rowSpan={2}>{"시간"}<br/>{"설정값"}<br/>{"확인"}</TableCell>
-        </TableRow>
-        <TableRow sx={{ '& th':{textTransform: 'none'}}}>
-          <TableCell align='center'>{"Addr"}</TableCell>
-          <TableCell align='center'>{"LoRa ID"}</TableCell>
-          <TableCell align='center'>{"음원"}</TableCell>
-          <TableCell align='center'>{"발생 시각"}</TableCell>
-          <TableCell align='center'>{"상태"}</TableCell>
-          <TableCell align='center'>{"버튼"}</TableCell>
-          <TableCell align='center'>{"스피커"}</TableCell>
-          <TableCell align='center'>{"그룹"}<br/>{"(횟수)"}</TableCell>
-          <TableCell align='center'>{"전원"}</TableCell>
-          <TableCell align='center'>{"본체"}</TableCell>
-          <TableCell align='center'>{"LoRa"}</TableCell>
-          <TableCell align='center'>{"BLE"}</TableCell>
-          <TableCell align='center'>{"358"}<br/>{"신호"}</TableCell>
-          <TableCell align='center'>{"358"}<br/>{"유도"}</TableCell>
-          <TableCell align='center'>{"235"}<br/>{"상호"}</TableCell>
-          <TableCell align='center'>{"적색"}</TableCell>
-          <TableCell align='center'>{"녹색"}</TableCell>
-          <TableCell align='center'>{"잔여"}</TableCell>
-          <TableCell align='center'>{"안전"}<br/>{"경고"}<br/>{"횟수"}</TableCell>
-          <TableCell align='center'>{"볼륨"}</TableCell>
-          <TableCell align='center'>{"바탕음"}<br/>{"볼륨"}</TableCell>
-          <TableCell align='center'>{"멜로디"}<br/>{"볼륨"}</TableCell>
-          <TableCell align='center'>{"야간"}<br/>{"볼륨"}</TableCell>
-          <TableCell align='center'>{"안전"}<br/>{"경고"}<br/>{"볼륨"}</TableCell>
-          <TableCell align='center'>{"유도"}<br/>{"거리"}</TableCell>
-          <TableCell align='center'>{"신호"}<br/>{"거리"}</TableCell>
-        </TableRow>
-      </TableHead>
-      <TableBody sx={{ 
-        '& tr td.MuiTableCell-body, & tr td.MuiTableCell-body:first-of-type':{
-          fontSize: 12, 
-          height: 29, 
-          color: '#777',  
-          border: '1px solid #9d9d9d', 
-          padding: '2px 4px'
-        }
-      }}>
-        {/* Listing All Equipment ------ */}
-        { devices.map((equi_state, rowID) =>(
-          <TableRow key={rowID} sx={{boxSizing: 'content-box'}}>
-            <TableCell align='center'>{equi_state.equi_num}</TableCell>
-            <TableCell align='center'>{equi_state.address}</TableCell>
-            <TableCell align='center'>{equi_state.lora_id}</TableCell>
-            <TableCell align='center'>{equi_state.sound_text}</TableCell>
-            <TableCell align='center'>{equi_state.occur_time}</TableCell>
-            <TableCell align='center'><CheckStateValue stateValue={equi_state.state_code}/></TableCell>
-            <TableCell align='center'><CheckButtonStateValue buttonState={equi_state.button_state}/></TableCell>
-            <TableCell align='center'><CheckSpeakeStateValue speakerState={equi_state.speaker_state}/></TableCell>
-            <TableCell align='center'>{equi_state.grid}<br/>{equi_state.guidecnt+"/"+equi_state.alertcnt}</TableCell>
-            <TableCell align='center'><CheckLightStateValue lightState={equi_state.light_state}/></TableCell>
-            <TableCell align='center'>{equi_state.equiversion}</TableCell>
-            <TableCell align='center'>{equi_state.loraversion}</TableCell>
-            <TableCell align='center'>{equi_state.bleversion}</TableCell>
-            <TableCell align='center'>{equi_state.cover_cnt}</TableCell>
-            <TableCell align='center'>{equi_state.button_cnt}</TableCell>
-            <TableCell align='center'>{equi_state.m358_cnt}</TableCell>
-            <TableCell align='center'>{equi_state.m358i_cnt}</TableCell>
-            <TableCell align='center'>{equi_state.m235_cnt}</TableCell> {/* TODO: Based on the count = 0  style changes */}
-            <TableCell align='center'>{equi_state.rlstate == 1 ? '정상': '이상'}</TableCell>
-            <TableCell align='center'>{equi_state.glstate == 1 ? '정상': '이상'}</TableCell>
-            <TableCell align='center'>{equi_state.ulstate == 1 ? '정상': '이상'}</TableCell>
-            <TableCell align='center'>{equi_state.redsoundcnt}</TableCell>
-            <TableCell align='center'>{equi_state.volume}</TableCell>
-            <TableCell align='center'>{equi_state.bvolume}</TableCell>
-            <TableCell align='center'>{equi_state.mvolume}</TableCell>
-            <TableCell align='center'>{equi_state.nvolume}</TableCell>
-            <TableCell align='center'>{equi_state.svolume}</TableCell>
-            <TableCell align='center'>{equi_state.induce}</TableCell>
-            <TableCell align='center'>{equi_state.signal0}</TableCell>
-            <TableCell align='center'>{equi_state.period}</TableCell>
-            <TableCell align='center'>{equi_state.statewarning}</TableCell>
-            <TableCell align='center'>{equi_state.termofwarning}</TableCell>
-            <TableCell align='center'><a>{"시간"}<br/>{"설정값"}</a></TableCell>
+      <Table>
+        <TableHead sx={{ 
+          '& tr th.MuiTableCell-head, & tr th.MuiTableCell-head:first-of-type':{
+            fontSize: 12, 
+            height: 29, 
+            color: '#444', 
+            fontWeight: '700', 
+            border: '1px solid #9d9d9d', 
+            padding: '2px 4px'
+          }
+        }}>
+          <TableRow>
+            <TableCell align='center' rowSpan={2}>{"부착"}<br/>{"번호"}</TableCell>
+            <TableCell align='center' colSpan={5}>{"제품정보"}</TableCell>
+            <TableCell align='center' colSpan={4}>{"제품상태"}</TableCell>
+            <TableCell align='center' colSpan={3}>{"펌웨어정보"}</TableCell>
+            <TableCell align='center' rowSpan={2}>{"상판"}<br/>{"열림"}<br/>{"횟수"}</TableCell>
+            <TableCell align='center' rowSpan={2}>{"버튼"}<br/>{"동작"}<br/>{"횟수"}</TableCell>
+            <TableCell align='center' colSpan={3}>{"통신상태"}</TableCell>
+            <TableCell align='center' colSpan={3}>{"보행등상태"}</TableCell>
+            <TableCell align='center' colSpan={6}>{"볼륨 및 소리 설정"}</TableCell>
+            <TableCell align='center' colSpan={2}>{"신호세기"}</TableCell>
+            <TableCell align='center' rowSpan={2}>{"주기"}</TableCell>
+            <TableCell align='center' rowSpan={2}>{"스쿨존"}<br/>{"안전"}<br/>{"경고"}<br/>{"사용"}<br/>{"상태"}</TableCell>
+            <TableCell align='center' rowSpan={2}>{"안전"}<br/>{"경고"}<br/>{"간격"}</TableCell>
+            <TableCell align='center' rowSpan={2}>{"시간"}<br/>{"설정값"}<br/>{"확인"}</TableCell>
           </TableRow>
-        )) }
-      </TableBody>
+          <TableRow sx={{ '& th':{textTransform: 'none'}}}>
+            <TableCell align='center'>{"Addr"}</TableCell>
+            <TableCell align='center'>{"LoRa ID"}</TableCell>
+            <TableCell align='center'>{"음원"}</TableCell>
+            <TableCell align='center'>{"발생 시각"}</TableCell>
+            <TableCell align='center'>{"상태"}</TableCell>
+            <TableCell align='center'>{"버튼"}</TableCell>
+            <TableCell align='center'>{"스피커"}</TableCell>
+            <TableCell align='center'>{"그룹"}<br/>{"(횟수)"}</TableCell>
+            <TableCell align='center'>{"전원"}</TableCell>
+            <TableCell align='center'>{"본체"}</TableCell>
+            <TableCell align='center'>{"LoRa"}</TableCell>
+            <TableCell align='center'>{"BLE"}</TableCell>
+            <TableCell align='center'>{"358"}<br/>{"신호"}</TableCell>
+            <TableCell align='center'>{"358"}<br/>{"유도"}</TableCell>
+            <TableCell align='center'>{"235"}<br/>{"상호"}</TableCell>
+            <TableCell align='center'>{"적색"}</TableCell>
+            <TableCell align='center'>{"녹색"}</TableCell>
+            <TableCell align='center'>{"잔여"}</TableCell>
+            <TableCell align='center'>{"안전"}<br/>{"경고"}<br/>{"횟수"}</TableCell>
+            <TableCell align='center'>{"볼륨"}</TableCell>
+            <TableCell align='center'>{"바탕음"}<br/>{"볼륨"}</TableCell>
+            <TableCell align='center'>{"멜로디"}<br/>{"볼륨"}</TableCell>
+            <TableCell align='center'>{"야간"}<br/>{"볼륨"}</TableCell>
+            <TableCell align='center'>{"안전"}<br/>{"경고"}<br/>{"볼륨"}</TableCell>
+            <TableCell align='center'>{"유도"}<br/>{"거리"}</TableCell>
+            <TableCell align='center'>{"신호"}<br/>{"거리"}</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody sx={{ 
+          '& tr td.MuiTableCell-body, & tr td.MuiTableCell-body:first-of-type':{
+            fontSize: 12, 
+            height: 29, 
+            color: '#777',  
+            border: '1px solid #9d9d9d', 
+            padding: '2px 4px'
+          }
+        }}>
+          {/* Listing All Equipment ------ */}
+          { devices.map((equi_state, rowID) =>(
+            <TableRow key={rowID} sx={{boxSizing: 'content-box'}}>
+              <TableCell align='center'>{equi_state.equi_num}</TableCell>
+              <TableCell align='center'>{equi_state.address}</TableCell>
+              <TableCell align='center'>{equi_state.lora_id}</TableCell>
+              <TableCell align='center'>{equi_state.sound_text}</TableCell>
+              <TableCell align='center'>{equi_state.occur_time}</TableCell>
+              <TableCell align='center'><CheckStateValue stateValue={equi_state.state_code}/></TableCell>
+              <TableCell align='center'><CheckButtonStateValue buttonState={equi_state.button_state}/></TableCell>
+              <TableCell align='center'><CheckSpeakeStateValue speakerState={equi_state.speaker_state}/></TableCell>
+              <TableCell align='center'>{equi_state.grid}<br/>{equi_state.guidecnt+"/"+equi_state.alertcnt}</TableCell>
+              <TableCell align='center'><CheckLightStateValue lightState={equi_state.light_state}/></TableCell>
+              <TableCell align='center'>{equi_state.equiversion ? equi_state.equiversion : '-'}</TableCell>
+              <TableCell align='center'>{equi_state.loraversion ? equi_state.loraversion : '-'}</TableCell>
+              <TableCell align='center'>{equi_state.bleversion ? equi_state.bleversion : '-'}</TableCell>
+              <TableCell align='center'>{equi_state.cover_cnt}</TableCell>
+              <TableCell align='center'>{equi_state.button_cnt}</TableCell>
+              <TableCell align='center'>{equi_state.m358_cnt}</TableCell>
+              <TableCell align='center'>{equi_state.m358i_cnt}</TableCell>
+              <TableCell align='center'>{equi_state.m235_cnt}</TableCell>{/* TODO: Based on the count = 0  style changes */}
+              <TableCell align='center'>{equi_state.rlstate == 1 ? '정상': '이상'}</TableCell>
+              <TableCell align='center'>{equi_state.glstate == 1 ? '정상': '이상'}</TableCell>
+              <TableCell align='center'>{equi_state.ulstate == 1 ? '정상': '이상'}</TableCell>
+              <TableCell align='center'>{equi_state.redsoundcnt}</TableCell>
+              <TableCell align='center'>{equi_state.volume}</TableCell>
+              <TableCell align='center'>{equi_state.bvolume}</TableCell>
+              <TableCell align='center'>{equi_state.mvolume}</TableCell>
+              <TableCell align='center'>{equi_state.nvolume}</TableCell>
+              <TableCell align='center'>{equi_state.svolume}</TableCell>
+              <TableCell align='center'>{equi_state.induce}</TableCell>
+              <TableCell align='center'>{equi_state.signal0}</TableCell>
+              <TableCell align='center'>{equi_state.period}</TableCell>
+              <TableCell align='center'>{equi_state.statewarning}</TableCell>
+              <TableCell align='center'>{equi_state.termofwarning}</TableCell>
+              <TableCell align='center'><a>{"시간"}<br/>{"설정값"}</a></TableCell>
+            </TableRow>
+          )) }
+        </TableBody>
+      </Table>
     </TableContainer>
   );
 }
