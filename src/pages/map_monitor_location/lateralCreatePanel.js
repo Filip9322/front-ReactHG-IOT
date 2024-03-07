@@ -2,12 +2,15 @@
 import { useState, useEffect } from 'react'
 
 // ** Material COmponents Imports
+import { styled } from '@mui/material/styles';
 import { Box, Drawer, Button, Tooltip, FormGroup, FormControlLabel, Checkbox,
-         Typography } from '@mui/material'
+         Typography, TextField } from '@mui/material'
 
 // ** Icon Imports
 import ChevronDown from 'mdi-material-ui/ChevronDown'
 import WindowClose from 'mdi-material-ui/WindowClose'
+import MapMarker from 'mdi-material-ui/MapMarker'
+import Magnify from 'mdi-material-ui/Magnify'
 
 
 // **  Utils
@@ -193,6 +196,56 @@ const LateralCreateControllerPanel = props =>{
           onChange={handleChangeInputComponent}
           value={formValues.controller_management_departnment}
         />
+        <BoxStyled>
+          <Typography>
+            {'주소'}
+          </Typography>
+          <TextField
+            disabled
+            name = {'controller_address'}
+            label= {'주소 검색'}
+            required = {true}
+            className= 'textFieldFormDetails'
+            variant={"outlined"}
+            multiline = {true}
+            sx ={{ width: '60%' }}
+          />
+          <Tooltip>
+            <Button
+              className = { 'ButtonIconSVG' }
+            >
+              <Magnify />
+            </Button>
+          </Tooltip>
+        </BoxStyled>
+        <BoxStyled>
+          <Typography>
+            {'좌표'}
+          </Typography>
+          <TextField
+            disabled
+            name = {'map_x'}
+            label = {' X: '}
+            required = {true}
+            className= 'textFieldFormDetails'
+            sx ={{ width: '20%' }}
+          />
+          <TextField
+            disabled
+            name = {'map_y'}
+            label = {' Y: '}
+            required = {true}
+            className= 'textFieldFormDetails'
+            sx ={{ width: '20%' }}
+          />
+          <Tooltip>
+            <Button
+              className = { 'ButtonIconSVG' }
+            >
+              <MapMarker />
+            </Button>
+          </Tooltip>
+        </BoxStyled>
         <TextAndInputComponent
           required = {true}
           name = {'controller_address'}
@@ -227,5 +280,38 @@ const LateralCreateControllerPanel = props =>{
     </Drawer>
   )
 }
+
+const BoxStyled = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  padding: '5px',
+  '& p': { paddingRight: '5px' },
+  '& .textFieldFormDetails .MuiInputBase-root input': {
+    color: '#777',
+    WebkitTextFillColor: '#777',
+    backgroundColor: 'white'
+  },
+  '& .textFieldFormDetails .MuiInputBase-root textarea': {
+    color: '#777',
+    WebkitTextFillColor: '#777',
+    backgroundColor: 'white'
+  },
+  '& .textFieldFormDetails .MuiInputBase-root fieldset':{
+    borderColor: 'rgba(58, 53, 65, 0.22)'
+  },
+  '& .textFieldFormDetails .MuiInputBase-root':{
+    backgroundColor: 'white'
+  }, 
+  '& button.ButtonIconSVG': {
+    display:'flex',
+    marginLeft: '10px',
+    position: 'relative',
+    alignItems:'center',
+    backgroundColor: '#dfdfdf',
+    ':hover':{ cursor: 'pointer', backgroundColor: 'rgba(241, 74, 74, 0.9)', '& svg':{ color: '#fff'}},
+    '& svg':{ color: '#777'}
+  }
+}));
 
 export { LateralCreateControllerPanel };
