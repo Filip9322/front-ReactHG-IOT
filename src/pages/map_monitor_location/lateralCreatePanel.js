@@ -1,5 +1,6 @@
 // ** React Imports
 import { useState, useEffect } from 'react'
+import { useDaumPostcodePopup  } from 'react-daum-postcode';
 
 // ** Material COmponents Imports
 import { styled } from '@mui/material/styles';
@@ -65,7 +66,30 @@ const LateralCreateControllerPanel = props =>{
     setState ({...state, [anchor]: openDrawer});
   }
 
+  const handleClickSearchAddress = event => {
+    event.preventDefault();
+    useDaumPostcodePopup({onComplete: handleCompleteDaum});
+  }
+
+  const handleCompleteDaum = data => {
+    let fullAddress = data.address;
+    let extraAddress = '';
+
+    if(data.addressType = 'R'){
+      if (data.bname !== '') {
+        extraAddress += data.bname
+      }
+      if (data.buildingName !== ''){
+        extraAddress += extraAddress !== '' ? `, ${data.buildingName}`: data.buildingName;
+      }
+      fullAddress += extraAddress !==''? `(${extraAddress})`: '';
+    }
+
+    console.log(fullAddress);
+  }
+
   // ** UseEffects
+  
 
   //***------- Return >>> */
   return (
@@ -212,6 +236,7 @@ const LateralCreateControllerPanel = props =>{
           />
           <Tooltip>
             <Button
+              onClick = { handleClickSearchAddress }
               className = { 'ButtonIconSVG' }
             >
               <Magnify />
@@ -313,5 +338,19 @@ const BoxStyled = styled(Box)(({ theme }) => ({
     '& svg':{ color: '#777'}
   }
 }));
+
+const daumURL = 'http://dmaps.daum.net/map_js_init/postcode.v2.js';
+const loadDaumAPI = (url, target) => new Promise(resolve => {
+  const tag = document.createElement('script');
+  tag.async = false;
+  tag.src = url;
+  target.appendChild(tag);
+  tag.addEventListener('load', resolve, {
+    once: true
+  });
+});
+
+
+//const callDaumAPI = ( urslsdk)
 
 export { LateralCreateControllerPanel };

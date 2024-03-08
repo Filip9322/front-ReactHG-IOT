@@ -2,10 +2,9 @@
 import { useState, useEffect, forwardRef }  from 'react';
 
 // **  Material Components Imports
-import { styled } from '@mui/material/styles';
 import { Box, Button, Typography, Menu, MenuItem, Fade,
         Drawer, ToggleButtonGroup, ToggleButton, ListItemIcon,
-        TextField, Snackbar, Alert, FormGroup, FormControlLabel, Checkbox, Switch
+        TextField, Snackbar, Alert, FormGroup, FormControlLabel, Checkbox
       } from '@mui/material';
 
 // ** Icons Imports
