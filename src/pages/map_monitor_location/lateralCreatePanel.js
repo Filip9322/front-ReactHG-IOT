@@ -33,9 +33,9 @@ const LateralCreateControllerPanel = props =>{
   const [ state, setState ] = useState({ right: openDrawer });
   const [ installedCheckbox, setInstalledCheckbox ] = useState(false);
   const [ schoolSwitch, setSchoolSwitch ] = useState(false);
-  const [ address, setAddress ] = useState();
-  const [ map_x, setMap_x ] = useState();
-  const [ map_y, setMap_y ] = useState();
+  const [ address, setAddress ] = useState('');
+  const [ map_x, setMap_x ] = useState('');
+  const [ map_y, setMap_y ] = useState('');
 
   // ** Hooks
   const  openDaum = useDaumPostcodePopup('//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js');
@@ -70,6 +70,12 @@ const LateralCreateControllerPanel = props =>{
     if(event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
       return;
     }
+    if(open == false){
+      setAddress('');
+      setMap_x('');
+      setMap_y('');
+    }
+
     setOpenDrawer(open);
     setState ({...state, [anchor]: openDrawer});
   }
@@ -250,56 +256,72 @@ const LateralCreateControllerPanel = props =>{
           <Typography>
             {'주소'}
           </Typography>
-          <TextField
-            disabled
-            name = {'controller_address'}
-            label= {address ? '': '주소 검색'}
-            value= {address} 
-            
-            className= 'textFieldFormDetails'
-            variant={"outlined"}
-            multiline = {true}
-            sx ={{ width: '60%' }}
-          />
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              width: '60%'
+            }}
+          >
+            <TextField
+              disabled
+              required = {true}
+              name = {'controller_address'}
+              label= {address ? '': '주소 검색'}
+              value= {address}            
+              className= 'textFieldFormDetails'
+              variant={"outlined"}
+              multiline = {true}
+              sx ={{ width: '100%' }}
+            />
 
-          <Tooltip>
-            <Button
-              onClick = { handleClickSearchAddress }
-              className = { 'ButtonIconSVG' }
-            >
-              <Magnify />
-            </Button>
-          </Tooltip>
+            <Tooltip>
+              <Button
+                onClick = { handleClickSearchAddress }
+                className = { 'ButtonIconSVG' }
+              >
+                <Magnify />
+              </Button>
+            </Tooltip>
+          </Box>
         </BoxStyled>
         <BoxStyled>
           <Typography>
             {'좌표'}
           </Typography>
-          <TextField
-            disabled
-            value = { map_x }
-            name =  {'map_x'}
-            label = { map_x ? '': 'X: '}
-            
-            className= 'textFieldFormDetails'
-            sx ={{ width: '20%' }}
-          />
-          <TextField
-            disabled
-            value = { map_y }
-            name  = {'map_y'}
-            label = { map_y ? '': 'Y: '}
-            
-            className= 'textFieldFormDetails'
-            sx ={{ width: '20%' }}
-          />
-          <Tooltip>
-            <Button
-              className = { 'ButtonIconSVG' }
-            >
-              <MapMarker />
-            </Button>
-          </Tooltip>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              width: '60%'
+            }}
+          >
+            <TextField
+              disabled
+              value = { map_x }
+              name =  {'map_x'}
+              label = { map_x ? '': 'X: '}
+              required = {true}
+              className= 'textFieldFormDetails'
+              sx ={{ width: '100%', padding: '0 0 0 2px' }}
+            />
+            <TextField
+              disabled
+              value = { map_y }
+              name  = {'map_y'}
+              label = { map_y ? '': 'Y: '}
+              required = {true}
+              className= 'textFieldFormDetails'
+              sx ={{ width: '100%', padding: '0 0 0 2px' }}
+            />
+            <Tooltip>
+              <Button
+                className = { 'ButtonIconSVG' }
+              >
+                <MapMarker />
+              </Button>
+            </Tooltip>
+          </Box>
         </BoxStyled>
         <TextAndInputComponent
           required = {true}
@@ -348,19 +370,5 @@ const BoxStyled = styled(Box)(({ theme }) => ({
     '& svg':{ color: '#777'}
   }
 }));
-
-const daumURL = 'http://dmaps.daum.net/map_js_init/postcode.v2.js';
-const loadDaumAPI = (url, target) => new Promise(resolve => {
-  const tag = document.createElement('script');
-  tag.async = false;
-  tag.src = url;
-  target.appendChild(tag);
-  tag.addEventListener('load', resolve, {
-    once: true
-  });
-});
-
-
-//const callDaumAPI = ( urslsdk)
 
 export { LateralCreateControllerPanel };
