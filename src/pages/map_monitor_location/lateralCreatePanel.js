@@ -19,18 +19,26 @@ import { postFetchURL } from 'src/@core/utils/fetchHelper'
 import { ControllerInformation } from 'src/pages/controller/[local_area]/[controller_larea_id]'
 import { TextAndInputComponent } from 'src/pages/map_monitor_location/lateralDetailPanel'
 
+import { useKakaoLoader } from 'src/@core/utils/kakao_map_api'
+
 // ** Styles
 import { SchoolZoneSwitch } from 'src/@core/styles/school_zone_switch'
 
 const LateralCreateControllerPanel = props =>{
-  
+  // ** Load Kakao Maps SDK
+  const [loading, error] = useKakaoLoader();
+
   // ** Props and States
   const { openDrawer, setOpenDrawer } = props;
   const [ state, setState ] = useState({ right: openDrawer });
   const [ installedCheckbox, setInstalledCheckbox ] = useState(false);
   const [ schoolSwitch, setSchoolSwitch ] = useState(false);
+  const [ address, setAddress ] = useState();
+  const [ map_x, setMap_x ] = useState();
+  const [ map_y, setMap_y ] = useState();
 
   // ** Hooks
+  const  openDaum = useDaumPostcodePopup('//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js');
 
   // ** Form Delivery
   const [ formValues, setFormValues ] = useState({});
@@ -68,7 +76,7 @@ const LateralCreateControllerPanel = props =>{
 
   const handleClickSearchAddress = event => {
     event.preventDefault();
-    useDaumPostcodePopup({onComplete: handleCompleteDaum});
+    openDaum({onComplete: handleCompleteDaum});
   }
 
   const handleCompleteDaum = data => {
@@ -84,11 +92,29 @@ const LateralCreateControllerPanel = props =>{
       }
       fullAddress += extraAddress !==''? `(${extraAddress})`: '';
     }
+    handleGeocoder(data.address);
 
-    console.log(fullAddress);
+    setAddress(fullAddress);
   }
 
+  const handleGeocoder = address => {
+    var Geocoder = new window.daum.maps.services.Geocoder();
+    
+    if(Geocoder){
+      Geocoder.addressSearch(address, (result, status)  =>{
+        if( status === kakao.maps.services.Status.OK){
+          setMap_x( result[0].x );
+          setMap_y( result[0].y );
+        }
+      });
+    }
+  }
+
+
   // ** UseEffects
+  useEffect(() =>{
+    console.log('Loaded KakaoMap SDK: '+ loading)
+  },[error])
   
 
   //***------- Return >>> */
@@ -227,13 +253,15 @@ const LateralCreateControllerPanel = props =>{
           <TextField
             disabled
             name = {'controller_address'}
-            label= {'주소 검색'}
-            required = {true}
+            label= {address ? '': '주소 검색'}
+            value= {address} 
+            
             className= 'textFieldFormDetails'
             variant={"outlined"}
             multiline = {true}
             sx ={{ width: '60%' }}
           />
+
           <Tooltip>
             <Button
               onClick = { handleClickSearchAddress }
@@ -249,17 +277,19 @@ const LateralCreateControllerPanel = props =>{
           </Typography>
           <TextField
             disabled
-            name = {'map_x'}
-            label = {' X: '}
-            required = {true}
+            value = { map_x }
+            name =  {'map_x'}
+            label = { map_x ? '': 'X: '}
+            
             className= 'textFieldFormDetails'
             sx ={{ width: '20%' }}
           />
           <TextField
             disabled
-            name = {'map_y'}
-            label = {' Y: '}
-            required = {true}
+            value = { map_y }
+            name  = {'map_y'}
+            label = { map_y ? '': 'Y: '}
+            
             className= 'textFieldFormDetails'
             sx ={{ width: '20%' }}
           />
@@ -273,32 +303,12 @@ const LateralCreateControllerPanel = props =>{
         </BoxStyled>
         <TextAndInputComponent
           required = {true}
-          name = {'controller_address'}
-          inputTxt = {'주소'}
-          labelTxt = {'주소'}
-          edit={true}
-          onChange={handleChangeInputComponent}
-          multiline = {true}
-          value={formValues.controller_address}
-        />
-        <TextAndInputComponent
-          required = {true}
-          name = {'map_xy'}
-          inputTxt = {'좌표'}
-          labelTxt = {'좌표'}
-          multiline = {true}
-          edit={true}
-          onChange={handleChangeInputComponent}
-          value={formValues.map_xy}
-        />
-        <TextAndInputComponent
-          required = {false}
           name = {'bigo'}
           inputTxt = {'비고'}
           labelTxt = {'비고'}
-          multiline = {true}
           edit={true}
           onChange={handleChangeInputComponent}
+          multiline = {true}
           value={formValues.bigo}
         />
       </Box>
