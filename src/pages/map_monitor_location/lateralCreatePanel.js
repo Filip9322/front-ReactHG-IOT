@@ -19,23 +19,24 @@ import { postFetchURL } from 'src/@core/utils/fetchHelper'
 import { ControllerInformation } from 'src/pages/controller/[local_area]/[controller_larea_id]'
 import { TextAndInputComponent } from 'src/pages/map_monitor_location/lateralDetailPanel'
 
-import { useKakaoLoader } from 'src/@core/utils/kakao_map_api'
-
 // ** Styles
 import { SchoolZoneSwitch } from 'src/@core/styles/school_zone_switch'
 
 const LateralCreateControllerPanel = props =>{
-  // ** Load Kakao Maps SDK
-  const [loading, error] = useKakaoLoader();
 
   // ** Props and States
   const { openDrawer, setOpenDrawer } = props;
   const [ state, setState ] = useState({ right: openDrawer });
   const [ installedCheckbox, setInstalledCheckbox ] = useState(false);
+  const [ openEquiStatus, setOpenEquiStatus ] = useState(false);
   const [ schoolSwitch, setSchoolSwitch ] = useState(false);
   const [ address, setAddress ] = useState('');
   const [ map_x, setMap_x ] = useState('');
   const [ map_y, setMap_y ] = useState('');
+  const [ mapKey, setMapKey ] = useState(1);
+
+  const [ controller, setController ] = useState({map_x: map_x, map_y: map_y});
+
 
   // ** Hooks
   const  openDaum = useDaumPostcodePopup('//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js');
@@ -74,6 +75,9 @@ const LateralCreateControllerPanel = props =>{
       setAddress('');
       setMap_x('');
       setMap_y('');
+      setMapKey( mapKey + 1 );
+      setController({map_x: '', map_y: ''});
+      setOpenEquiStatus(false);
     }
 
     setOpenDrawer(open);
@@ -109,19 +113,25 @@ const LateralCreateControllerPanel = props =>{
     if(Geocoder){
       Geocoder.addressSearch(address, (result, status)  =>{
         if( status === kakao.maps.services.Status.OK){
-          setMap_x( result[0].x );
-          setMap_y( result[0].y );
+          setMap_x( result[0].y );
+          setMap_y( result[0].x );
+          setMapKey( mapKey + 1 );
+          setController({map_x: result[0].y, map_y: result[0].x});
+          setOpenEquiStatus(true);
         }
       });
     }
   }
 
+  const handleClickMapMarkerIcon = event => {
+    event.preventDefault();
+    setOpenEquiStatus(true);
+  }
 
-  // ** UseEffects
-  useEffect(() =>{
-    console.log('Loaded KakaoMap SDK: '+ loading)
-  },[error])
-  
+  const handleSaveNewController = event => {
+    //event.preventDefault();
+  }
+
 
   //***------- Return >>> */
   return (
@@ -155,184 +165,213 @@ const LateralCreateControllerPanel = props =>{
       </Tooltip>
       <Box
         sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          backgroundColor: 'rgba(241,244,249,1)'
+          display: 'flex'
         }}
       >
-        <Typography
-          sx = {{
-            fontSize: '22px',
-            paddingRight: '5px',
-            justifySelf: 'center',
-            marginTop: 10,
-            marginBottom: 5
-          }}
-          variant='h6'
-        >{'신규 교차로 등록'}</Typography>
-      </Box>
-      <Box
-        sx={{
-          '& .MuiFormGroup-root':{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-around'
-          }
-        }}
-      >
-        <FormGroup>
-          {/*--- Checkbox Installed ---*/}
-          <FormControlLabel
-            control={
-              <Checkbox
-                color={'primary'} 
-                onChange={ handleInstallCheckbox }
-                checked={ installedCheckbox }
-                value={ formValues.is_installed }
-              />
-            }
-            label={'설치 여부'}
-          />
-          {/*--- Switch School Zone ---*/}
-          <FormControlLabel
-            control={
-              <SchoolZoneSwitch
-                onChange = { handleSwitchSchool } 
-                checked = { schoolSwitch }
-                value = { formValues.is_school_zone }
-              />
-            }
-            label={'스쿨존'}
-          />
-        </FormGroup>
-      </Box>
-      <Box
-        sx={{
-          backgroundColor: 'rgba(241,244,249,1)',
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          padding: '0 30px'
-        }}
-      >
-        <TextAndInputComponent
-          required = {true}
-          name = {'local_area_controller_number'}
-          inputTxt = {'관리번호'}
-          labelTxt = {'관리번호'}
-          edit={true}
-          onChange={handleChangeInputComponent}
-          value={formValues.local_area_controller_number}
-        />
-        <TextAndInputComponent
-          required = {true}
-          name = {'local_goverment_controller_number'}
-          inputTxt = {'제어기 No.'}
-          labelTxt = {'제어기 No.'}
-          edit={true}
-          onChange={handleChangeInputComponent}
-          value={formValues.local_goverment_controller_number}
-        />
-        <TextAndInputComponent
-          required = {true}
-          name = {'controller_name'} 
-          inputTxt = {'교차로명형태'}
-          labelTxt = {'교차로명형태'}
-          edit={true}
-          onChange={handleChangeInputComponent}
-          value={formValues.controller_name}
-        />
-        <TextAndInputComponent
-          required = {false}
-          name = {'controller_management_departnment'}
-          inputTxt = {'관리부서'}
-          labelTxt = {'관리부서'}
-          edit={true}
-          onChange={handleChangeInputComponent}
-          value={formValues.controller_management_departnment}
-        />
-        <BoxStyled>
-          <Typography>
-            {'주소'}
-          </Typography>
+        { openEquiStatus ? 
+        <Box>
+          <ControllerInformation
+            controller={ controller }
+            openEquiStatus={ openEquiStatus }
+            setOpenEquiStatus={ setOpenEquiStatus }
+            draggable = { true }
+            key = {mapKey}
+            />
+        </Box>
+        : ''}
+        <Box>
           <Box
             sx={{
               display: 'flex',
-              justifyContent: 'flex-end',
-              width: '60%'
+              justifyContent: 'center',
+              backgroundColor: 'rgba(241,244,249,1)'
             }}
           >
-            <TextField
-              disabled
+            <Typography
+              sx = {{
+                fontSize: '22px',
+                paddingRight: '5px',
+                justifySelf: 'center',
+                marginTop: 10,
+                marginBottom: 5
+              }}
+              variant='h6'
+            >{'신규 교차로 등록'}</Typography>
+          </Box>
+          <Box
+            sx={{
+              '& .MuiFormGroup-root':{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'space-around'
+              }
+            }}
+          >
+            <FormGroup>
+              {/*--- Checkbox Installed ---*/}
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    color={'primary'} 
+                    onChange={ handleInstallCheckbox }
+                    checked={ installedCheckbox }
+                    value={ formValues.is_installed }
+                  />
+                }
+                label={'설치 여부'}
+              />
+              {/*--- Switch School Zone ---*/}
+              <FormControlLabel
+                control={
+                  <SchoolZoneSwitch
+                    onChange = { handleSwitchSchool } 
+                    checked = { schoolSwitch }
+                    value = { formValues.is_school_zone }
+                  />
+                }
+                label={'스쿨존'}
+              />
+            </FormGroup>
+          </Box>
+          <Box
+            sx={{
+              backgroundColor: 'rgba(241,244,249,1)',
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              padding: '0 30px'
+            }}
+          >
+            <TextAndInputComponent
               required = {true}
-              name = {'controller_address'}
-              label= {address ? '': '주소 검색'}
-              value= {address}            
-              className= 'textFieldFormDetails'
-              variant={"outlined"}
-              multiline = {true}
-              sx ={{ width: '100%' }}
+              name = {'local_area_controller_number'}
+              inputTxt = {'관리번호'}
+              labelTxt = {'관리번호'}
+              edit={true}
+              onChange={handleChangeInputComponent}
+              value={formValues.local_area_controller_number}
             />
+            <TextAndInputComponent
+              required = {true}
+              name = {'local_goverment_controller_number'}
+              inputTxt = {'제어기 No.'}
+              labelTxt = {'제어기 No.'}
+              edit={true}
+              onChange={handleChangeInputComponent}
+              value={formValues.local_goverment_controller_number}
+            />
+            <TextAndInputComponent
+              required = {true}
+              name = {'controller_name'} 
+              inputTxt = {'교차로명형태'}
+              labelTxt = {'교차로명형태'}
+              edit={true}
+              onChange={handleChangeInputComponent}
+              value={formValues.controller_name}
+            />
+            <TextAndInputComponent
+              required = {false}
+              name = {'controller_management_departnment'}
+              inputTxt = {'관리부서'}
+              labelTxt = {'관리부서'}
+              edit={true}
+              onChange={handleChangeInputComponent}
+              value={formValues.controller_management_departnment}
+            />
+            <BoxStyled>
+              <Typography>
+                {'주소'}
+              </Typography>
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  width: '60%'
+                }}
+              >
+                <TextField
+                  disabled
+                  required = {true}
+                  name = {'controller_address'}
+                  label= {address ? '': '주소 검색'}
+                  value= {address}            
+                  className= 'textFieldFormDetails'
+                  variant={"outlined"}
+                  multiline = {true}
+                  sx ={{ width: '100%' }}
+                />
 
-            <Tooltip>
-              <Button
-                onClick = { handleClickSearchAddress }
-                className = { 'ButtonIconSVG' }
+                <Tooltip>
+                  <Button
+                    onClick = { handleClickSearchAddress }
+                    className = { 'ButtonIconSVG' }
+                  >
+                    <Magnify />
+                  </Button>
+                </Tooltip>
+              </Box>
+            </BoxStyled>
+            <BoxStyled>
+              <Typography>
+                {'좌표'}
+              </Typography>
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  width: '60%'
+                }}
               >
-                <Magnify />
-              </Button>
+                <TextField
+                  disabled
+                  value = { map_x }
+                  name =  {'map_x'}
+                  label = { map_x ? '': 'X: '}
+                  required = {true}
+                  className= 'textFieldFormDetails'
+                  sx ={{ width: '100%', padding: '0 0 0 2px' }}
+                />
+                <TextField
+                  disabled
+                  value = { map_y }
+                  name  = {'map_y'}
+                  label = { map_y ? '': 'Y: '}
+                  required = {true}
+                  className= 'textFieldFormDetails'
+                  sx ={{ width: '100%', padding: '0 0 0 2px' }}
+                />
+                <Tooltip>
+                  <Button
+                    onClick={handleClickMapMarkerIcon}
+                    className = { 'ButtonIconSVG' }
+                  >
+                    <MapMarker />
+                  </Button>
+                </Tooltip>
+              </Box>
+            </BoxStyled>
+            <TextAndInputComponent
+              required = {true}
+              name = {'bigo'}
+              inputTxt = {'비고'}
+              labelTxt = {'비고'}
+              edit={true}
+              onChange={handleChangeInputComponent}
+              multiline = {true}
+              value={formValues.bigo}
+            />
+            <Tooltip title={"저장"}>
+              <Button
+                onClick ={handleSaveNewController()}
+                aria-label={'저장'}
+                color={'success'}
+                variant={'contained'}
+                type='submit'
+              >{'저장'}</Button>
             </Tooltip>
           </Box>
-        </BoxStyled>
-        <BoxStyled>
-          <Typography>
-            {'좌표'}
-          </Typography>
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'flex-end',
-              width: '60%'
-            }}
-          >
-            <TextField
-              disabled
-              value = { map_x }
-              name =  {'map_x'}
-              label = { map_x ? '': 'X: '}
-              required = {true}
-              className= 'textFieldFormDetails'
-              sx ={{ width: '100%', padding: '0 0 0 2px' }}
-            />
-            <TextField
-              disabled
-              value = { map_y }
-              name  = {'map_y'}
-              label = { map_y ? '': 'Y: '}
-              required = {true}
-              className= 'textFieldFormDetails'
-              sx ={{ width: '100%', padding: '0 0 0 2px' }}
-            />
-            <Tooltip>
-              <Button
-                className = { 'ButtonIconSVG' }
-              >
-                <MapMarker />
-              </Button>
-            </Tooltip>
-          </Box>
-        </BoxStyled>
-        <TextAndInputComponent
-          required = {true}
-          name = {'bigo'}
-          inputTxt = {'비고'}
-          labelTxt = {'비고'}
-          edit={true}
-          onChange={handleChangeInputComponent}
-          multiline = {true}
-          value={formValues.bigo}
-        />
+        </Box>
       </Box>
     </Drawer>
   )

@@ -521,7 +521,8 @@ const LateralDetailPanel = props => {
             //hidden={!openEquiStatus}
             sx={{display:openEquiStatus?'':'none'}}
           >
-            <ControllerInformation 
+            <ControllerInformation
+              draggable = { false }
               controller={ controller }
               openEquiStatus={ openEquiStatus }
               setOpenEquiStatus={ setOpenEquiStatus }

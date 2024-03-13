@@ -15,7 +15,7 @@ const ControllerInformation = props => {
   // ** Load Kakao Maps SDK
   const [loading, error] = useKakaoLoader();
   
-  const { controller, openEquiState, setOpenEquiStatus } = props;
+  const { controller, openEquiState, setOpenEquiStatus, draggable } = props;
   
   const [mapKey, setMapKey] = useState(0);
   const [lat, setLat] = useState(controller.map_x);
@@ -23,6 +23,7 @@ const ControllerInformation = props => {
   const [spinner, setSpinner] = useState(true);
   const [devices, setDevices] = useState([]);
   const [deviceLocations, setDevicesLocations] = useState([]);
+  const [mapStyles, setMapStyles] = useState({});
   
   const [kakaoInitated, setKakaoInitiated] = useState(false);
   
@@ -74,6 +75,18 @@ const ControllerInformation = props => {
       setLat(controller.map_x);
       setLng(controller.map_y);
     }
+    if(devices.length){
+      console.log("confirmed")
+      setLat(controller.map_x);
+      setLng(controller.map_y);
+      setMapKey(mapKey+1);
+    }
+
+    setMapStyles({
+      minWidth: "1240px",
+      width: "1240px",
+      height: "505px",
+      border: 'solid 1px #aaa'});
     
     hasPageBeenRendered.current['effect1'] = true;
   },[devices]);
@@ -96,7 +109,11 @@ const ControllerInformation = props => {
   },[error])
 
   useEffect(() => {
-    
+    if(controller.map_x != '' && controller.map_y != ''){
+      setSpinner(false);
+      setDevices([{}]);
+      console.log('first step okay');
+    }
     console.log('checking state when opening the map tab in the drawer');
   },[openEquiState, controller])
   
@@ -225,13 +242,8 @@ const ControllerInformation = props => {
       { (kakaoInitated && !spinner && devices.length ) ? (
       <Map
         center={{ lat: lat, lng: lng }}
-        style={{
-          minWidth: "1240px",
-          width: "1240px",
-          height: "505px",
-          border: 'solid 1px #aaa'
-        }}
-        draggable = {false}
+        style={ mapStyles }
+        draggable = {draggable}
         level={1}
         key={mapKey}
       >
