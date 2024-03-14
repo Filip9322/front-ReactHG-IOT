@@ -28,7 +28,7 @@ const ControllerInformation = props => {
   const [kakaoInitated, setKakaoInitiated] = useState(false);
   
   // ** UseRef
-  const hasPageBeenRendered = useRef({ effect1: false, effect2: false });
+  const hasPageBeenRendered = useRef({ effect1: false, effect2: false, effect3: false });
 
   async function fetchEquiState(){
     setSpinner(true);
@@ -48,7 +48,6 @@ const ControllerInformation = props => {
           ArrayLocations.push(locObject);
           //console.log('posX: '+location[0]+' posY: '+location[1]);
         })
-
         setDevices(response);
         setDevicesLocations(ArrayLocations);
       }
@@ -74,19 +73,14 @@ const ControllerInformation = props => {
       
       setLat(controller.map_x);
       setLng(controller.map_y);
-    }
-    if(devices.length){
-      console.log("confirmed")
-      setLat(controller.map_x);
-      setLng(controller.map_y);
-      setMapKey(mapKey+1);
+      if(devices.length){
+        setSpinner(false);
+        setLat(controller.map_x);
+        setLng(controller.map_y);
+        setMapKey(mapKey+1);
+      }
     }
 
-    setMapStyles({
-      minWidth: "1240px",
-      width: "1240px",
-      height: "505px",
-      border: 'solid 1px #aaa'});
     
     hasPageBeenRendered.current['effect1'] = true;
   },[devices]);
@@ -95,8 +89,12 @@ const ControllerInformation = props => {
     if(hasPageBeenRendered.current['effect2']) {
       setSpinner(false);
     }
-    setMapKey(mapKey+1);
-    
+    setMapStyles({
+      minWidth: "1240px",
+      width: "1240px",
+      height: "505px",
+      border: 'solid 1px #aab'});
+
     hasPageBeenRendered.current['effect2'] = true;
   },[kakaoInitated, lat, lng]);
   
@@ -105,17 +103,25 @@ const ControllerInformation = props => {
       setSpinner(false);
     }
     setMapKey(mapKey+1);
-    console.log('Loaded KakaoMap SDK: '+ loading)
   },[error])
 
   useEffect(() => {
     if(controller.map_x != '' && controller.map_y != ''){
       setSpinner(false);
       setDevices([{}]);
-      console.log('first step okay');
     }
-    console.log('checking state when opening the map tab in the drawer');
   },[openEquiState, controller])
+
+  useEffect(() => {
+    if(hasPageBeenRendered.current['effect1']) {
+      setMapStyles({
+        minWidth: "1240px",
+        width: "1240px",
+        height: "505px",
+        border: 'solid 1px #aaa'});
+    }
+    
+  },[mapKey])
   
   //** -- Custom Marker Component */
   const CustomMarkerComponent = props => {

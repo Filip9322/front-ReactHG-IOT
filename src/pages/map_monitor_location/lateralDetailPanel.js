@@ -47,8 +47,9 @@ const LateralDetailPanel = props => {
     'bigo': controller.bigo
   }
   const [formController, setFormController] = useState(initialFormValues);
-
   const [edit, setEdit] = useState(false);
+  const [formKey, setFormKey] = useState(21);
+  const [mapKey, setMapKey] = useState(1)
 
   const [controllerStatus, setControllerStatus] = useState(false);
   const [installedCheckbox, setInstalledCheckbox] = useState(true);
@@ -140,8 +141,7 @@ const LateralDetailPanel = props => {
     event.preventDefault();
     try{
       setOpenEquiStatus(true);
-      
-      console.log('open left drawe - edit');
+      setMapKey( mapKey + 1 );
     }catch(error){
       if(error !== undefined ) console.log(error);
     }
@@ -229,6 +229,7 @@ const LateralDetailPanel = props => {
       setInstalledCheckbox(controller.is_installed);
 
       setFormController({...formController, ...controller});
+      setFormKey(formKey + 1);
     }
   },[controller])
 
@@ -339,7 +340,8 @@ const LateralDetailPanel = props => {
           </ToggleButtonGroup>
           <form
             hidden={ openEquiStatus }
-            onSubmit={ handleSubmit } 
+            onSubmit={ handleSubmit }
+            key ={ formKey }
           >
             <Box
               sx={{
@@ -526,6 +528,7 @@ const LateralDetailPanel = props => {
               controller={ controller }
               openEquiStatus={ openEquiStatus }
               setOpenEquiStatus={ setOpenEquiStatus }
+              key = {mapKey}
             />
           </Box>
           <Snackbar 
