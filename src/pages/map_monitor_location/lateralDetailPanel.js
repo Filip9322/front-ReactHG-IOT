@@ -528,6 +528,7 @@ const LateralDetailPanel = props => {
               controller={ controller }
               openEquiStatus={ openEquiStatus }
               setOpenEquiStatus={ setOpenEquiStatus }
+              action = {'view'}
               key = {mapKey}
             />
           </Box>

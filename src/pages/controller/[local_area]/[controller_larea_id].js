@@ -15,7 +15,8 @@ const ControllerInformation = props => {
   // ** Load Kakao Maps SDK
   const [loading, error] = useKakaoLoader();
   
-  const { controller, openEquiState, setOpenEquiStatus, draggable } = props;
+  const { controller, openEquiState, setOpenEquiStatus, draggable, action, 
+    UpdateNewLocationMapMarker, handleClickCreateControllerMapMarker } = props;
   
   const [mapKey, setMapKey] = useState(0);
   const [lat, setLat] = useState(controller.map_x);
@@ -30,6 +31,7 @@ const ControllerInformation = props => {
   // ** UseRef
   const hasPageBeenRendered = useRef({ effect1: false, effect2: false, effect3: false });
 
+  // ** Async Functions
   async function fetchEquiState(){
     setSpinner(true);
     getFetchURL(
@@ -56,6 +58,19 @@ const ControllerInformation = props => {
     }).finally(() => {
       setSpinner(true);
     })
+  }
+
+  // ** Handle Functions
+  const handleDragStartMapMarker = () => {
+    console.log('start dragging');
+  }
+
+  const handleDragEndMapMarker = event => {
+    console.log(event.getPosition())
+    setLat(event.getPosition().Ma);
+    setLng(event.getPosition().La);
+    UpdateNewLocationMapMarker({lat: event.getPosition().Ma, lng: event.getPosition().La});
+    //console.log(refCreateMapMarker);
   }
 
   useEffect(() => {
@@ -252,23 +267,44 @@ const ControllerInformation = props => {
         draggable = {draggable}
         level={1}
         key={mapKey}
+       
       >
         <MapTypeControl />
         <ZoomControl />
+        { /* -- Draggable Marker when creating -- */}
+        { action == 'create' ? 
+          <MapMarker 
+            position={{
+              lat: lat,
+              lng: lng
+            }}
+            draggable = { true }
+            clickable = { true }
+            onClick    = {handleClickCreateControllerMapMarker}
+            onDragStart= {handleDragStartMapMarker}
+            onDragEnd  = {handleDragEndMapMarker}
+          />
+        :''}
         {/* -- Listing All Equi_states -- */}
-        {
-          devices.map((row, rowID) => (
-            //*********** */
-            <CustomMarkerComponent controller={controller.local_area_id} key={rowID} equi_state ={row} rowID ={rowID}/>
-            ))  
-        }
-        <MapTypeId type={kakao.maps.MapTypeId ? kakao.maps.MapTypeId.HYBRID : ''} />
+        { action == 'view' || action == 'edit' ?
+        devices.map((row, rowID) => (
+          //*********** */
+          <CustomMarkerComponent controller={controller.local_area_id} key={rowID} equi_state ={row} rowID ={rowID}/>
+          ))
+          :''}
+        {/* -- Map Type HYBRID for view or edit -- */}
+        { action == 'view' || action == 'edit' ? 
+          <MapTypeId type={kakao.maps.MapTypeId ? kakao.maps.MapTypeId.HYBRID : ''} />
+        :''}
+
       </Map>
       ):
       <CircularProgress /> 
     }
       </Box>
-      <EquipmentTableDetails devices = {devices} />
+      { action == 'view' || action == 'edit' ?
+        <EquipmentTableDetails devices = {devices} />
+      :''}
     </Box>
   )
 }

@@ -132,6 +132,14 @@ const LateralCreateControllerPanel = props =>{
     //event.preventDefault();
   }
 
+  const handleClickCreateControllerMapMarker = event => {
+    console.log('click Mapmarker')
+  }
+
+  const UpdateNewLocationMapMarker = newLoc => {
+    setMap_x( newLoc.lat );
+    setMap_y( newLoc.lng );
+  }
 
   //***------- Return >>> */
   return (
@@ -175,7 +183,10 @@ const LateralCreateControllerPanel = props =>{
             openEquiStatus={ openEquiStatus }
             setOpenEquiStatus={ setOpenEquiStatus }
             draggable = { true }
+            action = {'create'}
             key = {mapKey}
+            handleClickCreateControllerMapMarker = {handleClickCreateControllerMapMarker}
+            UpdateNewLocationMapMarker = {UpdateNewLocationMapMarker}
             />
         </Box>
         : ''}
