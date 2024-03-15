@@ -4,7 +4,7 @@ import { Map, MapMarker, MapTypeId,
   MapTypeControl, ZoomControl } from "react-kakao-maps-sdk";
   
 // ** Material Components Imports
-import { Box, Typography, CircularProgress } from '@mui/material'
+import { Box, Typography, CircularProgress, Button } from '@mui/material'
 import { Paper, Table, TableHead, TableBody, TableRow, TableCell, TableContainer } from '@mui/material'
 
 // ** Utils
@@ -283,7 +283,24 @@ const ControllerInformation = props => {
             onClick    = {handleClickCreateControllerMapMarker}
             onDragStart= {handleDragStartMapMarker}
             onDragEnd  = {handleDragEndMapMarker}
-          />
+            infoWindowOptions={{
+              className: 'markerInfoWindow',
+              style: {display: 'none', width: '100%'}
+            }}
+          >
+            <div style={{
+            padding: "5px",
+            color: "#000",
+            display: "flex",
+            flexDirection:'column',
+            fontSize: 12,
+            height: "120px"
+            }}>
+            <Button label = {'저장'} className='saveButton' 
+              style={{ backgroundColor: 'rgba(241,244,249,1)', color: 'black' }}
+            >{'저장'}</Button>
+          </div>
+          </MapMarker>
         :''}
         {/* -- Listing All Equi_states -- */}
         { action == 'view' || action == 'edit' ?
