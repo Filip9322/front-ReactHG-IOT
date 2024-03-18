@@ -16,7 +16,7 @@ const ControllerInformation = props => {
   const [loading, error] = useKakaoLoader();
   
   const { controller, openEquiState, setOpenEquiStatus, draggable, action, 
-    UpdateNewLocationMapMarker, handleClickCreateControllerMapMarker } = props;
+    UpdateNewLocationMapMarker, handleClickSaveLocationMapMarker } = props;
   
   const [mapKey, setMapKey] = useState(0);
   const [lat, setLat] = useState(controller.map_x);
@@ -72,6 +72,26 @@ const ControllerInformation = props => {
     UpdateNewLocationMapMarker({lat: event.getPosition().Ma, lng: event.getPosition().La});
     //console.log(refCreateMapMarker);
   }
+
+  // ** UpdateMarkers Div Container
+  const updateMapMarkers = () => {
+    const divContainMapMarkers = document.getElementsByClassName('MessageMapMarker');
+
+    if(divContainMapMarkers.length > 0){
+      Array.from(divContainMapMarkers).map(marker => {
+        const parent = marker.parentNode;
+        parent.style['width']= '100%';
+
+        const parentParent = parent.parentNode;
+        parentParent.style['width']  = '170px';
+        parentParent.style['height'] = 'auto';
+        parentParent.style['border'] = 0;
+        parentParent.style['text-align']  = 'center';
+        parentParent.style['z-index']  = 10;
+      })
+    }
+  }
+  
 
   useEffect(() => {
     if(controller.local_area_id && controller.id) {
@@ -267,38 +287,51 @@ const ControllerInformation = props => {
         draggable = {draggable}
         level={1}
         key={mapKey}
-       
+        
       >
         <MapTypeControl />
         <ZoomControl />
         { /* -- Draggable Marker when creating -- */}
         { action == 'create' ? 
-          <MapMarker 
+          <MapMarker
             position={{
               lat: lat,
               lng: lng
             }}
             draggable = { true }
             clickable = { true }
-            onClick    = {handleClickCreateControllerMapMarker}
+            onCreate={() => updateMapMarkers()}
             onDragStart= {handleDragStartMapMarker}
             onDragEnd  = {handleDragEndMapMarker}
             infoWindowOptions={{
-              className: 'markerInfoWindow',
-              style: {display: 'none', width: '100%'}
+              disableAutoPan: true
             }}
           >
-            <div style={{
-            padding: "5px",
-            color: "#000",
-            display: "flex",
-            flexDirection:'column',
-            fontSize: 12,
-            height: "120px"
-            }}>
-            <Button label = {'저장'} className='saveButton' 
-              style={{ backgroundColor: 'rgba(241,244,249,1)', color: 'black' }}
-            >{'저장'}</Button>
+            <div 
+              className='MessageMapMarker'
+              style={{
+                width: '150px',
+                color: "#000",
+                fontSize: 12,
+                border: 0,
+                display: 'flex',
+                justifyContent: 'center'
+              }}
+            >
+            <Button 
+              label = {'저장'} 
+              onClick = {handleClickSaveLocationMapMarker}
+              className ='saveButton'
+              sx={{ 
+                backgroundColor: 'rgba(241,244,249,1)',
+                color: 'black',
+                cursor: 'pointer',
+                '&:hover': {
+                  backgroundColor: 'white',
+                  border: '1px solid #d02020 '
+                }
+              }}
+            >{'저장하고 닫기 <-'}</Button>
           </div>
           </MapMarker>
         :''}

@@ -7,6 +7,9 @@ import { styled } from '@mui/material/styles';
 import { Box, Drawer, Button, Tooltip, FormGroup, FormControlLabel, Checkbox,
          Typography, TextField } from '@mui/material'
 
+// ** Next Import
+import { useRouter } from 'next/router'
+
 // ** Icon Imports
 import ChevronDown from 'mdi-material-ui/ChevronDown'
 import WindowClose from 'mdi-material-ui/WindowClose'
@@ -36,13 +39,29 @@ const LateralCreateControllerPanel = props =>{
   const [ mapKey, setMapKey ] = useState(1);
 
   const [ controller, setController ] = useState({map_x: map_x, map_y: map_y});
-
-
+  
   // ** Hooks
+  const router = useRouter();
   const  openDaum = useDaumPostcodePopup('//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js');
 
   // ** Form Delivery
   const [ formValues, setFormValues ] = useState({});
+
+  // ** Async Functions
+  async function fetchCreateController(){
+    //setSpinner(true);
+    postFetchURL(
+      `${process.env.REACT_APP_APIURL}/map_controllers/${router.query.local_area}/${router.query.device_type}/create`
+    ).then(response => {
+      if(response){
+        console.log(response);
+      }
+    }).catch(error => {
+      console.error(error);
+    }).finally(() => {
+      //setSpinner(false);
+    })
+  }
 
   // ** Handler Functions
   const handleInstallCheckbox = event => {
@@ -132,8 +151,13 @@ const LateralCreateControllerPanel = props =>{
     //event.preventDefault();
   }
 
+  const handleClickSaveLocationMapMarker = event => {
+    fetchCreateController();
+    console.log('click Mapmarker');
+    setOpenEquiStatus(false);
+  }
+
   const handleClickCreateControllerMapMarker = event => {
-    console.log('click Mapmarker')
   }
 
   const UpdateNewLocationMapMarker = newLoc => {
@@ -185,7 +209,7 @@ const LateralCreateControllerPanel = props =>{
             draggable = { true }
             action = {'create'}
             key = {mapKey}
-            handleClickCreateControllerMapMarker = {handleClickCreateControllerMapMarker}
+            handleClickSaveLocationMapMarker = {handleClickSaveLocationMapMarker}
             UpdateNewLocationMapMarker = {UpdateNewLocationMapMarker}
             />
         </Box>
