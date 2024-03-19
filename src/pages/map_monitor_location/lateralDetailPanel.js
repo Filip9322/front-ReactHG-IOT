@@ -40,7 +40,7 @@ const LateralDetailPanel = props => {
     'local_goverment_controller_number' : controller.local_goverment_controller_number,
     'controller_name local_area_controller_number': controller.local_area_controller_number,
     'controller_name': controller.controller_name,
-    'controller_management_departnment': controller.controller_management_departnment,
+    'controller_management_department': controller.controller_management_department,
     'controller_address': controller.controller_address,
     'map_x': controller.map_x,
     'map_y': controller.map_y,
@@ -438,9 +438,9 @@ const LateralDetailPanel = props => {
               />
               <TextAndInputComponent
                 required = {false}
-                name = {'controller_management_departnment'}
+                name = {'controller_management_department'}
                 inputTxt = {'관리부서'}
-                valueTxt = {formController.controller_management_departnment}
+                valueTxt = {formController.controller_management_department}
                 labelTxt = {'관리부서'}
                 edit={edit}
                 onChange={handleChangeInputComponent}
@@ -551,8 +551,16 @@ const LateralDetailPanel = props => {
 const TextAndInputComponent = props => {
 
   const { name, inputTxt, valueTxt, labelTxt, multiline = false , 
-    edit, required, onChange} = props;
+    edit, create, required, onChange, error} = props;
+  
+  const [opLabel, setOpLabel] = useState('');
 
+  useEffect(() => {
+    if(create) setOpLabel(labelTxt);
+    if(!edit && create == undefined)  {setOpLabel('')} else setOpLabel(labelTxt);
+    if(error)  setOpLabel(labelTxt + ' 입력해 주세요');
+  },[labelTxt, error])
+  
   return (
     <Box
       sx={{
@@ -585,12 +593,13 @@ const TextAndInputComponent = props => {
         required={required}
         sx ={{width: '60%'}}
         className= 'textFieldFormDetails'
-        disabled={!edit}
-        label={!edit?labelTxt:''}
+        disabled={!edit || create && edit == undefined}
+        label={opLabel}
         defaultValue={valueTxt}
-        variant={!edit?"standard":"outlined"}
+        variant={!edit || create && edit == undefined?"standard":"outlined"}
         multiline={multiline}
         onChange={onChange}
+        error={error != undefined ? error : false}
       />
     </Box>
   );

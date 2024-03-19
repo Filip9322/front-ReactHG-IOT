@@ -37,15 +37,35 @@ const LateralCreateControllerPanel = props =>{
   const [ map_x, setMap_x ] = useState('');
   const [ map_y, setMap_y ] = useState('');
   const [ mapKey, setMapKey ] = useState(1);
+  const [ formKey, setFormKey ] = useState(mapKey + 10);
 
-  const [ controller, setController ] = useState({map_x: map_x, map_y: map_y});
+  
+  // - Form Values
+  const initialValues ={
+    local_area_controller_number: 0,
+    local_goverment_controller_number: 0,
+    controller_name: '',
+    controller_management_department: '',
+    controller_address: '',
+    map_x: map_x,
+    map_y: map_y,
+    bigo: ''
+  };
+  const [ formValues, setFormValues ] = useState( initialValues );
+  const [ controller, setController ] = useState( initialValues );
+  const [ values , setValues ] = useState({
+    errors: {
+      local_area_controller_number_hasError: false,
+      local_goverment_controller_number_hasError: false,
+      controller_name_hasError: false,
+      controller_address_hasError: false
+    }
+  })
   
   // ** Hooks
   const router = useRouter();
   const  openDaum = useDaumPostcodePopup('//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js');
 
-  // ** Form Delivery
-  const [ formValues, setFormValues ] = useState({});
 
   // ** Async Functions
   async function fetchCreateController(){
@@ -96,6 +116,15 @@ const LateralCreateControllerPanel = props =>{
       setMap_y('');
       setMapKey( mapKey + 1 );
       setController({map_x: '', map_y: ''});
+      
+      let errors = {
+        local_area_controller_number_hasError: false,
+        local_goverment_controller_number_hasError: false,
+        controller_name_hasError: false,
+        controller_address_hasError: false
+      }
+      setValues({...values, errors: errors});
+      
       setOpenEquiStatus(false);
     }
 
@@ -147,12 +176,58 @@ const LateralCreateControllerPanel = props =>{
     setOpenEquiStatus(true);
   }
 
+  // Save New Controller
   const handleSaveNewController = event => {
-    //event.preventDefault();
+    event.preventDefault();
+
+    console.log(formValues);
+    try{
+      let validateSubmit = false;
+
+      // Check Errors
+      let errors = validate(formValues);
+      setValues({errors: errors});
+      setFormValues({...values, errors: errors});
+
+      console.log(errors);
+
+    } catch (error){
+      console.log(error);
+    }
+    //fetchCreateController();
+  }
+
+  const validate = formValues => {
+    let errors =  {};
+
+    if(formValues.local_area_controller_number == 0 ||
+       formValues.local_area_controller_number == undefined ){
+      errors.local_area_controller_number = '입력해 주세요';
+      errors.local_area_controller_number_hasError = true;
+    } else errors.local_area_controller_number_hasError = false;
+
+    if(formValues.local_goverment_controller_number == 0 ||
+      formValues.local_goverment_controller_number == undefined ){
+      errors.local_goverment_controller_number = '입력해 주세요';
+      errors.local_goverment_controller_number_hasError = true;
+    } else errors.local_goverment_controller_number_hasError = false;
+
+    if(formValues.controller_name == '' ||
+       formValues.controller_name == undefined ){
+      errors.controller_name = '입력해 주세요';
+      errors.controller_name_hasError = true;
+    } else errors.controller_name_hasError = false;
+
+    if(formValues.controller_address == '' ||
+       formValues.controller_address == undefined ){
+      errors.controller_address = '입력해 주세요';
+      errors.controller_address_hasError = true;
+    } else errors.controller_address_hasError = false;
+
+    return errors;
   }
 
   const handleClickSaveLocationMapMarker = event => {
-    fetchCreateController();
     console.log('click Mapmarker');
     setOpenEquiStatus(false);
   }
@@ -208,13 +283,15 @@ const LateralCreateControllerPanel = props =>{
             setOpenEquiStatus={ setOpenEquiStatus }
             draggable = { true }
             action = {'create'}
-            key = {mapKey}
+            key = { mapKey }
             handleClickSaveLocationMapMarker = {handleClickSaveLocationMapMarker}
             UpdateNewLocationMapMarker = {UpdateNewLocationMapMarker}
             />
         </Box>
         : ''}
-        <Box>
+        <Box
+          key = { formKey }
+        >
           <Box
             sx={{
               display: 'flex',
@@ -283,36 +360,40 @@ const LateralCreateControllerPanel = props =>{
               name = {'local_area_controller_number'}
               inputTxt = {'관리번호'}
               labelTxt = {'관리번호'}
-              edit={true}
+              create={true} edit ={ true }
               onChange={handleChangeInputComponent}
               value={formValues.local_area_controller_number}
+              error={values.errors['local_area_controller_number'+'_hasError']}
             />
             <TextAndInputComponent
               required = {true}
               name = {'local_goverment_controller_number'}
               inputTxt = {'제어기 No.'}
               labelTxt = {'제어기 No.'}
-              edit={true}
+              create={true} edit ={ true }
               onChange={handleChangeInputComponent}
               value={formValues.local_goverment_controller_number}
+              error={values.errors['local_goverment_controller_number'+'_hasError']}
             />
             <TextAndInputComponent
               required = {true}
               name = {'controller_name'} 
               inputTxt = {'교차로명형태'}
               labelTxt = {'교차로명형태'}
-              edit={true}
+              create={true} edit ={ true }
               onChange={handleChangeInputComponent}
               value={formValues.controller_name}
+              error={values.errors['controller_name'+'_hasError']}
             />
             <TextAndInputComponent
               required = {false}
-              name = {'controller_management_departnment'}
+              name = {'controller_management_department'}
               inputTxt = {'관리부서'}
               labelTxt = {'관리부서'}
-              edit={true}
+              create={true} edit ={ true }
               onChange={handleChangeInputComponent}
-              value={formValues.controller_management_departnment}
+              value={formValues.controller_management_department}
+              error={values.errors['controller_management_department'+'_hasError']}
             />
             <BoxStyled>
               <Typography>
@@ -335,6 +416,7 @@ const LateralCreateControllerPanel = props =>{
                   variant={"outlined"}
                   multiline = {true}
                   sx ={{ width: '100%' }}
+                  error={values.errors['controller_address'+'_hasError']}
                 />
 
                 <Tooltip>
@@ -366,6 +448,7 @@ const LateralCreateControllerPanel = props =>{
                   required = {true}
                   className= 'textFieldFormDetails'
                   sx ={{ width: '100%', padding: '0 0 0 2px' }}
+                  error={values.errors['controller_address'+'_hasError']}
                 />
                 <TextField
                   disabled
@@ -375,10 +458,11 @@ const LateralCreateControllerPanel = props =>{
                   required = {true}
                   className= 'textFieldFormDetails'
                   sx ={{ width: '100%', padding: '0 0 0 2px' }}
+                  error={values.errors['controller_address'+'_hasError']}
                 />
                 <Tooltip>
                   <Button
-                    onClick={handleClickMapMarkerIcon}
+                    onClick={ handleClickMapMarkerIcon }
                     className = { 'ButtonIconSVG' }
                   >
                     <MapMarker />
@@ -391,14 +475,14 @@ const LateralCreateControllerPanel = props =>{
               name = {'bigo'}
               inputTxt = {'비고'}
               labelTxt = {'비고'}
-              edit={true}
-              onChange={handleChangeInputComponent}
+              create={true} edit ={ true }
+              onChange={ handleChangeInputComponent }
               multiline = {true}
               value={formValues.bigo}
             />
             <Tooltip title={"저장"}>
               <Button
-                onClick ={handleSaveNewController()}
+                onClick ={ handleSaveNewController }
                 aria-label={'저장'}
                 color={'success'}
                 variant={'contained'}
