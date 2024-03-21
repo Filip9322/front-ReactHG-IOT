@@ -65,13 +65,14 @@ const LateralCreateControllerPanel = props =>{
   // ** Hooks
   const router = useRouter();
   const  openDaum = useDaumPostcodePopup('//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js');
-
-
+  
+  
   // ** Async Functions
   async function fetchCreateController(){
     //setSpinner(true);
     postFetchURL(
-      `${process.env.REACT_APP_APIURL}/map_controllers/${router.query.local_area}/${router.query.device_type}/create`
+      `${process.env.REACT_APP_APIURL}/map_controllers/${router.query.local_area}/${router.query.device_type}/create`,
+      formValues
     ).then(response => {
       if(response){
         console.log(response);
@@ -103,7 +104,37 @@ const LateralCreateControllerPanel = props =>{
 
   const handleChangeInputComponent = event =>{
     const { name, value } = event.target;
-    setFormValues({...formValues, [name]: value})
+    setFormValues({...formValues, [name]: value});
+
+    if(value != '' || value != 0) {
+      let errors = values.errors;
+      errors[name+'_hasError'] = false;
+      setValues({...values, errors: errors});
+    }
+  }
+
+  const resetForm = () => {
+    let resetValues = {
+      local_area_controller_number: 0,
+      local_goverment_controller_number: 0,
+      controller_name: '',
+      controller_management_department: '',
+      controller_address: '',
+      map_x: '',
+      map_y: '',
+      bigo: ''
+    };
+    setFormValues(resetValues);
+  }
+
+  const resetErrors = () => {
+    let errors = {
+      local_area_controller_number_hasError: false,
+      local_goverment_controller_number_hasError: false,
+      controller_name_hasError: false,
+      controller_address_hasError: false
+    }
+    setValues({...values, errors: errors});
   }
 
   const toggleDrawer = (anchor, open) => event => {
@@ -117,13 +148,8 @@ const LateralCreateControllerPanel = props =>{
       setMapKey( mapKey + 1 );
       setController({map_x: '', map_y: ''});
       
-      let errors = {
-        local_area_controller_number_hasError: false,
-        local_goverment_controller_number_hasError: false,
-        controller_name_hasError: false,
-        controller_address_hasError: false
-      }
-      setValues({...values, errors: errors});
+      resetErrors();
+      resetForm();
       
       setOpenEquiStatus(false);
     }
@@ -150,12 +176,14 @@ const LateralCreateControllerPanel = props =>{
       }
       fullAddress += extraAddress !==''? `(${extraAddress})`: '';
     }
-    handleGeocoder(data.address);
-
+  
     setAddress(fullAddress);
+
+    handleGeocoder(data.address, fullAddress);
+
   }
 
-  const handleGeocoder = address => {
+  const handleGeocoder = (address, fullAddress) => {
     var Geocoder = new window.daum.maps.services.Geocoder();
     
     if(Geocoder){
@@ -163,6 +191,10 @@ const LateralCreateControllerPanel = props =>{
         if( status === kakao.maps.services.Status.OK){
           setMap_x( result[0].y );
           setMap_y( result[0].x );
+          setFormValues({...formValues, 
+            ['map_x']: parseFloat(result[0].y),
+            ['map_y']: parseFloat(result[0].x),
+            ['controller_address']: fullAddress });
           setMapKey( mapKey + 1 );
           setController({map_x: result[0].y, map_y: result[0].x});
           setOpenEquiStatus(true);
@@ -187,14 +219,13 @@ const LateralCreateControllerPanel = props =>{
       // Check Errors
       let errors = validate(formValues);
       setValues({errors: errors});
-      setFormValues({...values, errors: errors});
 
       console.log(errors);
-
+      
     } catch (error){
       console.log(error);
     }
-    //fetchCreateController();
+    fetchCreateController();
   }
 
   const validate = formValues => {
@@ -238,6 +269,10 @@ const LateralCreateControllerPanel = props =>{
   const UpdateNewLocationMapMarker = newLoc => {
     setMap_x( newLoc.lat );
     setMap_y( newLoc.lng );
+
+    setController({map_x: newLoc.lat, map_y: newLoc.lng});
+    setFormValues({...formValues, ['map_x']: newLoc.lat });
+    setFormValues({...formValues, ['map_y']: newLoc.lng });
   }
 
   //***------- Return >>> */
@@ -411,11 +446,12 @@ const LateralCreateControllerPanel = props =>{
                   required = {true}
                   name = {'controller_address'}
                   label= {address ? '': '주소 검색'}
-                  value= {address}            
+                  value= {formValues.controller_address}            
                   className= 'textFieldFormDetails'
                   variant={"outlined"}
                   multiline = {true}
                   sx ={{ width: '100%' }}
+                  onChange={handleChangeInputComponent}
                   error={values.errors['controller_address'+'_hasError']}
                 />
 
@@ -442,22 +478,24 @@ const LateralCreateControllerPanel = props =>{
               >
                 <TextField
                   disabled
-                  value = { map_x }
+                  value = { formValues.map_x }
                   name =  {'map_x'}
                   label = { map_x ? '': 'X: '}
                   required = {true}
                   className= 'textFieldFormDetails'
                   sx ={{ width: '100%', padding: '0 0 0 2px' }}
+                  onChange={handleChangeInputComponent}
                   error={values.errors['controller_address'+'_hasError']}
                 />
                 <TextField
                   disabled
-                  value = { map_y }
+                  value = { formValues.map_y }
                   name  = {'map_y'}
                   label = { map_y ? '': 'Y: '}
                   required = {true}
                   className= 'textFieldFormDetails'
                   sx ={{ width: '100%', padding: '0 0 0 2px' }}
+                  onChange={handleChangeInputComponent}
                   error={values.errors['controller_address'+'_hasError']}
                 />
                 <Tooltip>

@@ -95,7 +95,7 @@ const ControllerInformation = props => {
 
   useEffect(() => {
     if(controller.local_area_id && controller.id) {
-      fetchEquiState();
+      if(!create) fetchEquiState();
     } else {
       console.error('Missing local_area id or controller ID');
     }
