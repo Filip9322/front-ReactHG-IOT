@@ -54,6 +54,9 @@ const LateralCreateControllerPanel = props =>{
   const [ formValues, setFormValues ] = useState( initialValues );
   const [ controller, setController ] = useState( initialValues );
   const [ values , setValues ] = useState({
+    local_area_controller_number: '',
+    local_goverment_controller_number: '',
+    controller_name: '',
     errors: {
       local_area_controller_number_hasError: false,
       local_goverment_controller_number_hasError: false,
@@ -75,10 +78,29 @@ const LateralCreateControllerPanel = props =>{
       formValues
     ).then(response => {
       if(response){
+        if(response.code){
+          let code = parseInt(response.code);
+          let errorMessage = '';
+          switch (code){
+            case 100: errorMessage = '잘못된 요청: 관리번호 가 제공되지 않았습니다.';
+              break;
+            case 101: errorMessage = `잘못된 요청: 관리번호 ${formValues.local_area_controller_number}이 이미 데이터베이스에 존재합니다.`;
+              break;
+            default: break;
+          }
+          // Update Errors
+          let errors = {
+            local_area_controller_number_hasError: true
+          };
+
+          setValues({...values, local_area_controller_number : errorMessage, errors: errors});
+
+          console.log(values);
+        }
         console.log(response);
       }
     }).catch(error => {
-      console.error(error);
+      if (error) console.error(error);
     }).finally(() => {
       //setSpinner(false);
     })
@@ -233,25 +255,21 @@ const LateralCreateControllerPanel = props =>{
 
     if(formValues.local_area_controller_number == 0 ||
        formValues.local_area_controller_number == undefined ){
-      errors.local_area_controller_number = '입력해 주세요';
       errors.local_area_controller_number_hasError = true;
     } else errors.local_area_controller_number_hasError = false;
 
     if(formValues.local_goverment_controller_number == 0 ||
       formValues.local_goverment_controller_number == undefined ){
-      errors.local_goverment_controller_number = '입력해 주세요';
       errors.local_goverment_controller_number_hasError = true;
     } else errors.local_goverment_controller_number_hasError = false;
 
     if(formValues.controller_name == '' ||
        formValues.controller_name == undefined ){
-      errors.controller_name = '입력해 주세요';
       errors.controller_name_hasError = true;
     } else errors.controller_name_hasError = false;
 
     if(formValues.controller_address == '' ||
        formValues.controller_address == undefined ){
-      errors.controller_address = '입력해 주세요';
       errors.controller_address_hasError = true;
     } else errors.controller_address_hasError = false;
 
@@ -398,7 +416,8 @@ const LateralCreateControllerPanel = props =>{
               create={true} edit ={ true }
               onChange={handleChangeInputComponent}
               value={formValues.local_area_controller_number}
-              error={values.errors['local_area_controller_number'+'_hasError']}
+              textError={values.local_area_controller_number}
+              error={values.errors['local_area_controller_number_hasError']}
             />
             <TextAndInputComponent
               required = {true}
@@ -408,7 +427,7 @@ const LateralCreateControllerPanel = props =>{
               create={true} edit ={ true }
               onChange={handleChangeInputComponent}
               value={formValues.local_goverment_controller_number}
-              error={values.errors['local_goverment_controller_number'+'_hasError']}
+              error={values.errors['local_goverment_controller_number_hasError']}
             />
             <TextAndInputComponent
               required = {true}
@@ -418,7 +437,7 @@ const LateralCreateControllerPanel = props =>{
               create={true} edit ={ true }
               onChange={handleChangeInputComponent}
               value={formValues.controller_name}
-              error={values.errors['controller_name'+'_hasError']}
+              error={values.errors['controller_name_hasError']}
             />
             <TextAndInputComponent
               required = {false}
@@ -428,7 +447,7 @@ const LateralCreateControllerPanel = props =>{
               create={true} edit ={ true }
               onChange={handleChangeInputComponent}
               value={formValues.controller_management_department}
-              error={values.errors['controller_management_department'+'_hasError']}
+              error={values.errors['controller_management_department_hasError']}
             />
             <BoxStyled>
               <Typography>
@@ -452,7 +471,7 @@ const LateralCreateControllerPanel = props =>{
                   multiline = {true}
                   sx ={{ width: '100%' }}
                   onChange={handleChangeInputComponent}
-                  error={values.errors['controller_address'+'_hasError']}
+                  error={values.errors['controller_address_hasError']}
                 />
 
                 <Tooltip>
@@ -485,7 +504,7 @@ const LateralCreateControllerPanel = props =>{
                   className= 'textFieldFormDetails'
                   sx ={{ width: '100%', padding: '0 0 0 2px' }}
                   onChange={handleChangeInputComponent}
-                  error={values.errors['controller_address'+'_hasError']}
+                  error={values.errors['controller_address_hasError']}
                 />
                 <TextField
                   disabled
@@ -496,7 +515,7 @@ const LateralCreateControllerPanel = props =>{
                   className= 'textFieldFormDetails'
                   sx ={{ width: '100%', padding: '0 0 0 2px' }}
                   onChange={handleChangeInputComponent}
-                  error={values.errors['controller_address'+'_hasError']}
+                  error={values.errors['controller_address_hasError']}
                 />
                 <Tooltip>
                   <Button

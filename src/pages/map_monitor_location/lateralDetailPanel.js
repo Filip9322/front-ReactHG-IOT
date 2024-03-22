@@ -551,14 +551,16 @@ const LateralDetailPanel = props => {
 const TextAndInputComponent = props => {
 
   const { name, inputTxt, valueTxt, labelTxt, multiline = false , 
-    edit, create, required, onChange, error} = props;
+    edit, create, required, onChange, error, textError} = props;
   
   const [opLabel, setOpLabel] = useState('');
 
   useEffect(() => {
     if(create) setOpLabel(labelTxt);
     if(!edit && create == undefined)  {setOpLabel('')} else setOpLabel(labelTxt);
-    if(error)  setOpLabel(labelTxt + ' 입력해 주세요');
+    if(error) {
+      if (textError != '') {setOpLabel(textError);  console.log(textError);} else { setOpLabel(labelTxt + ' 입력해 주세요')};
+    }
   },[labelTxt, error])
   
   return (
