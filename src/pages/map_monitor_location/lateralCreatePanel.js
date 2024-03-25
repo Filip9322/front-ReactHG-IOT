@@ -5,7 +5,7 @@ import { useDaumPostcodePopup  } from 'react-daum-postcode';
 // ** Material COmponents Imports
 import { styled } from '@mui/material/styles';
 import { Box, Drawer, Button, Tooltip, FormGroup, FormControlLabel, Checkbox,
-         Typography, TextField } from '@mui/material'
+         Typography, TextField, Select, MenuItem, InputLabel } from '@mui/material'
 
 // ** Next Import
 import { useRouter } from 'next/router'
@@ -42,11 +42,15 @@ const LateralCreateControllerPanel = props =>{
   
   // - Form Values
   const initialValues ={
+    is_IOT: false,
+    is_installed: installedCheckbox,
+    is_school_zone: schoolSwitch,
     local_area_controller_number: 0,
     local_goverment_controller_number: 0,
     controller_name: '',
     controller_management_department: '',
     controller_address: '',
+    controller_type_name: '',
     map_x: map_x,
     map_y: map_y,
     bigo: ''
@@ -61,6 +65,7 @@ const LateralCreateControllerPanel = props =>{
       local_area_controller_number_hasError: false,
       local_goverment_controller_number_hasError: false,
       controller_name_hasError: false,
+      controller_type_name_hasError: false,
       controller_address_hasError: false
     }
   })
@@ -140,6 +145,7 @@ const LateralCreateControllerPanel = props =>{
       local_area_controller_number: 0,
       local_goverment_controller_number: 0,
       controller_name: '',
+      controller_type_name: '',
       controller_management_department: '',
       controller_address: '',
       map_x: '',
@@ -154,6 +160,7 @@ const LateralCreateControllerPanel = props =>{
       local_area_controller_number_hasError: false,
       local_goverment_controller_number_hasError: false,
       controller_name_hasError: false,
+      controller_type_name_hasError: false,
       controller_address_hasError: false
     }
     setValues({...values, errors: errors});
@@ -167,6 +174,8 @@ const LateralCreateControllerPanel = props =>{
       setAddress('');
       setMap_x('');
       setMap_y('');
+      setSchoolSwitch(false);
+      setInstalledCheckbox(false);
       setMapKey( mapKey + 1 );
       setController({map_x: '', map_y: ''});
       
@@ -273,6 +282,9 @@ const LateralCreateControllerPanel = props =>{
       errors.controller_address_hasError = true;
     } else errors.controller_address_hasError = false;
 
+    if(formValues.controller_type_name != '표지판명' || formValues.controller_type_name != '지도명'){
+      errors.controller_type_name_hasError = true;
+    }
     return errors;
   }
 
@@ -429,6 +441,39 @@ const LateralCreateControllerPanel = props =>{
               value={formValues.local_goverment_controller_number}
               error={values.errors['local_goverment_controller_number_hasError']}
             />
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: '5px',
+                '& .MuiSelect-select':{
+                  color: '#777',
+                  WebkitTextFillColor: '#777',
+                  backgroundColor: 'white'
+                },
+                '& .MuiFormLabel-root ':{
+                  color: '#777'
+                }
+              }}
+            >
+              
+              <InputLabel id="select-controller_type_name">{'도로형태'}</InputLabel>
+              <Select
+                labelId="select-controller_type_name"
+                name ={'controller_type_name'}
+                value={formValues.controller_type_name.length !== 0 ? formValues.controller_type_name : `도로형태 선택: `}
+                onChange={handleChangeInputComponent}
+                inputProps={{ readOnly: false }}
+                sx ={{width: '60%'}}
+                required = {true}
+                error = {values.errors['controller_type_name_hasError']}
+              >
+                <MenuItem disabled selected value="도로형태 선택: "><em>도로형태 선택: </em></MenuItem>
+                <MenuItem value={'지도명'}>{'지도명'}</MenuItem>
+                <MenuItem value={'표지판명'}>{'표지판명'}</MenuItem>
+              </Select>
+            </Box>
             <TextAndInputComponent
               required = {true}
               name = {'controller_name'} 
@@ -449,6 +494,7 @@ const LateralCreateControllerPanel = props =>{
               value={formValues.controller_management_department}
               error={values.errors['controller_management_department_hasError']}
             />
+
             <BoxStyled>
               <Typography>
                 {'주소'}
