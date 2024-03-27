@@ -102,6 +102,7 @@ const LateralCreateControllerPanel = props =>{
 
           console.log(values);
         }
+
         console.log(response);
       }
     }).catch(error => {
@@ -251,12 +252,14 @@ const LateralCreateControllerPanel = props =>{
       let errors = validate(formValues);
       setValues({errors: errors});
 
+      if(errors)
+      console.log("errors!")
       console.log(errors);
       
     } catch (error){
       console.log(error);
     }
-    fetchCreateController();
+    //fetchCreateController(); //<---- Validate if errors if not submit
   }
 
   const validate = formValues => {
@@ -430,6 +433,8 @@ const LateralCreateControllerPanel = props =>{
               value={formValues.local_area_controller_number}
               textError={values.local_area_controller_number}
               error={values.errors['local_area_controller_number_hasError']}
+              inputProps={ { inputProps: { min: 0 }} }
+              type={"number"}
             />
             <TextAndInputComponent
               required = {true}
@@ -457,22 +462,28 @@ const LateralCreateControllerPanel = props =>{
                 }
               }}
             >
-              
-              <InputLabel id="select-controller_type_name">{'도로형태'}</InputLabel>
-              <Select
-                labelId="select-controller_type_name"
-                name ={'controller_type_name'}
-                value={formValues.controller_type_name.length !== 0 ? formValues.controller_type_name : `도로형태 선택: `}
-                onChange={handleChangeInputComponent}
-                inputProps={{ readOnly: false }}
+              <Typography>
+                {'도로형태'}
+              </Typography>
+              <Box
                 sx ={{width: '60%'}}
-                required = {true}
-                error = {values.errors['controller_type_name_hasError']}
               >
-                <MenuItem disabled selected value="도로형태 선택: "><em>도로형태 선택: </em></MenuItem>
-                <MenuItem value={'지도명'}>{'지도명'}</MenuItem>
-                <MenuItem value={'표지판명'}>{'표지판명'}</MenuItem>
-              </Select>
+                <TextField      
+                  name ={'controller_type_name'}
+                  value={formValues.controller_type_name.length !== 0 ? formValues.controller_type_name : `도로형태 선택: `}
+                  onChange={handleChangeInputComponent}
+                  inputProps={{ readOnly: false }}
+                  sx ={{width: '100%'}}
+                  required = {true}
+                  select
+                  error = {values.errors['controller_type_name_hasError']}
+                  label = {values.errors['controller_type_name_hasError'] ? "도로형태 선택해 주세요" : "도로형태 선택: "}
+                >
+                  <MenuItem disabled selected value="도로형태 선택: "><em>도로형태 선택: </em></MenuItem>
+                  <MenuItem value={'지도명'}>{'지도명'}</MenuItem>
+                  <MenuItem value={'표지판명'}>{'표지판명'}</MenuItem>
+                </TextField>
+              </Box>
             </Box>
             <TextAndInputComponent
               required = {true}

@@ -21,7 +21,7 @@ import { SchoolZoneSwitch } from 'src/@core/styles/school_zone_switch'
 // ** Forward React Reference
 /*const Alert = forwardRef( function Alert(props, ref ) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-})*/
+})*/ 
 
 const LateralDetailPanel = props => {
 
@@ -551,17 +551,27 @@ const LateralDetailPanel = props => {
 const TextAndInputComponent = props => {
 
   const { name, inputTxt, valueTxt, labelTxt, multiline = false , 
-    edit, create, required, onChange, error, textError} = props;
+    edit, create, required, onChange, error, textError, value, inputProps, type} = props;
   
   const [opLabel, setOpLabel] = useState('');
 
   useEffect(() => {
-    if(create) setOpLabel(labelTxt);
-    if(!edit && create == undefined)  {setOpLabel('')} else setOpLabel(labelTxt);
-    if(error) {
-      if (textError != '') {setOpLabel(textError);  console.log(textError);} else { setOpLabel(labelTxt + ' 입력해 주세요')};
+    if(error == false){
+      if(create && edit == undefined) setOpLabel(labelTxt);
+      if(edit == false && create == undefined) setOpLabel('');
+      if(edit == true  && create == undefined) setOpLabel(labelTxt);
+    } else {
+      if (textError != '' && textError != undefined) { 
+        setOpLabel(textError);
+      } else { setOpLabel(labelTxt + ' 입력해 주세요')};
     }
-  },[labelTxt, error])
+
+    console.log(opLabel + 'error: ' + error+ 'txtError: '+textError)
+  },[labelTxt, error, textError])
+
+  useEffect(() => {
+    setOpLabel(labelTxt);
+  },[])
   
   return (
     <Box
@@ -591,17 +601,20 @@ const TextAndInputComponent = props => {
         }}
       >{inputTxt}</Typography>
       <TextField
-        name={name}
-        required={required}
+        name = {name}
+        value = {value.length !== 0 && value != 0 ? value : ''}
+        onChange = {onChange}
         sx ={{width: '60%'}}
-        className= 'textFieldFormDetails'
-        disabled={!edit || create && edit == undefined}
-        label={opLabel}
-        defaultValue={valueTxt}
-        variant={!edit || create && edit == undefined?"standard":"outlined"}
-        multiline={multiline}
-        onChange={onChange}
-        error={error != undefined ? error : false}
+        required={required}
+        label = {opLabel}
+        error = {error != undefined ? error : false}
+        className = 'textFieldFormDetails'
+        disabled = {!edit || create && edit == undefined}
+        defaultValue = {valueTxt}
+        variant = {!edit || create && edit == undefined?"standard":"outlined"}
+        multiline = {multiline}
+        inputProps = {inputProps}
+        type = {type}
       />
     </Box>
   );
