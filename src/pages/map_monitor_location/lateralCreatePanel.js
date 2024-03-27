@@ -133,12 +133,14 @@ const LateralCreateControllerPanel = props =>{
   const handleChangeInputComponent = event =>{
     const { name, value } = event.target;
     setFormValues({...formValues, [name]: value});
-
+    console.log('['+name+']:'+value)
+    
     if(value != '' || value != 0) {
       let errors = values.errors;
       errors[name+'_hasError'] = false;
       setValues({...values, errors: errors});
     }
+
   }
 
   const resetForm = () => {
@@ -226,7 +228,8 @@ const LateralCreateControllerPanel = props =>{
           setFormValues({...formValues, 
             ['map_x']: parseFloat(result[0].y),
             ['map_y']: parseFloat(result[0].x),
-            ['controller_address']: fullAddress });
+            ['controller_address']: fullAddress,
+            ['controller_address_district']: result[0].address.region_3depth_name });
           setMapKey( mapKey + 1 );
           setController({map_x: result[0].y, map_y: result[0].x});
           setOpenEquiStatus(true);
@@ -251,6 +254,17 @@ const LateralCreateControllerPanel = props =>{
       // Check Errors
       let errors = validate(formValues);
       setValues({errors: errors});
+      
+      setFormValues({...formValues, ['is_IOT']: true, is_installed: installedCheckbox, is_school_zone: schoolSwitch});
+
+      if(errors.local_area_controller_number_hasError == false &&
+         errors.local_goverment_controller_number_hasError == false &&
+         errors.controller_name_hasError == false &&
+         errors.controller_type_name_hasError == false &&
+         errors.controller_address_hasError == false ) {
+          
+          fetchCreateController(); //<---- Validate if errors if not submit
+      }
 
       if(errors)
       console.log("errors!")
@@ -259,7 +273,6 @@ const LateralCreateControllerPanel = props =>{
     } catch (error){
       console.log(error);
     }
-    //fetchCreateController(); //<---- Validate if errors if not submit
   }
 
   const validate = formValues => {
@@ -285,9 +298,10 @@ const LateralCreateControllerPanel = props =>{
       errors.controller_address_hasError = true;
     } else errors.controller_address_hasError = false;
 
-    if(formValues.controller_type_name != '표지판명' || formValues.controller_type_name != '지도명'){
+    if(formValues.controller_type_name != '표지판명' && formValues.controller_type_name != '지도명'){
       errors.controller_type_name_hasError = true;
-    }
+    } else errors.controller_type_name_hasError = false;
+
     return errors;
   }
 

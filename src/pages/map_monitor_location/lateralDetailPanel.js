@@ -602,7 +602,7 @@ const TextAndInputComponent = props => {
       >{inputTxt}</Typography>
       <TextField
         name = {name}
-        value = {value.length !== 0 && value != 0 ? value : ''}
+        value = {value != '' && value != 0 ? value : ''}
         onChange = {onChange}
         sx ={{width: '60%'}}
         required={required}
