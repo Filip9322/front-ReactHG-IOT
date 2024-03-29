@@ -5,7 +5,7 @@ import { useDaumPostcodePopup  } from 'react-daum-postcode';
 // ** Material COmponents Imports
 import { styled } from '@mui/material/styles';
 import { Box, Drawer, Button, Tooltip, FormGroup, FormControlLabel, Checkbox,
-         Typography, TextField, Select, MenuItem, InputLabel } from '@mui/material'
+         Typography, TextField, MenuItem, Snackbar, Alert } from '@mui/material'
 
 // ** Next Import
 import { useRouter } from 'next/router'
@@ -28,7 +28,7 @@ import { SchoolZoneSwitch } from 'src/@core/styles/school_zone_switch'
 const LateralCreateControllerPanel = props =>{
 
   // ** Props and States
-  const { openDrawer, setOpenDrawer } = props;
+  const { openDrawer, setOpenDrawer, isIOT } = props;
   const [ state, setState ] = useState({ right: openDrawer });
   const [ installedCheckbox, setInstalledCheckbox ] = useState(false);
   const [ openEquiStatus, setOpenEquiStatus ] = useState(false);
@@ -38,11 +38,12 @@ const LateralCreateControllerPanel = props =>{
   const [ map_y, setMap_y ] = useState('');
   const [ mapKey, setMapKey ] = useState(1);
   const [ formKey, setFormKey ] = useState(mapKey + 10);
-
+  const [ openSnackbar , setOpenSnackbar ]  = useState(false);
+  const [ isErrorSaving, setIsErrorSaving ]   = useState(false);
   
   // - Form Values
   const initialValues ={
-    is_IOT: false,
+    is_IOT: isIOT,
     is_installed: installedCheckbox,
     is_school_zone: schoolSwitch,
     local_area_controller_number: 0,
@@ -77,7 +78,6 @@ const LateralCreateControllerPanel = props =>{
   
   // ** Async Functions
   async function fetchCreateController(){
-    //setSpinner(true);
     postFetchURL(
       `${process.env.REACT_APP_APIURL}/map_controllers/${router.query.local_area}/${router.query.device_type}/create`,
       formValues
@@ -99,16 +99,15 @@ const LateralCreateControllerPanel = props =>{
           };
 
           setValues({...values, local_area_controller_number : errorMessage, errors: errors});
-
-          console.log(values);
         }
-
-        console.log(response);
+        if(response.id) {
+          resetAll();
+        }
       }
     }).catch(error => {
       if (error) console.error(error);
     }).finally(() => {
-      //setSpinner(false);
+      setOpenSnackbar(true);
     })
   }
 
@@ -133,7 +132,7 @@ const LateralCreateControllerPanel = props =>{
   const handleChangeInputComponent = event =>{
     const { name, value } = event.target;
     setFormValues({...formValues, [name]: value});
-    console.log('['+name+']:'+value)
+    //console.log('['+name+']:'+value)
     
     if(value != '' || value != 0) {
       let errors = values.errors;
@@ -145,6 +144,9 @@ const LateralCreateControllerPanel = props =>{
 
   const resetForm = () => {
     let resetValues = {
+      is_IOT: isIOT,
+      is_installed: installedCheckbox,
+      is_school_zone: schoolSwitch,
       local_area_controller_number: 0,
       local_goverment_controller_number: 0,
       controller_name: '',
@@ -169,25 +171,28 @@ const LateralCreateControllerPanel = props =>{
     setValues({...values, errors: errors});
   }
 
+  const resetAll = () => {
+    setAddress('');
+    setMap_x('');
+    setMap_y('');
+    setSchoolSwitch(false);
+    setInstalledCheckbox(false);
+    setMapKey( mapKey + 1 );
+    setController({map_x: '', map_y: ''});
+      
+    resetErrors();
+    resetForm();
+    setOpenEquiStatus(false);
+  }
+
   const toggleDrawer = (anchor, open) => event => {
+    if(open == false){
+      resetAll();
+    } 
     if(event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
       return;
     }
-    if(open == false){
-      setAddress('');
-      setMap_x('');
-      setMap_y('');
-      setSchoolSwitch(false);
-      setInstalledCheckbox(false);
-      setMapKey( mapKey + 1 );
-      setController({map_x: '', map_y: ''});
-      
-      resetErrors();
-      resetForm();
-      
-      setOpenEquiStatus(false);
-    }
-
+    
     setOpenDrawer(open);
     setState ({...state, [anchor]: openDrawer});
   }
@@ -247,31 +252,31 @@ const LateralCreateControllerPanel = props =>{
   const handleSaveNewController = event => {
     event.preventDefault();
 
-    console.log(formValues);
     try{
-      let validateSubmit = false;
-
       // Check Errors
       let errors = validate(formValues);
       setValues({errors: errors});
       
-      setFormValues({...formValues, ['is_IOT']: true, is_installed: installedCheckbox, is_school_zone: schoolSwitch});
+      //setFormValues({...formValues, ['is_IOT']: true, is_installed: installedCheckbox, is_school_zone: schoolSwitch});
 
       if(errors.local_area_controller_number_hasError == false &&
          errors.local_goverment_controller_number_hasError == false &&
          errors.controller_name_hasError == false &&
          errors.controller_type_name_hasError == false &&
-         errors.controller_address_hasError == false ) {
+         errors.controller_address_hasError == false &&
+         formValues.is_IOT != null ) {
           
           fetchCreateController(); //<---- Validate if errors if not submit
+      } else {
+        if(errors) console.error(errors);
       }
 
-      if(errors)
-      console.log("errors!")
-      console.log(errors);
       
     } catch (error){
-      console.log(error);
+      if(error){
+        console.error(error);
+        setIsErrorSaving(true);
+      }
     }
   }
 
@@ -306,11 +311,14 @@ const LateralCreateControllerPanel = props =>{
   }
 
   const handleClickSaveLocationMapMarker = event => {
-    console.log('click Mapmarker');
     setOpenEquiStatus(false);
   }
 
-  const handleClickCreateControllerMapMarker = event => {
+  const handleSnackbarClose = (event, reason) => {
+    if(reason === 'clickanyway') {
+      return ;
+    }
+    setOpenSnackbar(false);
   }
 
   const UpdateNewLocationMapMarker = newLoc => {
@@ -620,6 +628,16 @@ const LateralCreateControllerPanel = props =>{
           </Box>
         </Box>
       </Box>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        { isErrorSaving ? 
+          <Alert onClose={handleSnackbarClose} severity="error"   variant='filled'> 등록 실페됬어요! </Alert> :
+          <Alert onClose={handleSnackbarClose} severity="success" variant='filled'> 등록 완료됬어요! </Alert>
+        }
+      </Snackbar>
     </Drawer>
   )
 }

@@ -202,6 +202,7 @@ const IntersectionRegistration = () => {
 
   // ** States
   const [spinner, setSpinner] = useState(true);
+  const [isIOT, setIsIOT] = useState(false);
   const [controllers, setControllers] = useState([]);
   const [filteredControllers, setFilteredControllers] = useState([]);
   const [controllersNames, SetControllersNames] = useState([{id: 1, name: 'test'}]);
@@ -413,6 +414,7 @@ const IntersectionRegistration = () => {
        `${process.env.REACT_APP_APIURL}/map_controllers/${router.query.local_area}/${router.query.device_type}`
     ).then(response => {
       if(response) {
+        setIsIOT(response[0].is_IOT);
         setControllers(response);
         response.map((controller) => {
           let controllerStatus = '';
@@ -620,6 +622,7 @@ const IntersectionRegistration = () => {
       <LateralCreateControllerPanel
         openDrawer={openDrawerCreateController}
         setOpenDrawer={changeOpenCreateDrawerController}
+        isIOT = {isIOT}
       />
     </Box>
   );
