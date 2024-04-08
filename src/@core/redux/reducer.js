@@ -65,12 +65,34 @@ export const currentLocalArea = createSlice ({
       }
     }
   }
-})
+});
+
+export const currentAllIntersectionControllerTypes = createSlice({
+  name: 'InterTypes',
+  initialState: [{
+    id:0,
+    inter_type_draw:'',
+    inter_type_name:'',
+    inter_type_number_devices: 0,
+    is_deleted: false,
+    updatedAt:'0000-00-00T00:00:00.000Z',
+    user_mod: 1
+  }],
+  reducers: {
+    updateListInterTypes: (state,action) => {
+      state = action.payload;
+    },
+    searchByInterTypeID: (state,action) => {
+      state.find(interType => interType.id == action.payload);
+    }
+  }
+});
 
 const rootReducer = combineSlices({
     pageinfo: currentPageInformation.reducer,
     counter: counterSlice.reducer,
-    currentLA: currentLocalArea.reducer
+    currentLA: currentLocalArea.reducer,
+    interCTypes: currentAllIntersectionControllerTypes.reducer
 });
 
 export const store = configureStore({
@@ -80,7 +102,8 @@ export const store = configureStore({
 export const rootActions = {
   ...currentPageInformation.actions,
   ...counterSlice.actions,
-  ...currentLocalArea.actions
+  ...currentLocalArea.actions,
+  ...currentAllIntersectionControllerTypes.actions
 }
 
 export default rootReducer;

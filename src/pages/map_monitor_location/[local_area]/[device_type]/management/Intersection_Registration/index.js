@@ -132,9 +132,7 @@ const EnhancedTableHead = props => {
             indeterminate = {indeterminateMCheckbox}
             checked={stateMCheckBox}
             onClick = {onSelectAllClick}
-            inputProps = {{
-              'aria-label': '모드 기기 선택'
-            }}
+            aria-label='모드 기기 선택'
           />
         </TableCell>
         { headCells.map((headCell) => (
@@ -204,6 +202,7 @@ const IntersectionRegistration = () => {
   const [spinner, setSpinner] = useState(true);
   const [isIOT, setIsIOT] = useState(false);
   const [controllers, setControllers] = useState([]);
+  const [intersectionTypes, setIntersectionTypes] = useState([]);
   const [filteredControllers, setFilteredControllers] = useState([]);
   const [controllersNames, SetControllersNames] = useState([{id: 1, name: 'test'}]);
   const [controllersDirections, SetcontrollersDirections] = useState([{id: 1, name: 'test'}]);
@@ -319,6 +318,18 @@ const IntersectionRegistration = () => {
 
   const changeOpenCreateDrawerController = setOpen => {
     SetOpenDrawerCreateCrontroller(setOpen);
+  }
+
+  const searchIntersectionType = (typeID)  => {
+    const findInterType = intersectionTypes.find(interType => interType.id == typeID);
+    console.log(typeof(typeID));
+    return (
+      <Tooltip title={findInterType.inter_type_name }>
+        <Typography>
+          {findInterType.inter_type_name}
+        </Typography>
+      </Tooltip>
+    );
   }
 
   // ** Handler Functions
@@ -442,6 +453,21 @@ const IntersectionRegistration = () => {
     });
   }
 
+  const fetchControllerIntersectionType = async () => {
+    setSpinner(true);
+    getFetchURL(
+      `${process.env.REACT_APP_APIURL}/API/Intersection_Types`
+    ).then(response => {
+      if(response) {
+        setIntersectionTypes(response);
+        console.log(response);
+      }
+    }).catch(error => { console.error('Error : ' + error )
+    }).finally(() => {
+      setSpinner(false);
+    })
+  }
+
   // ** Use Effects
   useEffect(() => {
     // ** Set Page Name and MetaData
@@ -451,6 +477,7 @@ const IntersectionRegistration = () => {
   useEffect(() => {
     if(router.query.local_area) {
       fetchControllers();
+      fetchControllerIntersectionType();
     }
   },[router])
 
@@ -568,6 +595,8 @@ const IntersectionRegistration = () => {
           <TableBody>
             {visibleRows.map((controller, rowKey) => {
               
+              var InterType = controller.Intersection_Controller;
+
               return(
               <TableRow key={rowKey+'-'+controller.id} 
                 sx={{
@@ -586,7 +615,12 @@ const IntersectionRegistration = () => {
                 <TableCell className={'TableCellMinimun'}>{controller.local_area_controller_number}</TableCell>
                 <TableCell>{controller.controller_name}</TableCell>
                 <TableCell className={'TableCellMinimun'}>{controller.controller_type_name}</TableCell>
-                <TableCell className={'TableCellMinimun'}>4</TableCell>
+                <TableCell
+                sx={{
+                  '& p.MuiTypography-root':{ fontSize: '0.875rem'}
+                }} 
+                className={'TableCellMinimun'}
+                >{searchIntersectionType(InterType.intersection_type_id)}</TableCell>
                 <TableCell className={'TableCellMinimun'}>{controller.local_goverment_controller_number}</TableCell>
                 <TableCell className={'TableCellMinimun'}>{controller.controller_management_department}</TableCell>
                 <TableCell>{controller.controller_address}</TableCell>
