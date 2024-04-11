@@ -70,7 +70,6 @@ const ControllerInformation = props => {
     setLat(event.getPosition().Ma);
     setLng(event.getPosition().La);
     UpdateNewLocationMapMarker({lat: event.getPosition().Ma, lng: event.getPosition().La});
-    //console.log(refCreateMapMarker);
   }
 
   // ** UpdateMarkers Div Container

@@ -239,7 +239,7 @@ const LoginPage = () => {
               sx={{ marginBottom: 4 }} 
             />
             <FormControl error={values.errors.user_pw_hasError} fullWidth>
-              <InputLabel htmlFor='user_password'>비밀번호</InputLabel>
+              <InputLabel htmlFor='password'>비밀번호</InputLabel>
               <OutlinedInput
                 id='password'
                 name='password'
@@ -266,7 +266,12 @@ const LoginPage = () => {
             <Box
               sx={{ mb: 4, display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'space-between' }}
             >
-              <FormControlLabel  control={<Checkbox />} label='로그인 상태 유지' onChange={store_userID} />
+              <FormControlLabel
+                name ={'saveCredentials_checkbox'}
+                control={<Checkbox />} 
+                label='로그인 상태 유지' 
+                onChange={store_userID} 
+              />
               <Link passHref href='/'>
                 <LinkStyled onClick={e => e.preventDefault()}>비밀번호 찾기</LinkStyled>
               </Link>

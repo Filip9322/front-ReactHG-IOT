@@ -566,7 +566,7 @@ const TextAndInputComponent = props => {
       } else { setOpLabel(labelTxt + ' 입력해 주세요')};
     }
 
-    console.log(opLabel + 'error: ' + error+ 'txtError: '+textError)
+    //console.log(opLabel + 'error: ' + error+ ' txtError: '+textError)
   },[labelTxt, error, textError])
 
   useEffect(() => {
@@ -615,6 +615,7 @@ const TextAndInputComponent = props => {
         multiline = {multiline}
         inputProps = {inputProps}
         type = {type}
+        rows={multiline?2:1}
       />
     </Box>
   );

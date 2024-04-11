@@ -10,6 +10,9 @@ import { Box, Drawer, Button, Tooltip, FormGroup, FormControlLabel, Checkbox,
 // ** Next Import
 import { useRouter } from 'next/router'
 
+// ** Redux
+import { useSelector } from 'react-redux';
+
 // ** Icon Imports
 import ChevronDown from 'mdi-material-ui/ChevronDown'
 import WindowClose from 'mdi-material-ui/WindowClose'
@@ -28,7 +31,7 @@ import { SchoolZoneSwitch } from 'src/@core/styles/school_zone_switch'
 const LateralCreateControllerPanel = props =>{
 
   // ** Props and States
-  const { openDrawer, setOpenDrawer, isIOT } = props;
+  const { openDrawer, setOpenDrawer, isIOT, updateListOfControllers } = props;
   const [ state, setState ] = useState({ right: openDrawer });
   const [ installedCheckbox, setInstalledCheckbox ] = useState(false);
   const [ openEquiStatus, setOpenEquiStatus ] = useState(false);
@@ -37,7 +40,7 @@ const LateralCreateControllerPanel = props =>{
   const [ map_x, setMap_x ] = useState('');
   const [ map_y, setMap_y ] = useState('');
   const [ mapKey, setMapKey ] = useState(1);
-  const [ formKey, setFormKey ] = useState(mapKey + 10);
+  const [ inseTypeKey, setInseTypeKey ] = useState(mapKey + 10);
   const [ openSnackbar , setOpenSnackbar ]  = useState(false);
   const [ isErrorSaving, setIsErrorSaving ]   = useState(false);
   
@@ -52,6 +55,7 @@ const LateralCreateControllerPanel = props =>{
     controller_management_department: '',
     controller_address: '',
     controller_type_name: '',
+    inse_type: 0,
     map_x: map_x,
     map_y: map_y,
     bigo: ''
@@ -67,9 +71,14 @@ const LateralCreateControllerPanel = props =>{
       local_goverment_controller_number_hasError: false,
       controller_name_hasError: false,
       controller_type_name_hasError: false,
-      controller_address_hasError: false
+      controller_address_hasError: false,
+      inse_type_hasError: false
     }
   })
+
+  // ** Redux
+  const { interTypesArray, length } = useSelector(state => state.interCTypes);
+  const [localInseType, setLocalInseType] = useState([]);
   
   // ** Hooks
   const router = useRouter();
@@ -107,6 +116,7 @@ const LateralCreateControllerPanel = props =>{
     }).catch(error => {
       if (error) console.error(error);
     }).finally(() => {
+      updateListOfControllers();
       setOpenSnackbar(true);
     })
   }
@@ -153,6 +163,7 @@ const LateralCreateControllerPanel = props =>{
       controller_type_name: '',
       controller_management_department: '',
       controller_address: '',
+      inse_type: 0,
       map_x: '',
       map_y: '',
       bigo: ''
@@ -166,7 +177,8 @@ const LateralCreateControllerPanel = props =>{
       local_goverment_controller_number_hasError: false,
       controller_name_hasError: false,
       controller_type_name_hasError: false,
-      controller_address_hasError: false
+      controller_address_hasError: false,
+      inse_type_hasError: false
     }
     setValues({...values, errors: errors});
   }
@@ -307,6 +319,10 @@ const LateralCreateControllerPanel = props =>{
       errors.controller_type_name_hasError = true;
     } else errors.controller_type_name_hasError = false;
 
+    if(formValues.inse_type == 0 || formValues.inse_type == undefined) {
+      errors.inse_type_hasError = true;
+    } else errors.inse_type_hasError = false;
+
     return errors;
   }
 
@@ -329,6 +345,12 @@ const LateralCreateControllerPanel = props =>{
     setFormValues({...formValues, ['map_x']: newLoc.lat });
     setFormValues({...formValues, ['map_y']: newLoc.lng });
   }
+
+  useEffect(() =>{
+    if(openDrawer){
+      setLocalInseType(interTypesArray);
+    }
+  },[openDrawer])
 
   //***------- Return >>> */
   return (
@@ -379,9 +401,7 @@ const LateralCreateControllerPanel = props =>{
             />
         </Box>
         : ''}
-        <Box
-          key = { formKey }
-        >
+        <Box>
           <Box
             sx={{
               display: 'flex',
@@ -418,6 +438,7 @@ const LateralCreateControllerPanel = props =>{
                     onChange={ handleInstallCheckbox }
                     checked={ installedCheckbox }
                     value={ formValues.is_installed }
+                    name={'is_installed'}
                   />
                 }
                 label={'설치 여부'}
@@ -429,6 +450,7 @@ const LateralCreateControllerPanel = props =>{
                     onChange = { handleSwitchSchool } 
                     checked = { schoolSwitch }
                     value = { formValues.is_school_zone }
+                    name = {'is_school_zone'}
                   />
                 }
                 label={'스쿨존'}
@@ -455,7 +477,6 @@ const LateralCreateControllerPanel = props =>{
               value={formValues.local_area_controller_number}
               textError={values.local_area_controller_number}
               error={values.errors['local_area_controller_number_hasError']}
-              inputProps={ { inputProps: { min: 0 }} }
               type={"number"}
             />
             <TextAndInputComponent
@@ -490,18 +511,62 @@ const LateralCreateControllerPanel = props =>{
               <Box
                 sx ={{width: '60%'}}
               >
-                <TextField      
+                <TextField
+                  name ={'inse_type'}
+                  InputLabelProps={{ htmlFor: 'inse-type' }}
+                  inputProps={{ id: 'inse-type' }}
+                  value={formValues.inse_type !== 0 ? formValues.inse_type : 0}
+                  onChange={handleChangeInputComponent}             
+                  sx ={{width: '100%'}}
+                  required = {true}
+                  error = {values.errors['inse_type_hasError']}
+                  label = {values.errors['inse_type_hasError'] ? "도로형태 선택해 주세요" : "도로형태 선택: "}
+                  select
+  I             >
+                  <MenuItem disabled selected value="0"><em>도로형태 선택: </em></MenuItem>
+                  { localInseType.map(inse_type_ =>{
+                    return(
+                      <MenuItem value={inse_type_.id} key={'inseType'+inse_type_.id}>{inse_type_.inter_type_name}</MenuItem>
+                    )
+                  })}
+                </TextField>
+              </Box>
+            </Box>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: '5px',
+                '& .MuiSelect-select':{
+                  color: '#777',
+                  WebkitTextFillColor: '#777',
+                  backgroundColor: 'white'
+                },
+                '& .MuiFormLabel-root ':{
+                  color: '#777'
+                }
+              }}
+            >
+              <Typography>
+                {'교차로명형태'}
+              </Typography>
+              <Box
+                sx ={{width: '60%'}}
+              >
+                <TextField
                   name ={'controller_type_name'}
-                  value={formValues.controller_type_name.length !== 0 ? formValues.controller_type_name : `도로형태 선택: `}
+                  InputLabelProps={{ htmlFor: 'controller_type_name' }}
+                  inputProps={{ id: 'controller_type_name' }}
+                  value={formValues.controller_type_name.length !== 0 ? formValues.controller_type_name : `교차로명형태 선택: `}
                   onChange={handleChangeInputComponent}
-                  inputProps={{ readOnly: false }}
                   sx ={{width: '100%'}}
                   required = {true}
                   select
                   error = {values.errors['controller_type_name_hasError']}
-                  label = {values.errors['controller_type_name_hasError'] ? "도로형태 선택해 주세요" : "도로형태 선택: "}
+                  label = {values.errors['controller_type_name_hasError'] ? "교차로명형태 선택해 주세요" : "교차로명형태 선택: "}
                 >
-                  <MenuItem disabled selected value="도로형태 선택: "><em>도로형태 선택: </em></MenuItem>
+                  <MenuItem disabled selected value="교차로명형태 선택: "><em>교차로명형태 선택: </em></MenuItem>
                   <MenuItem value={'지도명'}>{'지도명'}</MenuItem>
                   <MenuItem value={'표지판명'}>{'표지판명'}</MenuItem>
                 </TextField>
@@ -510,8 +575,8 @@ const LateralCreateControllerPanel = props =>{
             <TextAndInputComponent
               required = {true}
               name = {'controller_name'} 
-              inputTxt = {'교차로명형태'}
-              labelTxt = {'교차로명형태'}
+              inputTxt = {'교차로명'}
+              labelTxt = {'교차로명'}
               create={true} edit ={ true }
               onChange={handleChangeInputComponent}
               value={formValues.controller_name}
@@ -548,11 +613,11 @@ const LateralCreateControllerPanel = props =>{
                   className= 'textFieldFormDetails'
                   variant={"outlined"}
                   multiline = {true}
+                  rows={2}
                   sx ={{ width: '100%' }}
                   onChange={handleChangeInputComponent}
                   error={values.errors['controller_address_hasError']}
                 />
-
                 <Tooltip>
                   <Button
                     onClick = { handleClickSearchAddress }

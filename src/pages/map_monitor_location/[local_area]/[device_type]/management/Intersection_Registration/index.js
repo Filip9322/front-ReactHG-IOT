@@ -133,6 +133,7 @@ const EnhancedTableHead = props => {
             checked={stateMCheckBox}
             onClick = {onSelectAllClick}
             aria-label='모드 기기 선택'
+            name="allDevices_checkbox"
           />
         </TableCell>
         { headCells.map((headCell) => (
@@ -189,6 +190,7 @@ const ChecboxListItem = props => {
       onClick={ handleClickCheckBoxItem }
       checked={ checkState }
       value={ dataID }
+      name={ dataID +'_checkbox' }
     />
   );
 }
@@ -221,6 +223,10 @@ const IntersectionRegistration = () => {
   // ** Drawer States
   const [openDrawerSelController, SetOpenDrawerSelController] = useState(false);
   const [openDrawerCreateController, SetOpenDrawerCreateCrontroller] = useState(false);
+
+  const updateListOfControllers = () => {
+    console.log('updateControllers')
+  }
 
   const descendingComparator = (a, b, orderBy) => {
     if (b[orderBy] < a[orderBy]) { return -1; }
@@ -322,7 +328,6 @@ const IntersectionRegistration = () => {
 
   const searchIntersectionType = (typeID)  => {
     const findInterType = intersectionTypes.find(interType => interType.id == typeID);
-    console.log(typeof(typeID));
     return (
       <Tooltip title={findInterType.inter_type_name }>
         <Typography>
@@ -460,7 +465,8 @@ const IntersectionRegistration = () => {
     ).then(response => {
       if(response) {
         setIntersectionTypes(response);
-        console.log(response);
+        // ** Set Page Name and MetaData
+        dispatch(rootActions.updateListInterTypes(response));
       }
     }).catch(error => { console.error('Error : ' + error )
     }).finally(() => {
@@ -652,10 +658,13 @@ const IntersectionRegistration = () => {
         controller={controllerSelected}
         openDrawer={openDrawerSelController}
         setOpenDrawer={changeOpenDrawerController}
+        updateListOfControllers = {updateListOfControllers}
+        isIOT = {isIOT}  
       />
       <LateralCreateControllerPanel
         openDrawer={openDrawerCreateController}
         setOpenDrawer={changeOpenCreateDrawerController}
+        updateListOfControllers = {updateListOfControllers}
         isIOT = {isIOT}
       />
     </Box>
