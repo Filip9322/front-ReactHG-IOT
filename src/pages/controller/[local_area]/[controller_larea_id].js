@@ -12,12 +12,14 @@ import { getFetchURL } from 'src/@core/utils/fetchHelper';
 import { useKakaoLoader } from 'src/@core/utils/kakao_map_api'
 
 const ControllerInformation = props => {
+  
   // ** Load Kakao Maps SDK
   const [loading, error] = useKakaoLoader();
   
   const { controller, openEquiState, setOpenEquiStatus, draggable, action, 
     UpdateNewLocationMapMarker, handleClickSaveLocationMapMarker } = props;
-  
+    
+  const [showDevices, setShowDevices ] = useState(false);
   const [mapKey, setMapKey] = useState(0);
   const [lat, setLat] = useState(controller.map_x);
   const [lng, setLng] = useState(controller.map_y);
@@ -93,10 +95,12 @@ const ControllerInformation = props => {
   
 
   useEffect(() => {
-    if(controller.local_area_id && controller.id) {
-      if(action != 'create') fetchEquiState();
-    } else {
-      console.error('Missing local_area id or controller ID');
+    if(action != 'create')  {
+      if(controller.local_area_id && controller.id) {
+        fetchEquiState();
+      } else {
+        console.error('Missing local_area id or controller ID');
+      }
     }
     /*const element = document.querySelectorAll("button[title='스카이뷰']")[1]; refButton = element; //refButton.click();*/
   },[]);
@@ -112,6 +116,7 @@ const ControllerInformation = props => {
         setLat(controller.map_x);
         setLng(controller.map_y);
         setMapKey(mapKey+1);
+        if( devices[0].id != undefined ) { setShowDevices(true) } else { setShowDevices(false) }
       }
     }
 
@@ -245,8 +250,9 @@ const ControllerInformation = props => {
           marginTop: 10,
           marginBottom: 5
         }}
+        align='center'
         variant='h6'
-      >{controller.local_area_controller_number}번 {controller.controller_name} Controllers: {deviceLocations.length}</Typography>
+      >{controller.local_area_controller_number}번 - {controller.controller_name}, 기기: {deviceLocations.length}</Typography>
       <Box
         className="content-map"
         sx={{
@@ -279,7 +285,7 @@ const ControllerInformation = props => {
           }
         }}
       >
-      { (kakaoInitated && !spinner && devices.length ) ? (
+      { (kakaoInitated && !spinner && devices.length > 0 ) ? (
       <Map
         center={{ lat: lat, lng: lng }}
         style={ mapStyles }
@@ -335,8 +341,9 @@ const ControllerInformation = props => {
           </MapMarker>
         :''}
         {/* -- Listing All Equi_states -- */}
-        { action == 'view' || action == 'edit' ?
-        devices.map((row, rowID) => (
+        { action == 'view' && showDevices || action == 'edit' && showDevices
+        ?
+          devices.map((row, rowID) => (
           //*********** */
           <CustomMarkerComponent controller={controller.local_area_id} key={rowID} equi_state ={row} rowID ={rowID}/>
           ))
@@ -351,9 +358,9 @@ const ControllerInformation = props => {
       <CircularProgress /> 
     }
       </Box>
-      { action == 'view' || action == 'edit' ?
+      { action == 'view' && showDevices || action == 'edit' && showDevices ?
         <EquipmentTableDetails devices = {devices} />
-      :''}
+      : <Typography align='center'  >{'기기 없음'}</Typography>}
     </Box>
   )
 }

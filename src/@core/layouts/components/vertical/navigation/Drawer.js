@@ -1,8 +1,8 @@
 // ** MUI Imports
 import { styled, useTheme } from '@mui/material/styles'
-import MuiSwipeableDrawer from '@mui/material/SwipeableDrawer'
+import SwipeableDrawer  from '@mui/material/SwipeableDrawer'
 
-const SwipeableDrawer = styled(MuiSwipeableDrawer)({
+const SSwipeableDrawer = styled(SwipeableDrawer)({
   overflowX: 'hidden',
   transition: 'width .25s ease-in-out',
   '& ul': {

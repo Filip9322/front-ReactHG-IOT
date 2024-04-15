@@ -26,7 +26,7 @@ import { SchoolZoneSwitch } from 'src/@core/styles/school_zone_switch'
 const LateralDetailPanel = props => {
 
   // * Props and states
-  const { controller, openDrawer, setOpenDrawer } = props;
+  const { controller, openDrawer, setOpenDrawer, updateListOfControllers } = props;
   const [ openEquiStatus, setOpenEquiStatus ] = useState(false);
 
   const [ openSnackbar , setOpenSnackbar ]    = useState(false);
@@ -190,6 +190,7 @@ const LateralDetailPanel = props => {
       updateInitialValues();
       setOpenSnackbar(true);
       resetDrawerInfo();
+      updateListOfControllers();
     })
   }
 

@@ -225,6 +225,7 @@ const IntersectionRegistration = () => {
   const [openDrawerCreateController, SetOpenDrawerCreateCrontroller] = useState(false);
 
   const updateListOfControllers = () => {
+    fetchControllers();
     console.log('updateControllers')
   }
 
@@ -626,7 +627,7 @@ const IntersectionRegistration = () => {
                   '& p.MuiTypography-root':{ fontSize: '0.875rem'}
                 }} 
                 className={'TableCellMinimun'}
-                >{searchIntersectionType(InterType.intersection_type_id)}</TableCell>
+                >{controller.Intersection_Controller ? searchIntersectionType(InterType.intersection_type_id):'설정 없음'}</TableCell>
                 <TableCell className={'TableCellMinimun'}>{controller.local_goverment_controller_number}</TableCell>
                 <TableCell className={'TableCellMinimun'}>{controller.controller_management_department}</TableCell>
                 <TableCell>{controller.controller_address}</TableCell>

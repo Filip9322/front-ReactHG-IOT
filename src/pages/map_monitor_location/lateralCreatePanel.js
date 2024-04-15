@@ -5,7 +5,7 @@ import { useDaumPostcodePopup  } from 'react-daum-postcode';
 // ** Material COmponents Imports
 import { styled } from '@mui/material/styles';
 import { Box, Drawer, Button, Tooltip, FormGroup, FormControlLabel, Checkbox,
-         Typography, TextField, MenuItem, Snackbar, Alert } from '@mui/material'
+         Typography, TextField, MenuItem, Snackbar, Alert, Input } from '@mui/material'
 
 // ** Next Import
 import { useRouter } from 'next/router'
@@ -36,11 +36,11 @@ const LateralCreateControllerPanel = props =>{
   const [ installedCheckbox, setInstalledCheckbox ] = useState(false);
   const [ openEquiStatus, setOpenEquiStatus ] = useState(false);
   const [ schoolSwitch, setSchoolSwitch ] = useState(false);
+  const [ isActive, setIsActive ] = useState(false);
   const [ address, setAddress ] = useState('');
   const [ map_x, setMap_x ] = useState('');
   const [ map_y, setMap_y ] = useState('');
   const [ mapKey, setMapKey ] = useState(1);
-  const [ inseTypeKey, setInseTypeKey ] = useState(mapKey + 10);
   const [ openSnackbar , setOpenSnackbar ]  = useState(false);
   const [ isErrorSaving, setIsErrorSaving ]   = useState(false);
   
@@ -128,7 +128,9 @@ const LateralCreateControllerPanel = props =>{
 
     setFormValues({...formValues, ['is_installed']: checked });
     setFormValues({...formValues, ['is_active']: checked });
+    
     setInstalledCheckbox(checked);
+    setIsActive(checked);
   }
 
   const handleSwitchSchool = event => {
@@ -443,6 +445,11 @@ const LateralCreateControllerPanel = props =>{
                 }
                 label={'설치 여부'}
               />
+              <Input
+                sx={{ display: 'none' }}
+                value={isActive}
+                name={'is_active'}
+              />
               {/*--- Switch School Zone ---*/}
               <FormControlLabel
                 control={
@@ -522,11 +529,11 @@ const LateralCreateControllerPanel = props =>{
                   error = {values.errors['inse_type_hasError']}
                   label = {values.errors['inse_type_hasError'] ? "도로형태 선택해 주세요" : "도로형태 선택: "}
                   select
-  I             >
+                >
                   <MenuItem disabled selected value="0"><em>도로형태 선택: </em></MenuItem>
                   { localInseType.map(inse_type_ =>{
                     return(
-                      <MenuItem value={inse_type_.id} key={'inseType'+inse_type_.id}>{inse_type_.inter_type_name}</MenuItem>
+                      <MenuItem value={inse_type_.id} key={'insetype'+inse_type_.id}>{inse_type_.inter_type_name}</MenuItem>
                     )
                   })}
                 </TextField>
