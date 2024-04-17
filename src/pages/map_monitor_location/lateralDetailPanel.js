@@ -26,7 +26,7 @@ import { SchoolZoneSwitch } from 'src/@core/styles/school_zone_switch'
 const LateralDetailPanel = props => {
 
   // * Props and states
-  const { controller, openDrawer, setOpenDrawer, updateListOfControllers } = props;
+  const { controller, openDrawer, setOpenDrawer, updateListOfControllers, editController } = props;
   const [ openEquiStatus, setOpenEquiStatus ] = useState(false);
 
   const [ openSnackbar , setOpenSnackbar ]    = useState(false);
@@ -471,6 +471,8 @@ const LateralDetailPanel = props => {
               />
               <TextAndInputComponent
                 required = {false}
+                InputLabelProps={{ htmlFor: 'bigo' }}
+                inputProps={{ id: 'bigo' }}
                 name = {'bigo'}
                 inputTxt = {'비고'}
                 valueTxt = {formController.bigo}
@@ -529,7 +531,7 @@ const LateralDetailPanel = props => {
               controller={ controller }
               openEquiStatus={ openEquiStatus }
               setOpenEquiStatus={ setOpenEquiStatus }
-              action = {'view'}
+              action = {editController ? 'edit' : 'view'}
               key = {mapKey}
             />
           </Box>
@@ -552,7 +554,8 @@ const LateralDetailPanel = props => {
 const TextAndInputComponent = props => {
 
   const { name, inputTxt, valueTxt, labelTxt, multiline = false , 
-    edit, create, required, onChange, error, textError, value, inputProps, type} = props;
+    edit, create, required, onChange, error, textError, value, inputProps, type,
+    InputLabelProps } = props;
   
   const [opLabel, setOpLabel] = useState('');
 
@@ -615,6 +618,7 @@ const TextAndInputComponent = props => {
         variant = {!edit || create && edit == undefined?"standard":"outlined"}
         multiline = {multiline}
         inputProps = {inputProps}
+        InputLabelProps = {InputLabelProps}
         type = {type}
         rows={multiline?2:1}
       />

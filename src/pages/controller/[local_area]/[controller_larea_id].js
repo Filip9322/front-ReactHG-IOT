@@ -4,8 +4,11 @@ import { Map, MapMarker, MapTypeId,
   MapTypeControl, ZoomControl } from "react-kakao-maps-sdk";
   
 // ** Material Components Imports
-import { Box, Typography, CircularProgress, Button } from '@mui/material'
+import { styled } from '@mui/material/styles';
+import { Box, Typography, CircularProgress, Button, Tooltip, tableCellClasses } from '@mui/material'
 import { Paper, Table, TableHead, TableBody, TableRow, TableCell, TableContainer } from '@mui/material'
+
+import { Plus } from 'mdi-material-ui'
 
 // ** Utils
 import { getFetchURL } from 'src/@core/utils/fetchHelper';
@@ -16,7 +19,7 @@ const ControllerInformation = props => {
   // ** Load Kakao Maps SDK
   const [loading, error] = useKakaoLoader();
   
-  const { controller, openEquiState, setOpenEquiStatus, draggable, action, 
+  const { controller, openEquiState, setOpenEquiStatus, draggable, action,
     UpdateNewLocationMapMarker, handleClickSaveLocationMapMarker } = props;
     
   const [showDevices, setShowDevices ] = useState(false);
@@ -27,6 +30,7 @@ const ControllerInformation = props => {
   const [devices, setDevices] = useState([]);
   const [deviceLocations, setDevicesLocations] = useState([]);
   const [mapStyles, setMapStyles] = useState({});
+  const [editDevices, setEditDevices] = useState(false);
   
   const [kakaoInitated, setKakaoInitiated] = useState(false);
   
@@ -65,6 +69,20 @@ const ControllerInformation = props => {
   // ** Handle Functions
   const handleDragStartMapMarker = () => {
     console.log('start dragging');
+  }
+
+  const handleClickAdd = event => {
+    event.preventDefault();
+    setEditDevices(true);
+    setMapStyles({
+      minWidth: "600px",
+      width: "600px",
+      height: "505px",
+      border: 'solid 1px #aab'});
+      setLat(controller.map_x);
+      setLng(controller.map_y);
+      setMapKey(mapKey+1);
+    console.log(mapStyles);
   }
 
   const handleDragEndMapMarker = event => {
@@ -128,12 +146,14 @@ const ControllerInformation = props => {
     if(hasPageBeenRendered.current['effect2']) {
       setSpinner(false);
     }
-    setMapStyles({
-      minWidth: "1240px",
-      width: "1240px",
-      height: "505px",
-      border: 'solid 1px #aab'});
-
+    
+    if(!editDevices) {
+      setMapStyles({
+        minWidth: "1240px",
+        width: "1240px",
+        height: "505px",
+        border: 'solid 1px #aab'});
+    }
     hasPageBeenRendered.current['effect2'] = true;
   },[kakaoInitated, lat, lng]);
   
@@ -153,11 +173,14 @@ const ControllerInformation = props => {
 
   useEffect(() => {
     if(hasPageBeenRendered.current['effect1']) {
-      setMapStyles({
-        minWidth: "1240px",
-        width: "1240px",
-        height: "505px",
-        border: 'solid 1px #aaa'});
+    
+      if(!editDevices) {
+        setMapStyles({
+          minWidth: "1240px",
+          width: "1240px",
+          height: "505px",
+          border: 'solid 1px #aaa'});
+      }
     }
     
   },[mapKey])
@@ -254,113 +277,144 @@ const ControllerInformation = props => {
         variant='h6'
       >{controller.local_area_controller_number}번 - {controller.controller_name}, 기기: {deviceLocations.length}</Typography>
       <Box
-        className="content-map"
         sx={{
-          backgroundColor: 'rgba(241,244,249,1)',
-          width: '100%',
-          minWidth:' 400px',
-          height: '505px',
-          display: 'flex',
-          flexDirection: 'column',
-          padding: '0 30px',
-          '& #react-kakao-maps-sdk-map-container':
-          {
-            '& div:nth-of-type(3)':{
-              '& div:nth-of-type(1)':{
-                width: '130px !important',
-                boxSizing: 'initial !important',
-                '& button:nth-of-type(1)':{
-                  width: '30px !important'
-                }
-              },
-              '& div:nth-of-type(2) div':{
-                width: 'initial !important',
-                '& div':{
-                  width: '32px !important',
-                  '& div:nth-of-type(1), & div:nth-of-type(2)': { width: '4px !important' },
-                  '& :nth-of-type(3)':{ width: '20px !important' }
-                }
-              }
-            }
+          width: 'fit-content',
+          position: 'relative',
+          '& button.IconButtonSVG, & button.CBActionButton':{
+            bottom: 5, right: 35,
+            height: '4rem',
+            zIndex: 10,
+            display:'flex',
+            marginLeft: '10px',
+            position: 'absolute',
+            alignItems:'center',
+            border: 'solid 1px #aaa',
+            boxShadow: '0 2px 10px 0 rgba(58, 53, 65, 0.1)',
+            backgroundColor: '#fff',
+            ':hover':{ cursor: 'pointer', backgroundColor: 'rgba(241, 74, 74, 0.9)', '& svg':{ color: '#fff'}},
+            '& svg':{ color: '#777'}
           }
         }}
       >
-      { (kakaoInitated && !spinner && devices.length > 0 ) ? (
-      <Map
-        center={{ lat: lat, lng: lng }}
-        style={ mapStyles }
-        draggable = {draggable}
-        level={1}
-        key={mapKey}
-        
-      >
-        <MapTypeControl />
-        <ZoomControl />
-        { /* -- Draggable Marker when creating -- */}
-        { action == 'create' ? 
-          <MapMarker
-            position={{
-              lat: lat,
-              lng: lng
-            }}
-            draggable = { true }
-            clickable = { true }
-            onCreate={() => updateMapMarkers()}
-            onDragStart= {handleDragStartMapMarker}
-            onDragEnd  = {handleDragEndMapMarker}
-            infoWindowOptions={{
-              disableAutoPan: true
-            }}
+        <Tooltip title={"추가"}>
+          <Button 
+            onClick = { handleClickAdd }
+            className={'IconButtonSVG'}
           >
-            <div 
-              className='MessageMapMarker'
-              style={{
-                width: '150px',
-                color: "#000",
-                fontSize: 12,
-                border: 0,
-                display: 'flex',
-                justifyContent: 'center'
+            <Plus />
+          </Button>
+        </Tooltip>
+        <Box
+          className="content-map"
+          sx={{
+            width: 'fit-content',
+            backgroundColor: 'rgba(241,244,249,1)',
+            display: 'flex',
+            flexDirection: 'column',
+            padding: '0 30px',
+            '& #react-kakao-maps-sdk-map-container':
+            {
+              '& div:nth-of-type(3)':{
+                '& div:nth-of-type(1)':{
+                  width: '130px !important',
+                  boxSizing: 'initial !important',
+                  '& button:nth-of-type(1)':{
+                    width: '30px !important'
+                  }
+                },
+                '& div:nth-of-type(2) div':{
+                  width: 'initial !important',
+                  '& div':{
+                    width: '32px !important',
+                    '& div:nth-of-type(1), & div:nth-of-type(2)': { width: '4px !important' },
+                    '& :nth-of-type(3)':{ width: '20px !important' }
+                  }
+                }
+              }
+            }
+          }}
+        >
+        { (kakaoInitated && !spinner && devices.length > 0 ) ? (
+        <Map
+          center={{ lat: lat, lng: lng }}
+          style={ mapStyles }
+          draggable = {draggable}
+          level={1}
+          key={mapKey}
+          
+        >
+          <MapTypeControl />
+          <ZoomControl />
+          { /* -- Draggable Marker when creating -- */}
+          { action == 'create' ? 
+            <MapMarker
+              position={{
+                lat: lat,
+                lng: lng
+              }}
+              draggable = { true }
+              clickable = { true }
+              onCreate={() => updateMapMarkers()}
+              onDragStart= {handleDragStartMapMarker}
+              onDragEnd  = {handleDragEndMapMarker}
+              infoWindowOptions={{
+                disableAutoPan: true
               }}
             >
-            <Button 
-              label = {'저장'} 
-              onClick = {handleClickSaveLocationMapMarker}
-              className ='saveButton'
-              sx={{ 
-                backgroundColor: 'rgba(241,244,249,1)',
-                color: 'black',
-                cursor: 'pointer',
-                '&:hover': {
-                  backgroundColor: 'white',
-                  border: '1px solid #d02020 '
-                }
-              }}
-            >{'저장하고 닫기 <-'}</Button>
-          </div>
-          </MapMarker>
-        :''}
-        {/* -- Listing All Equi_states -- */}
-        { action == 'view' && showDevices || action == 'edit' && showDevices
-        ?
-          devices.map((row, rowID) => (
-          //*********** */
-          <CustomMarkerComponent controller={controller.local_area_id} key={rowID} equi_state ={row} rowID ={rowID}/>
-          ))
+              <div 
+                className='MessageMapMarker'
+                style={{
+                  width: '150px',
+                  color: "#000",
+                  fontSize: 12,
+                  border: 0,
+                  display: 'flex',
+                  justifyContent: 'center'
+                }}
+              >
+              <Button 
+                label = {'저장'} 
+                onClick = { handleClickSaveLocationMapMarker }
+                className ='saveButton'
+                sx={{ 
+                  backgroundColor: 'rgba(241,244,249,1)',
+                  color: 'black',
+                  cursor: 'pointer',
+                  '&:hover': {
+                    backgroundColor: 'white',
+                    border: '1px solid #d02020 '
+                  }
+                }}
+              >{'저장하고 닫기 <-'}</Button>
+            </div>
+            </MapMarker>
           :''}
-        {/* -- Map Type HYBRID for view or edit -- */}
-        { action == 'view' || action == 'edit' ? 
-          <MapTypeId type={kakao.maps.MapTypeId ? kakao.maps.MapTypeId.HYBRID : ''} />
-        :''}
+          {/* -- Listing All Equi_states -- */}
+          { action == 'view' && showDevices || action == 'edit' && showDevices
+          ?
+            devices.map((row, rowID) => (
+            //*********** */
+            <CustomMarkerComponent controller={controller.local_area_id} key={rowID} equi_state ={row} rowID ={rowID}/>
+            ))
+            :''}
+          {/* -- Map Type HYBRID for view or edit -- */}
+          { action == 'view' || action == 'edit' ? 
+            <MapTypeId type={kakao.maps.MapTypeId ? kakao.maps.MapTypeId.HYBRID : ''} />
+          :''}
 
-      </Map>
-      ):
-      <CircularProgress /> 
-    }
+        </Map>
+        ):
+        <CircularProgress /> 
+      }
+        </Box>
       </Box>
-      { action == 'view' && showDevices || action == 'edit' && showDevices ?
-        <EquipmentTableDetails devices = {devices} />
-      : <Typography align='center'  >{'기기 없음'}</Typography>}
+      { !editDevices ?
+        <EquipmentTableDetails devices = {devices} showDevices={showDevices} />
+      : '' }
+      {
+        action == 'edit' && editDevices ? 
+        <TableCompanyModel devices = {devices} showDevices={showDevices} /> : ''
+      }
     </Box>
   )
 }
@@ -468,7 +522,7 @@ const CheckLightStateValue = props => {
 
 const EquipmentTableDetails = props => {
 
-  const { devices } = props;
+  const { devices, showDevices } = props;
 
   return (
     <TableContainer component={ Paper }>
@@ -528,57 +582,122 @@ const EquipmentTableDetails = props => {
             <TableCell align='center'>{"신호"}<br/>{"거리"}</TableCell>
           </TableRow>
         </TableHead>
-        <TableBody sx={{ 
-          '& tr td.MuiTableCell-body, & tr td.MuiTableCell-body:first-of-type':{
-            fontSize: 12, 
-            height: 29, 
-            color: '#777',  
-            border: '1px solid #9d9d9d', 
-            padding: '2px 4px'
-          }
-        }}>
-          {/* Listing All Equipment ------ */}
-          { devices.map((equi_state, rowID) =>(
-            <TableRow key={rowID} sx={{boxSizing: 'content-box'}}>
-              <TableCell align='center'>{equi_state.equi_num}</TableCell>
-              <TableCell align='center'>{equi_state.address}</TableCell>
-              <TableCell align='center'>{equi_state.lora_id}</TableCell>
-              <TableCell align='center'>{equi_state.sound_text}</TableCell>
-              <TableCell align='center'>{equi_state.occur_time}</TableCell>
-              <TableCell align='center'><CheckStateValue stateValue={equi_state.state_code}/></TableCell>
-              <TableCell align='center'><CheckButtonStateValue buttonState={equi_state.button_state}/></TableCell>
-              <TableCell align='center'><CheckSpeakeStateValue speakerState={equi_state.speaker_state}/></TableCell>
-              <TableCell align='center'>{equi_state.grid}<br/>{equi_state.guidecnt+"/"+equi_state.alertcnt}</TableCell>
-              <TableCell align='center'><CheckLightStateValue lightState={equi_state.light_state}/></TableCell>
-              <TableCell align='center'>{equi_state.equiversion ? equi_state.equiversion : '-'}</TableCell>
-              <TableCell align='center'>{equi_state.loraversion ? equi_state.loraversion : '-'}</TableCell>
-              <TableCell align='center'>{equi_state.bleversion ? equi_state.bleversion : '-'}</TableCell>
-              <TableCell align='center'>{equi_state.cover_cnt}</TableCell>
-              <TableCell align='center'>{equi_state.button_cnt}</TableCell>
-              <TableCell align='center'>{equi_state.m358_cnt}</TableCell>
-              <TableCell align='center'>{equi_state.m358i_cnt}</TableCell>
-              <TableCell align='center'>{equi_state.m235_cnt}</TableCell>{/* TODO: Based on the count = 0  style changes */}
-              <TableCell align='center'>{equi_state.rlstate == 1 ? '정상': '이상'}</TableCell>
-              <TableCell align='center'>{equi_state.glstate == 1 ? '정상': '이상'}</TableCell>
-              <TableCell align='center'>{equi_state.ulstate == 1 ? '정상': '이상'}</TableCell>
-              <TableCell align='center'>{equi_state.redsoundcnt}</TableCell>
-              <TableCell align='center'>{equi_state.volume}</TableCell>
-              <TableCell align='center'>{equi_state.bvolume}</TableCell>
-              <TableCell align='center'>{equi_state.mvolume}</TableCell>
-              <TableCell align='center'>{equi_state.nvolume}</TableCell>
-              <TableCell align='center'>{equi_state.svolume}</TableCell>
-              <TableCell align='center'>{equi_state.induce}</TableCell>
-              <TableCell align='center'>{equi_state.signal0}</TableCell>
-              <TableCell align='center'>{equi_state.period}</TableCell>
-              <TableCell align='center'>{equi_state.statewarning}</TableCell>
-              <TableCell align='center'>{equi_state.termofwarning}</TableCell>
-              <TableCell align='center'><a>{"시간"}<br/>{"설정값"}</a></TableCell>
+        { showDevices ? 
+          <TableBody sx={{ 
+            '& tr td.MuiTableCell-body, & tr td.MuiTableCell-body:first-of-type':{
+              fontSize: 12, 
+              height: 29, 
+              color: '#777',  
+              border: '1px solid #9d9d9d', 
+              padding: '2px 4px'
+            }
+          }}>
+            {/* Listing All Equipment ------ */}
+            { devices.map((equi_state, rowID) =>(
+              <TableRow key={rowID} sx={{boxSizing: 'content-box'}}>
+                <TableCell align='center'>{equi_state.equi_num}</TableCell>
+                <TableCell align='center'>{equi_state.address}</TableCell>
+                <TableCell align='center'>{equi_state.lora_id}</TableCell>
+                <TableCell align='center'>{equi_state.sound_text}</TableCell>
+                <TableCell align='center'>{equi_state.occur_time}</TableCell>
+                <TableCell align='center'><CheckStateValue stateValue={equi_state.state_code}/></TableCell>
+                <TableCell align='center'><CheckButtonStateValue buttonState={equi_state.button_state}/></TableCell>
+                <TableCell align='center'><CheckSpeakeStateValue speakerState={equi_state.speaker_state}/></TableCell>
+                <TableCell align='center'>{equi_state.grid}<br/>{equi_state.guidecnt+"/"+equi_state.alertcnt}</TableCell>
+                <TableCell align='center'><CheckLightStateValue lightState={equi_state.light_state}/></TableCell>
+                <TableCell align='center'>{equi_state.equiversion ? equi_state.equiversion : '-'}</TableCell>
+                <TableCell align='center'>{equi_state.loraversion ? equi_state.loraversion : '-'}</TableCell>
+                <TableCell align='center'>{equi_state.bleversion ? equi_state.bleversion : '-'}</TableCell>
+                <TableCell align='center'>{equi_state.cover_cnt}</TableCell>
+                <TableCell align='center'>{equi_state.button_cnt}</TableCell>
+                <TableCell align='center'>{equi_state.m358_cnt}</TableCell>
+                <TableCell align='center'>{equi_state.m358i_cnt}</TableCell>
+                <TableCell align='center'>{equi_state.m235_cnt}</TableCell>{/* TODO: Based on the count = 0  style changes */}
+                <TableCell align='center'>{equi_state.rlstate == 1 ? '정상': '이상'}</TableCell>
+                <TableCell align='center'>{equi_state.glstate == 1 ? '정상': '이상'}</TableCell>
+                <TableCell align='center'>{equi_state.ulstate == 1 ? '정상': '이상'}</TableCell>
+                <TableCell align='center'>{equi_state.redsoundcnt}</TableCell>
+                <TableCell align='center'>{equi_state.volume}</TableCell>
+                <TableCell align='center'>{equi_state.bvolume}</TableCell>
+                <TableCell align='center'>{equi_state.mvolume}</TableCell>
+                <TableCell align='center'>{equi_state.nvolume}</TableCell>
+                <TableCell align='center'>{equi_state.svolume}</TableCell>
+                <TableCell align='center'>{equi_state.induce}</TableCell>
+                <TableCell align='center'>{equi_state.signal0}</TableCell>
+                <TableCell align='center'>{equi_state.period}</TableCell>
+                <TableCell align='center'>{equi_state.statewarning}</TableCell>
+                <TableCell align='center'>{equi_state.termofwarning}</TableCell>
+                <TableCell align='center'><a>{"시간"}<br/>{"설정값"}</a></TableCell>
+              </TableRow>
+            )) }
+          </TableBody>
+        : <TableBody>
+            <TableRow>
+              <TableCell align='center'><Typography align='center'  >{'기기 없음'}</Typography></TableCell>
             </TableRow>
-          )) }
-        </TableBody>
+          </TableBody>}
       </Table>
     </TableContainer>
   );
+}
+
+const TableCompanyModel = props => {
+
+  const { devices, showDevices } = props;
+
+  // * Styled TableCell
+  const StyledTableCell = styled(TableCell)(({ theme }) => ({
+    [`&.${tableCellClasses.head}`]: {
+      backgroundColor: '#F9FAFC',
+      color: 'rgba(58, 53, 65, 0.87)'
+    },
+    [`&.${tableCellClasses.body}`]: {
+      fontSize: 14
+    }
+  }));
+
+  // * Styled TableRow
+  const StyledTableRow = styled(TableRow)(({ theme }) => ({
+    '&:nth-of-type(odd)': {
+      backgroundColor: '#e7eaf9'
+    },
+    '&:last-child td, &: last-child th': {
+      border: 0
+    }
+  }))
+
+
+  return(
+    <TableContainer>
+      <Table>
+        <TableHead>
+          <StyledTableRow>
+            <StyledTableCell>{'부착번호'}</StyledTableCell>
+            <StyledTableCell align='center'>{'RoLaId'}</StyledTableCell>
+            <StyledTableCell align='center'>{'제조사'}</StyledTableCell>
+            <StyledTableCell align='center'>{'모델명'}</StyledTableCell>
+          </StyledTableRow>
+        </TableHead>
+        {showDevices ?
+        <TableBody>
+          {/* Listing All Equipment ------ */}
+          { devices.map((equi_state, rowID) =>(
+            <StyledTableRow key={'equiState'+rowID}>
+              <StyledTableCell>{equi_state.equi_num}</StyledTableCell>
+              <StyledTableCell align='center'>{equi_state.lora_id}</StyledTableCell>
+              <StyledTableCell align='center'>{equi_state.prod_comp}</StyledTableCell>
+              <StyledTableCell align='center'>{equi_state.model_no}</StyledTableCell>
+            </StyledTableRow>
+          ))}
+        </TableBody>
+        :  <TableBody>
+            <StyledTableRow>
+              <StyledTableCell align='center'><Typography align='center'  >{'기기 없음'}</Typography></StyledTableCell>
+            </StyledTableRow>
+          </TableBody> }
+      </Table>
+    </TableContainer>
+  )
 }
 
 export { ControllerInformation };

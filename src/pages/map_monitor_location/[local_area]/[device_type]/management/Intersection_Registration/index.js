@@ -363,7 +363,6 @@ const IntersectionRegistration = () => {
 
     let controllerToEdit = controllers.find(controller => controller.id == id);
     setControllerSelected(controllerToEdit);
-    console.log(controllerToEdit);
 
     SetOpenDrawerSelController(true);
   }
@@ -640,8 +639,8 @@ const IntersectionRegistration = () => {
                     <Button 
                       className={'IconButtonSVG'}
                       onClick = { handleClickEdit }
-                      data-row ={rowKey}
-                      data-id = {controller.id}
+                      data-row ={ rowKey }
+                      data-id = { controller.id }
                     >
                       <PencilOutline />
                     </Button>
@@ -660,7 +659,8 @@ const IntersectionRegistration = () => {
         openDrawer={openDrawerSelController}
         setOpenDrawer={changeOpenDrawerController}
         updateListOfControllers = {updateListOfControllers}
-        isIOT = {isIOT}  
+        isIOT = {isIOT}
+        editController = {true}
       />
       <LateralCreateControllerPanel
         openDrawer={openDrawerCreateController}

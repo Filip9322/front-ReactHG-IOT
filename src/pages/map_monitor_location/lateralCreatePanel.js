@@ -530,7 +530,7 @@ const LateralCreateControllerPanel = props =>{
                   label = {values.errors['inse_type_hasError'] ? "도로형태 선택해 주세요" : "도로형태 선택: "}
                   select
                 >
-                  <MenuItem disabled selected value="0"><em>도로형태 선택: </em></MenuItem>
+                  <MenuItem disabled selected value="0"><em>{'도로형태 선택: '}</em></MenuItem>
                   { localInseType.map(inse_type_ =>{
                     return(
                       <MenuItem value={inse_type_.id} key={'insetype'+inse_type_.id}>{inse_type_.inter_type_name}</MenuItem>
