@@ -6,9 +6,9 @@ import { Map, MapMarker, MapTypeId,
 // ** Material Components Imports
 import { styled } from '@mui/material/styles';
 import { Box, Typography, CircularProgress, Button, Tooltip, tableCellClasses } from '@mui/material'
-import { Paper, Table, TableHead, TableBody, TableRow, TableCell, TableContainer } from '@mui/material'
+import { Paper, Table, TableHead, TableBody, TableRow, TableCell, TableContainer, RadioGroup, Radio  } from '@mui/material'
 
-import { Plus } from 'mdi-material-ui'
+import { Plus, PencilOutline, PencilOffOutline } from 'mdi-material-ui'
 
 // ** Utils
 import { getFetchURL } from 'src/@core/utils/fetchHelper';
@@ -264,6 +264,7 @@ const ControllerInformation = props => {
         backgroundColor: 'rgba(241, 244, 249, 1)'
       }}
     >
+      { action != 'create' ? 
       <Typography
         sx={{
           width: '100%',
@@ -276,6 +277,7 @@ const ControllerInformation = props => {
         align='center'
         variant='h6'
       >{controller.local_area_controller_number}번 - {controller.controller_name}, 기기: {deviceLocations.length}</Typography>
+      : '' }
       <Box
         sx={{
           width: 'fit-content',
@@ -296,14 +298,16 @@ const ControllerInformation = props => {
           }
         }}
       >
+        { action != 'create' ?
         <Tooltip title={"추가"}>
           <Button 
             onClick = { handleClickAdd }
             className={'IconButtonSVG'}
           >
-            <Plus />
+            <PencilOutline />
           </Button>
         </Tooltip>
+        : '' }
         <Box
           className="content-map"
           sx={{
@@ -343,8 +347,16 @@ const ControllerInformation = props => {
           key={mapKey}
           
         >
-          <MapTypeControl />
-          <ZoomControl />
+          { /* -- MapTYpeControl, only in view */}
+          { action != 'edit' && !editDevices ?
+            <MapTypeControl />
+          :''}
+
+          { /* -- ZoomControl, only in view */}
+          { action == 'create' ?
+            <ZoomControl />
+          :''}
+          
           { /* -- Draggable Marker when creating -- */}
           { action == 'create' ? 
             <MapMarker
@@ -389,7 +401,7 @@ const ControllerInformation = props => {
             </div>
             </MapMarker>
           :''}
-          {/* -- Listing All Equi_states -- */}
+          { /* -- Listing All Equi_states -- */ }
           { action == 'view' && showDevices || action == 'edit' && showDevices
           ?
             devices.map((row, rowID) => (
@@ -397,7 +409,7 @@ const ControllerInformation = props => {
             <CustomMarkerComponent controller={controller.local_area_id} key={rowID} equi_state ={row} rowID ={rowID}/>
             ))
             :''}
-          {/* -- Map Type HYBRID for view or edit -- */}
+          { /* -- Map Type HYBRID for view or edit -- */ }
           { action == 'view' || action == 'edit' ? 
             <MapTypeId type={kakao.maps.MapTypeId ? kakao.maps.MapTypeId.HYBRID : ''} />
           :''}
@@ -408,7 +420,7 @@ const ControllerInformation = props => {
       }
         </Box>
       </Box>
-      { !editDevices ?
+      { action == 'edit' && !editDevices ?
         <EquipmentTableDetails devices = {devices} showDevices={showDevices} />
       : '' }
       {
@@ -645,6 +657,9 @@ const TableCompanyModel = props => {
 
   const { devices, showDevices } = props;
 
+  const [selectedDevice, setSelectedDevice] = useState();
+  const [tableKey, setTableKey] = useState(1);
+
   // * Styled TableCell
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -666,12 +681,26 @@ const TableCompanyModel = props => {
     }
   }))
 
+  // * Handle Functions
+  const handleSelectDeviceRadio = event => {
+    setSelectedDevice(event.target.value);
+  }
+
+  const handleClickTableRow = deviceID => {
+    console.log(deviceID)
+    setSelectedDevice(deviceID);
+  }
+
+  useEffect (() =>{
+    setTableKey(tableKey + 1);
+  },[selectedDevice])
 
   return(
     <TableContainer>
       <Table>
         <TableHead>
           <StyledTableRow>
+            <StyledTableCell></StyledTableCell>
             <StyledTableCell>{'부착번호'}</StyledTableCell>
             <StyledTableCell align='center'>{'RoLaId'}</StyledTableCell>
             <StyledTableCell align='center'>{'제조사'}</StyledTableCell>
@@ -679,16 +708,26 @@ const TableCompanyModel = props => {
           </StyledTableRow>
         </TableHead>
         {showDevices ?
-        <TableBody>
-          {/* Listing All Equipment ------ */}
+        <TableBody
+          key={tableKey}
+        >
+          {/* Listing All Equipment ------ */}  
           { devices.map((equi_state, rowID) =>(
-            <StyledTableRow key={'equiState'+rowID}>
+            <StyledTableRow key={'equiState'+rowID} onClick={()=>handleClickTableRow(equi_state.equi_num)} >
+              <StyledTableCell>
+                <Radio
+                  name ={'radio-select-device'}
+                  value={equi_state.equi_num}
+                  checked={selectedDevice == equi_state.equi_num}
+                  onChange={handleSelectDeviceRadio}
+                />
+              </StyledTableCell>
               <StyledTableCell>{equi_state.equi_num}</StyledTableCell>
               <StyledTableCell align='center'>{equi_state.lora_id}</StyledTableCell>
               <StyledTableCell align='center'>{equi_state.prod_comp}</StyledTableCell>
               <StyledTableCell align='center'>{equi_state.model_no}</StyledTableCell>
             </StyledTableRow>
-          ))}
+          ))}       
         </TableBody>
         :  <TableBody>
             <StyledTableRow>
