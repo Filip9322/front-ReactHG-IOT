@@ -33,6 +33,19 @@ const ControllerInformation = props => {
   const [editDevices, setEditDevices] = useState(false);
   
   const [kakaoInitated, setKakaoInitiated] = useState(false);
+
+  const initialMapStyles = {
+    minWidth: "1240px",
+    width: "1240px",
+    height: "505px",
+    border: 'solid 1px #aaa'}
+
+  const editDevicesMapStyle = {
+      minWidth: "600px",
+      width: "600px",
+      height: "505px",
+      border: 'solid 1px #aab'
+  }
   
   // ** UseRef
   const hasPageBeenRendered = useRef({ effect1: false, effect2: false, effect3: false });
@@ -73,16 +86,8 @@ const ControllerInformation = props => {
 
   const handleClickAdd = event => {
     event.preventDefault();
-    setEditDevices(true);
-    setMapStyles({
-      minWidth: "600px",
-      width: "600px",
-      height: "505px",
-      border: 'solid 1px #aab'});
-      setLat(controller.map_x);
-      setLng(controller.map_y);
-      setMapKey(mapKey+1);
-    console.log(mapStyles);
+    setEditDevices(!editDevices);
+    setMapStyles(editDevicesMapStyle);
   }
 
   const handleDragEndMapMarker = event => {
@@ -148,11 +153,7 @@ const ControllerInformation = props => {
     }
     
     if(!editDevices) {
-      setMapStyles({
-        minWidth: "1240px",
-        width: "1240px",
-        height: "505px",
-        border: 'solid 1px #aab'});
+      setMapStyles(initialMapStyles);
     }
     hasPageBeenRendered.current['effect2'] = true;
   },[kakaoInitated, lat, lng]);
@@ -173,17 +174,21 @@ const ControllerInformation = props => {
 
   useEffect(() => {
     if(hasPageBeenRendered.current['effect1']) {
-    
       if(!editDevices) {
-        setMapStyles({
-          minWidth: "1240px",
-          width: "1240px",
-          height: "505px",
-          border: 'solid 1px #aaa'});
+        setMapStyles(initialMapStyles);
       }
     }
     
   },[mapKey])
+
+  useEffect(() => {
+    if(editDevices) {
+      setMapStyles(editDevicesMapStyle);
+    } else {
+      setMapStyles(initialMapStyles);
+    }
+    setMapKey(mapKey+1);
+  },[editDevices])
   
   //** -- Custom Marker Component */
   const CustomMarkerComponent = props => {
@@ -278,155 +283,167 @@ const ControllerInformation = props => {
         variant='h6'
       >{controller.local_area_controller_number}번 - {controller.controller_name}, 기기: {deviceLocations.length}</Typography>
       : '' }
+      {/** --- Container Map and Tables */}
       <Box
         sx={{
-          width: 'fit-content',
-          position: 'relative',
-          '& button.IconButtonSVG, & button.CBActionButton':{
-            bottom: 5, right: 35,
-            height: '4rem',
-            zIndex: 10,
-            display:'flex',
-            marginLeft: '10px',
-            position: 'absolute',
-            alignItems:'center',
-            border: 'solid 1px #aaa',
-            boxShadow: '0 2px 10px 0 rgba(58, 53, 65, 0.1)',
-            backgroundColor: '#fff',
-            ':hover':{ cursor: 'pointer', backgroundColor: 'rgba(241, 74, 74, 0.9)', '& svg':{ color: '#fff'}},
-            '& svg':{ color: '#777'}
-          }
+          display: 'flex',
+          flexDirection: action == 'edit' && editDevices ? 'row' : 'column'
         }}
       >
-        { action != 'create' ?
-        <Tooltip title={"추가"}>
-          <Button 
-            onClick = { handleClickAdd }
-            className={'IconButtonSVG'}
-          >
-            <PencilOutline />
-          </Button>
-        </Tooltip>
-        : '' }
+        {
+          action == 'edit' && editDevices ? 
+          <TableCompanyModel devices = {devices} showDevices={showDevices} /> : ''
+        }
         <Box
-          className="content-map"
           sx={{
             width: 'fit-content',
-            backgroundColor: 'rgba(241,244,249,1)',
-            display: 'flex',
-            flexDirection: 'column',
-            padding: '0 30px',
-            '& #react-kakao-maps-sdk-map-container':
-            {
-              '& div:nth-of-type(3)':{
-                '& div:nth-of-type(1)':{
-                  width: '130px !important',
-                  boxSizing: 'initial !important',
-                  '& button:nth-of-type(1)':{
-                    width: '30px !important'
-                  }
-                },
-                '& div:nth-of-type(2) div':{
-                  width: 'initial !important',
-                  '& div':{
-                    width: '32px !important',
-                    '& div:nth-of-type(1), & div:nth-of-type(2)': { width: '4px !important' },
-                    '& :nth-of-type(3)':{ width: '20px !important' }
-                  }
-                }
-              }
+            position: 'relative',
+            '& button.IconButtonSVG, & button.CBActionButton':{
+              bottom: 5, right: 35,
+              height: '4rem',
+              zIndex: 10,
+              display:'flex',
+              marginLeft: '10px',
+              position: 'absolute',
+              alignItems:'center',
+              border: 'solid 1px #aaa',
+              boxShadow: '0 2px 10px 0 rgba(58, 53, 65, 0.1)',
+              backgroundColor: '#fff',
+              ':hover':{ cursor: 'pointer', backgroundColor: 'rgba(241, 74, 74, 0.9)', '& svg':{ color: '#fff'}},
+              '& svg':{ color: '#777'}
             }
           }}
         >
-        { (kakaoInitated && !spinner && devices.length > 0 ) ? (
-        <Map
-          center={{ lat: lat, lng: lng }}
-          style={ mapStyles }
-          draggable = {draggable}
-          level={1}
-          key={mapKey}
-          
-        >
-          { /* -- MapTYpeControl, only in view */}
-          { action != 'edit' && !editDevices ?
-            <MapTypeControl />
-          :''}
-
-          { /* -- ZoomControl, only in view */}
-          { action == 'create' ?
-            <ZoomControl />
-          :''}
-          
-          { /* -- Draggable Marker when creating -- */}
-          { action == 'create' ? 
-            <MapMarker
-              position={{
-                lat: lat,
-                lng: lng
-              }}
-              draggable = { true }
-              clickable = { true }
-              onCreate={() => updateMapMarkers()}
-              onDragStart= {handleDragStartMapMarker}
-              onDragEnd  = {handleDragEndMapMarker}
-              infoWindowOptions={{
-                disableAutoPan: true
-              }}
+          { action == 'edit'  ?
+          <Tooltip title={"추가"}>
+            <Button 
+              onClick = { handleClickAdd }
+              className={'IconButtonSVG'}
             >
-              <div 
-                className='MessageMapMarker'
-                style={{
-                  width: '150px',
-                  color: "#000",
-                  fontSize: 12,
-                  border: 0,
-                  display: 'flex',
-                  justifyContent: 'center'
+              {editDevices && action == 'edit' ?
+                <PencilOffOutline />
+              :
+                <PencilOutline />
+              }
+            </Button>
+          </Tooltip>
+          : '' }
+          <Box
+            className="content-map"
+            sx={{
+              width: 'fit-content',
+              backgroundColor: 'rgba(241,244,249,1)',
+              display: 'flex',
+              flexDirection: 'column',
+              padding: '0 30px',
+              '& #react-kakao-maps-sdk-map-container':
+              {
+                '& div:nth-of-type(3)':{
+                  '& div:nth-of-type(1)':{
+                    width: '130px !important',
+                    boxSizing: 'initial !important',
+                    '& button:nth-of-type(1)':{
+                      width: '30px !important'
+                    }
+                  },
+                  '& div:nth-of-type(2) div':{
+                    width: 'initial !important',
+                    '& div':{
+                      width: '32px !important',
+                      '& div:nth-of-type(1), & div:nth-of-type(2)': { width: '4px !important' },
+                      '& :nth-of-type(3)':{ width: '20px !important' }
+                    }
+                  }
+                }
+              }
+            }}
+          >
+          { (kakaoInitated && !spinner && devices.length > 0 ) ? (
+          <Map
+            center={{ lat: lat, lng: lng }}
+            style={ mapStyles }
+            draggable = {draggable}
+            level={1}
+            key={mapKey}
+            
+          >
+            { /* -- MapTYpeControl, only in view */}
+            { action != 'edit' && !editDevices ?
+              <MapTypeControl />
+            :''}
+
+            { /* -- ZoomControl, only in view */}
+            { action == 'create' ?
+              <ZoomControl />
+            :''}
+            
+            { /* -- Draggable Marker when creating -- */}
+            { action == 'create' ? 
+              <MapMarker
+                position={{
+                  lat: lat,
+                  lng: lng
+                }}
+                draggable = { true }
+                clickable = { true }
+                onCreate={() => updateMapMarkers()}
+                onDragStart= {handleDragStartMapMarker}
+                onDragEnd  = {handleDragEndMapMarker}
+                infoWindowOptions={{
+                  disableAutoPan: true
                 }}
               >
-              <Button 
-                label = {'저장'} 
-                onClick = { handleClickSaveLocationMapMarker }
-                className ='saveButton'
-                sx={{ 
-                  backgroundColor: 'rgba(241,244,249,1)',
-                  color: 'black',
-                  cursor: 'pointer',
-                  '&:hover': {
-                    backgroundColor: 'white',
-                    border: '1px solid #d02020 '
-                  }
-                }}
-              >{'저장하고 닫기 <-'}</Button>
-            </div>
-            </MapMarker>
-          :''}
-          { /* -- Listing All Equi_states -- */ }
-          { action == 'view' && showDevices || action == 'edit' && showDevices
-          ?
-            devices.map((row, rowID) => (
-            //*********** */
-            <CustomMarkerComponent controller={controller.local_area_id} key={rowID} equi_state ={row} rowID ={rowID}/>
-            ))
+                <div 
+                  className='MessageMapMarker'
+                  style={{
+                    width: '150px',
+                    color: "#000",
+                    fontSize: 12,
+                    border: 0,
+                    display: 'flex',
+                    justifyContent: 'center'
+                  }}
+                >
+                <Button 
+                  label = {'저장'} 
+                  onClick = { handleClickSaveLocationMapMarker }
+                  className ='saveButton'
+                  sx={{ 
+                    backgroundColor: 'rgba(241,244,249,1)',
+                    color: 'black',
+                    cursor: 'pointer',
+                    '&:hover': {
+                      backgroundColor: 'white',
+                      border: '1px solid #d02020 '
+                    }
+                  }}
+                >{'저장하고 닫기 <-'}</Button>
+              </div>
+              </MapMarker>
             :''}
-          { /* -- Map Type HYBRID for view or edit -- */ }
-          { action == 'view' || action == 'edit' ? 
-            <MapTypeId type={kakao.maps.MapTypeId ? kakao.maps.MapTypeId.HYBRID : ''} />
-          :''}
+            { /* -- Listing All Equi_states -- */ }
+            { action == 'view' && showDevices || action == 'edit' && showDevices
+            ?
+              devices.map((row, rowID) => (
+              //*********** */
+              <CustomMarkerComponent controller={controller.local_area_id} key={rowID} equi_state ={row} rowID ={rowID}/>
+              ))
+              :''}
+            { /* -- Map Type HYBRID for view or edit -- */ }
+            { action == 'view' || action == 'edit' ? 
+              <MapTypeId type={kakao.maps.MapTypeId ? kakao.maps.MapTypeId.HYBRID : ''} />
+            :''}
 
-        </Map>
-        ):
-        <CircularProgress /> 
-      }
+          </Map>
+          ):
+          <CircularProgress /> 
+        }
+          </Box>
         </Box>
       </Box>
-      { action == 'edit' && !editDevices ?
+      { action == 'view' && !editDevices || action == 'edit' && !editDevices ?
         <EquipmentTableDetails devices = {devices} showDevices={showDevices} />
       : '' }
-      {
-        action == 'edit' && editDevices ? 
-        <TableCompanyModel devices = {devices} showDevices={showDevices} /> : ''
-      }
     </Box>
   )
 }
