@@ -196,11 +196,16 @@ const ControllerInformation = props => {
     const {equi_state, rowID, controller} = props;
     const [hoverMarker, setHoverMarker] = useState(false);
     const [iconState, setIconState] = useState('b');
-
+    const [latDevice, setLatDevice] = useState(0.0);
+    const [lngDevice, setLngDevice] = useState(0.0);
     const prevController = useRef();
   
     useEffect(()=>{
       prevController.current = controller;
+      if(equi_state.Equipment != undefined){
+        setLatDevice(equi_state.Equipment.map_y);
+        setLngDevice(equi_state.Equipment.map_x);
+      }
     },[])
     useEffect(()=>{
       if(equi_state.state_code != 0) {setIconState('o'); console.log('state_code: '+equi_state.state_code)}
@@ -211,8 +216,8 @@ const ControllerInformation = props => {
     return (
       <MapMarker 
         position={{
-          lat: equi_state.map_y,
-          lng: equi_state.map_x
+          lat: latDevice,
+          lng: lngDevice
         }}
         key={rowID}
         sx={{
@@ -627,7 +632,7 @@ const EquipmentTableDetails = props => {
                 <TableCell align='center'>{equi_state.equi_num}</TableCell>
                 <TableCell align='center'>{equi_state.address}</TableCell>
                 <TableCell align='center'>{equi_state.lora_id}</TableCell>
-                <TableCell align='center'>{equi_state.sound_text}</TableCell>
+                <TableCell align='center'>{equi_state.Equipment ? equi_state.Equipment.sound_text : '없음'}</TableCell>
                 <TableCell align='center'>{equi_state.occur_time}</TableCell>
                 <TableCell align='center'><CheckStateValue stateValue={equi_state.state_code}/></TableCell>
                 <TableCell align='center'><CheckButtonStateValue buttonState={equi_state.button_state}/></TableCell>
@@ -741,8 +746,8 @@ const TableCompanyModel = props => {
               </StyledTableCell>
               <StyledTableCell>{equi_state.equi_num}</StyledTableCell>
               <StyledTableCell align='center'>{equi_state.lora_id}</StyledTableCell>
-              <StyledTableCell align='center'>{equi_state.prod_comp}</StyledTableCell>
-              <StyledTableCell align='center'>{equi_state.model_no}</StyledTableCell>
+              <StyledTableCell align='center'>{equi_state.Equipment ? equi_state.Equipment.prod_comp : '없음' }</StyledTableCell>
+              <StyledTableCell align='center'>{equi_state.Equipment ? equi_state.Equipment.model_no : '없음' }</StyledTableCell>
             </StyledTableRow>
           ))}       
         </TableBody>
