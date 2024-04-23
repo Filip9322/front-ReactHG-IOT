@@ -21,7 +21,9 @@ const ControllerInformation = props => {
   
   const { controller, openEquiState, setOpenEquiStatus, draggable, action,
     UpdateNewLocationMapMarker, handleClickSaveLocationMapMarker } = props;
-    
+  
+  const [deviceModels, setDeviceModels] = useState([]);
+  
   const [showDevices, setShowDevices ] = useState(false);
   const [mapKey, setMapKey] = useState(0);
   const [lat, setLat] = useState(controller.map_x);
@@ -79,6 +81,18 @@ const ControllerInformation = props => {
     })
   }
 
+  async function fetchDeviceModels(){
+    getFetchURL(
+      `${process.env.REACT_APP_APIURL}/API/device_models`
+    ).then(response => {
+      if(response) {
+        setDeviceModels(response);
+      }
+    }).catch(errror => {
+      console.error('error: ' + error );
+    })
+  }
+
   // ** Handle Functions
   const handleDragStartMapMarker = () => {
     console.log('start dragging');
@@ -121,6 +135,7 @@ const ControllerInformation = props => {
     if(action != 'create')  {
       if(controller.local_area_id && controller.id) {
         fetchEquiState();
+        fetchDeviceModels();
       } else {
         console.error('Missing local_area id or controller ID');
       }
@@ -297,7 +312,7 @@ const ControllerInformation = props => {
       >
         {
           action == 'edit' && editDevices ? 
-          <TableCompanyModel devices = {devices} showDevices={showDevices} /> : ''
+          <TableCompanyModel devices = {devices} showDevices={showDevices} deviceModels={deviceModels} /> : ''
         }
         <Box
           sx={{
@@ -677,7 +692,7 @@ const EquipmentTableDetails = props => {
 
 const TableCompanyModel = props => {
 
-  const { devices, showDevices } = props;
+  const { devices, showDevices, deviceModels } = props;
 
   const [selectedDevice, setSelectedDevice] = useState();
   const [tableKey, setTableKey] = useState(1);
@@ -747,7 +762,7 @@ const TableCompanyModel = props => {
               <StyledTableCell>{equi_state.equi_num}</StyledTableCell>
               <StyledTableCell align='center'>{equi_state.lora_id}</StyledTableCell>
               <StyledTableCell align='center'>{equi_state.Equipment ? equi_state.Equipment.prod_comp : '없음' }</StyledTableCell>
-              <StyledTableCell align='center'>{equi_state.Equipment ? equi_state.Equipment.model_no : '없음' }</StyledTableCell>
+              <StyledTableCell align='center'>{equi_state.Equipment ? deviceModels.find(model => model.id == equi_state.Equipment.model_no).model_name : '없음' }</StyledTableCell>
             </StyledTableRow>
           ))}       
         </TableBody>
