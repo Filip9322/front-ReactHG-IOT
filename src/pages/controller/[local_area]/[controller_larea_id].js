@@ -8,7 +8,7 @@ import { styled } from '@mui/material/styles';
 import { Box, Typography, CircularProgress, Button, Tooltip, tableCellClasses } from '@mui/material'
 import { Paper, Table, TableHead, TableBody, TableRow, TableCell, TableContainer, RadioGroup, Radio  } from '@mui/material'
 
-import { Plus, PencilOutline, PencilOffOutline } from 'mdi-material-ui'
+import { Plus, PencilOutline, PencilOffOutline, Reload } from 'mdi-material-ui'
 
 // ** Utils
 import { getFetchURL } from 'src/@core/utils/fetchHelper';
@@ -33,6 +33,7 @@ const ControllerInformation = props => {
   const [deviceLocations, setDevicesLocations] = useState([]);
   const [mapStyles, setMapStyles] = useState({});
   const [editDevices, setEditDevices] = useState(false);
+  const [selectedDevice, setSelectedDevice] = useState(0);
   
   const [kakaoInitated, setKakaoInitiated] = useState(false);
 
@@ -208,7 +209,7 @@ const ControllerInformation = props => {
   //** -- Custom Marker Component */
   const CustomMarkerComponent = props => {
 
-    const {equi_state, rowID, controller} = props;
+    const {equi_state, rowID, controller, selectedDevice} = props;
     const [hoverMarker, setHoverMarker] = useState(false);
     const [iconState, setIconState] = useState('b');
     const [latDevice, setLatDevice] = useState(0.0);
@@ -235,10 +236,7 @@ const ControllerInformation = props => {
           lng: lngDevice
         }}
         key={rowID}
-        sx={{
-          with: '100%',
-          border: 0
-        }}
+        opacity = {equi_state.equi_num == selectedDevice || selectedDevice == 0 ? 1 : 0.4}
         infoWindowOptions={{
           className: 'markerInfoWindow',
           style: {display: 'none', width: '100%'}
@@ -312,7 +310,12 @@ const ControllerInformation = props => {
       >
         {
           action == 'edit' && editDevices ? 
-          <TableCompanyModel devices = {devices} showDevices={showDevices} deviceModels={deviceModels} /> : ''
+          <TableCompanyModel
+            selectedDevice = {selectedDevice}
+            setSelectedDevice = {setSelectedDevice}
+            devices = {devices} 
+            showDevices={showDevices} 
+            deviceModels={deviceModels} /> : ''
         }
         <Box
           sx={{
@@ -446,7 +449,13 @@ const ControllerInformation = props => {
             ?
               devices.map((row, rowID) => (
               //*********** */
-              <CustomMarkerComponent controller={controller.local_area_id} key={rowID} equi_state ={row} rowID ={rowID}/>
+              <CustomMarkerComponent
+                selectedDevice ={selectedDevice}
+                controller={controller.local_area_id} 
+                equi_state ={row}
+                rowID ={rowID}
+                key={rowID}
+              />
               ))
               :''}
             { /* -- Map Type HYBRID for view or edit -- */ }
@@ -692,9 +701,8 @@ const EquipmentTableDetails = props => {
 
 const TableCompanyModel = props => {
 
-  const { devices, showDevices, deviceModels } = props;
+  const { devices, showDevices, deviceModels, selectedDevice, setSelectedDevice } = props;
 
-  const [selectedDevice, setSelectedDevice] = useState();
   const [tableKey, setTableKey] = useState(1);
 
   // * Styled TableCell
@@ -724,8 +732,11 @@ const TableCompanyModel = props => {
   }
 
   const handleClickTableRow = deviceID => {
-    console.log(deviceID)
     setSelectedDevice(deviceID);
+  }
+
+  const handleResetSelectedDevice = event => {
+    setSelectedDevice(0);
   }
 
   useEffect (() =>{
@@ -737,7 +748,16 @@ const TableCompanyModel = props => {
       <Table>
         <TableHead>
           <StyledTableRow>
-            <StyledTableCell></StyledTableCell>
+            <StyledTableCell>
+              <Tooltip title={"지우기"}>
+                <Button 
+                  className={'IconButtonSVG'}
+                  onClick={handleResetSelectedDevice}
+                >
+                  <Reload />
+                </Button>
+              </Tooltip>
+            </StyledTableCell>
             <StyledTableCell>{'부착번호'}</StyledTableCell>
             <StyledTableCell align='center'>{'RoLaId'}</StyledTableCell>
             <StyledTableCell align='center'>{'제조사'}</StyledTableCell>
