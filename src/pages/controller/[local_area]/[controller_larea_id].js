@@ -103,10 +103,10 @@ const ControllerInformation = props => {
     event.preventDefault();
     setEditDevices(!editDevices);
     setMapStyles(editDevicesMapStyle);
+    setSelectedDevice(0);
   }
 
   const handleDragEndMapMarker = event => {
-    console.log(event.getPosition())
     setLat(event.getPosition().Ma);
     setLng(event.getPosition().La);
     UpdateNewLocationMapMarker({lat: event.getPosition().Ma, lng: event.getPosition().La});
@@ -471,6 +471,9 @@ const ControllerInformation = props => {
         </Box>
       </Box>
       { action == 'view' && !editDevices || action == 'edit' && !editDevices ?
+        <EquipmentTableDetails devices = {devices} showDevices={showDevices} />
+      : '' }
+      { action == 'edit' && editDevices && selectedDevice != 0 ?
         <EquipmentTableDetails devices = {devices} showDevices={showDevices} />
       : '' }
     </Box>
