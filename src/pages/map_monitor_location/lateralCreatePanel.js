@@ -280,7 +280,7 @@ const LateralCreateControllerPanel = props =>{
          errors.controller_address_hasError == false &&
          formValues.is_IOT != null ) {
           
-          fetchCreateController(); //<---- Validate if errors if not submit
+          fetchCreateController();//<---- Validate if errors if not submit
       } else {
         if(errors) console.error(errors);
       }

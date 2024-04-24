@@ -32,5 +32,5 @@ export const getWithExpiry = (key) => {
       return null;
     }
     return item.value;
-  } else { return null; }
+  } else { return null;}
 }

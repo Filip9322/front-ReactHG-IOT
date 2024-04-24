@@ -43,4 +43,4 @@ export async function putFetchURL (url = "", data = {}){
   });
 
   return response;
-}; 
+};

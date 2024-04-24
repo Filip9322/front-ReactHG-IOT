@@ -40,7 +40,7 @@ const Page = () => {
   }
 
   const handleLogout = async () => {
-    await logout(); 
+    await logout();
   }
 
   handleLogout();

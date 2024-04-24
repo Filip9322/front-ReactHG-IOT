@@ -230,8 +230,8 @@ const IntersectionRegistration = () => {
   }
 
   const descendingComparator = (a, b, orderBy) => {
-    if (b[orderBy] < a[orderBy]) { return -1; }
-    if (b[orderBy] > a[orderBy]) { return 1;  }
+    if (b[orderBy] < a[orderBy]) { return -1;}
+    if (b[orderBy] > a[orderBy]) { return 1;}
     return 0;
   }
 
@@ -286,7 +286,7 @@ const IntersectionRegistration = () => {
     Object.assign(body, {number: controller.local_area_controller_number});
     Object.assign(body, {name: name });
 
-    return body; 
+    return body;
   }
 
   const set_controllersDirections = controller =>{
@@ -296,7 +296,7 @@ const IntersectionRegistration = () => {
     Object.assign(body, {number: controller.local_area_controller_number});
     Object.assign(body, {name: controller.controller_address });
 
-    return body; 
+    return body;
   }
 
   const BuildArraySearchBars = () => {
@@ -478,7 +478,7 @@ const IntersectionRegistration = () => {
   useEffect(() => {
     // ** Set Page Name and MetaData
     dispatch(rootActions.updateTitle("교차로등록"));
-  },[]);  
+  },[]);
 
   useEffect(() => {
     if(router.query.local_area) {

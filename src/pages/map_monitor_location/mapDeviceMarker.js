@@ -55,7 +55,7 @@ const MapDeviceMarker = props =>{
       }}
       clickable = { true }
       onCreate={() => updateMapMarkers()}
-      onClick ={() => {setViewDeviceInfo(!viewDeviceInfo); updateMapMarkers(); clickController(controller)}}
+      onClick ={() => {setViewDeviceInfo(!viewDeviceInfo);updateMapMarkers();clickController(controller)}}
       draggable = { false }
       image={{
         src: `/icon/${controller.logo}.png`,

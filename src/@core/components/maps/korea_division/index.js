@@ -16,11 +16,11 @@ const KoreaMapComponent = props => {
         >
         <defs>
           <style>{`
-            .cls-1 { fill: ${color1}; }
-            .cls-1, .cls-2 { stroke: #fff; stroke-linejoin: round; }
-            .cls-2 { fill: ${color2}; }
-            .cls-1:hover, .cls-2:hover { fill: ${HoColor}; }
-            .selected { fill: ${Hcolor}; }
+            .cls-1 { fill: ${color1};}
+            .cls-1, .cls-2 { stroke: #fff;stroke-linejoin: round;}
+            .cls-2 { fill: ${color2};}
+            .cls-1:hover, .cls-2:hover { fill: ${HoColor};}
+            .selected { fill: ${Hcolor};}
           `}</style>
         </defs>
         <a data-title="서울" xmlnsXlink='http://localhost:3001/api/wide_areas/1' target='_blank' id='wide_area_1' onClick={() => chooseArea('서울',1)}>

@@ -126,7 +126,7 @@ const Map_Monitor_Location_Page = () => {
     Object.assign(body, {number: controller.local_area_controller_number});
     Object.assign(body, {name: name });
 
-    return body; 
+    return body;
   }
 
   const filterMapType = type => {

@@ -55,7 +55,7 @@ const SearchBar = props => {
         if(newValue){
           updateSearchedController(newValue.value, fieldName);
         }
-        //setTimeout(() => { debugger; }, 5000);
+        //setTimeout(() => { debugger;}, 5000);
       }}
       onClick={(event)=>{event.preventDefault()}}
       getOptionLabel={(option) => {

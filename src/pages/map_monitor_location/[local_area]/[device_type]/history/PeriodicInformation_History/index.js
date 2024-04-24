@@ -12,7 +12,7 @@ import { Typography } from '@mui/material'
 
 const EquiManagement = () => {
   // ** Hooks
-  const router = useRouter(); 
+  const router = useRouter();
 
   return(
     <Typography>

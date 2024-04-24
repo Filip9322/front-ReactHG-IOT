@@ -477,7 +477,7 @@ const CheckStateValue = props => {
     color = 'green';
     text = '정상';
   } else {
-    color = 'red';    
+    color = 'red';
     switch(stateValue){
       case 1: {
         text = '이상';
@@ -748,7 +748,7 @@ const TableCompanyModel = props => {
         <TableBody
           key={tableKey}
         >
-          {/* Listing All Equipment ------ */}  
+          {/* Listing All Equipment ------ */}
           { devices.map((equi_state, rowID) =>(
             <StyledTableRow key={'equiState'+rowID} onClick={()=>handleClickTableRow(equi_state.equi_num)} >
               <StyledTableCell>
@@ -764,7 +764,7 @@ const TableCompanyModel = props => {
               <StyledTableCell align='center'>{equi_state.Equipment ? equi_state.Equipment.prod_comp : '없음' }</StyledTableCell>
               <StyledTableCell align='center'>{equi_state.Equipment ? deviceModels.find(model => model.id == equi_state.Equipment.model_no).model_name : '없음' }</StyledTableCell>
             </StyledTableRow>
-          ))}       
+          ))}
         </TableBody>
         :  <TableBody>
             <StyledTableRow>

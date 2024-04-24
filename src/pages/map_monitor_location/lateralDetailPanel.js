@@ -130,7 +130,7 @@ const LateralDetailPanel = props => {
 
       //setFormErrors(validateSubmit);
       setFormValues({...formValues, ['id']: controller.id});
-      setIsSubmitting(validateSubmit);  
+      setIsSubmitting(validateSubmit);
 
     } catch (error) {
       if(error !== undefined )console.log(error)
