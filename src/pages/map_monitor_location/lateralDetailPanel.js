@@ -274,7 +274,7 @@ const LateralDetailPanel = props => {
           }}
         >
           <ToggleButtonGroup
-            color='primary'
+            color ='primary'
             value={1}
             exclusive
             aria-label={'지우기'}
@@ -282,7 +282,7 @@ const LateralDetailPanel = props => {
               width: '100%',
               display: 'flex',
               justifyContent: 'center',
-              backgroundColor: 'rgba(241,244,249,1)',
+              backgroundColor: '#f1f4f9',
               '& .toggleTitle.Mui-disabled': { color: '#392d2d' }
             }}
           >
@@ -290,7 +290,7 @@ const LateralDetailPanel = props => {
               className='toggleTitle'
               value='title'
               sx={{
-                backgroundColor: 'rgba(230,224,235,1)'
+                backgroundColor: '#e6e0eb'
               }}
               disabled
             >
@@ -298,7 +298,8 @@ const LateralDetailPanel = props => {
             </ToggleButton>
             <ToggleButton 
               sx={{
-                backgroundColor: 'rgba(255,255,255,1)'
+                backgroundColor: 'white',
+                border: 'solid 1px #3a35412e'
               }}
               value='area'
             >

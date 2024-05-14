@@ -6,13 +6,14 @@ import { Map, MapMarker, MapTypeId,
 // ** Material Components Imports
 import { styled } from '@mui/material/styles';
 import { Box, Typography, CircularProgress, Button, Tooltip, tableCellClasses } from '@mui/material'
-import { Paper, Table, TableHead, TableBody, TableRow, TableCell, TableContainer, RadioGroup, Radio  } from '@mui/material'
+import { Paper, Table, TableHead, TableBody, TableRow, TableCell, TableContainer, Divider, Radio  } from '@mui/material'
 
 import { Plus, PencilOutline, PencilOffOutline, Reload } from 'mdi-material-ui'
 
 // ** Utils
 import { getFetchURL } from 'src/@core/utils/fetchHelper';
-import { useKakaoLoader } from 'src/@core/utils/kakao_map_api'
+import { useKakaoLoader } from 'src/@core/utils/kakao_map_api';
+import { FormEditSelectedDevice } from 'src/pages/controller/FormEditSelectedDevice';
 
 const ControllerInformation = props => {
   
@@ -391,7 +392,7 @@ const ControllerInformation = props => {
             
           >
             { /* -- MapTYpeControl, only in view */}
-            { action != 'edit' && !editDevices ?
+            { action == 'create' && !editDevices ?
               <MapTypeControl />
             :''}
 
@@ -470,11 +471,12 @@ const ControllerInformation = props => {
           </Box>
         </Box>
       </Box>
+      <Divider />
       { action == 'view' && !editDevices || action == 'edit' && !editDevices ?
         <EquipmentTableDetails devices = {devices} showDevices={showDevices} />
       : '' }
       { action == 'edit' && editDevices && selectedDevice != 0 ?
-        <EquipmentTableDetails devices = {devices} showDevices={showDevices} />
+        <FormEditSelectedDevice selectedDevice = {selectedDevice} devices={devices} />
       : '' }
     </Box>
   )
