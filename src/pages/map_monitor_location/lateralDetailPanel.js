@@ -602,7 +602,8 @@ const TextAndInputComponent = props => {
     >
       <Typography
         sx = {{
-          paddingRight: '5px'
+          paddingRight: '5px',
+          fontSize: '0.875rem'
         }}
       >{inputTxt}</Typography>
       <TextField

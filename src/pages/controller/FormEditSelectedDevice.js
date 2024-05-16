@@ -127,6 +127,9 @@ const FormEditSelectedDevice = props => {
             '& .formColumn': {
               width: '50%',
               margin: '0 10%'
+            },
+            '& .MuiInputBase-input, & .MuiOutlinedInput-input, & .MuiTypography-root':{
+              fontSize: '0.875rem'
             }
           }}
           >
@@ -198,7 +201,6 @@ const FormEditSelectedDevice = props => {
                   paddingRight: '5px'
                 }}
               >{'모듈 모델명'}</Typography>
-              <InputLabel id={'moduleModelName'} >{'모듈 모델명'}</InputLabel>
               <Select
                 labelID={'moduleModelName'}
                 label={'모듈 모델명'}
@@ -443,36 +445,72 @@ const FormEditSelectedDevice = props => {
             error = {false}
             type
           />
-          {/* 18. 죄표 */}
-          <TextAndInputComponent 
-            required = {false}
-            name 
-            value
-            inputTxt ={'죄표 X'}
-            labelTxt ={'죄표 X'}
-            edit   = {true}
-            create = {false}
-            textError = {'text Error'}
-            error = {false}
-            type
-          />
-          <TextAndInputComponent 
-            required = {false}
-            name 
-            value
-            inputTxt ={'죄표 Y'}
-            labelTxt ={'죄표 Y'}
-            edit   = {true}
-            create = {false}
-            textError = {'text Error'}
-            error = {false}
-            type
-          />
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'row'
+            }}
+          >
+            {/* 18. 죄표 */}
+            <TextAndInputComponent 
+              required = {false}
+              name 
+              value
+              inputTxt ={'죄표 X'}
+              labelTxt ={'죄표 X'}
+              edit   = {true}
+              create = {false}
+              textError = {'text Error'}
+              error = {false}
+              type
+            />
+            <TextAndInputComponent 
+              required = {false}
+              name 
+              value
+              inputTxt ={'죄표 Y'}
+              labelTxt ={'죄표 Y'}
+              edit   = {true}
+              create = {false}
+              textError = {'text Error'}
+              error = {false}
+              type
+            />
+          </Box>
           {/* 19. 비고 */}
+          <TextAndInputComponent 
+            required = {false}
+            name 
+            value
+            inputTxt ={'비고'}
+            labelTxt ={'비고'}
+            edit   = {true}
+            create = {false}
+            textError = {'text Error'}
+            error = {false}
+            multiline ={ true }
+          />
+          <Box 
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-evenly'
+            }}
+          >
+            <Button
+              color={'error'}
+              variant={'outlined'}
+              //onClick={}
+            >{'최소'}</Button>
+            <Button
+              color={'success'}
+              variant={'contained'}
+              type='submit'
+            >{'저장'}</Button>
           </Box>
         </Box>
-      </FormGroup>
-    </Box>
+      </Box>
+    </FormGroup>
+  </Box>
   )
 }
 
