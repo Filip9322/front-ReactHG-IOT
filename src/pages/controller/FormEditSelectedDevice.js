@@ -17,7 +17,7 @@ import { TextAndInputComponent } from 'src/pages/map_monitor_location/lateralDet
 
 const FormEditSelectedDevice = props => {
 
-  const { selectedDevice, devices } = props;
+  const { selectedDevice, selectedDeviceBody, deviceModels, devices } = props;
   const [replacementDeviceDate, setReplacementDeviceDate] = useState(dayjs('2022-04-17'))
   const [anchorEl, setAnchorEl] = useState();
   const [selectMenuTitle, setSelectMenuTitle] = useState('활성');
@@ -44,10 +44,15 @@ const FormEditSelectedDevice = props => {
   const handleChangeReplacementDeviceDate = event => {
     console.log(event);
   }
+  
   //--- Select EquiNum
   const handleChangeEquiNum = event => {
     console.log(event);
   }
+
+  useEffect(()=>{
+    console.log(selectedDeviceBody);
+  },[selectedDevice])
 
   return(
     <Box>
@@ -123,13 +128,21 @@ const FormEditSelectedDevice = props => {
         <Box
           sx={{
             display: 'flex',
-            justifyContent: 'space-between',
+            justifyContent: 'space-evenly',
             '& .formColumn': {
               width: '50%',
-              margin: '0 10%'
+              margin: '2% 1%',
+              paddingRight: '5px',
+              borderRight: 'dashed 1px #dbdce3'
+            },
+            '& .formColumn:last-child': {
+              border: 0
             },
             '& .MuiInputBase-input, & .MuiOutlinedInput-input, & .MuiTypography-root':{
               fontSize: '0.875rem'
+            },
+            '& .MuiInputBase-input, & .MuiOutlinedInput-input': {
+              padding: '10px 14px'
             }
           }}
           >
@@ -151,6 +164,7 @@ const FormEditSelectedDevice = props => {
                 labelID={'deviceEquiNum'}
                 label={'부착번호'}
                 onChange={handleChangeEquiNum}
+                value={selectedDevice}
               >
                 <MenuItem value={1}>{'1'}</MenuItem>
                 <MenuItem value={2}>{'2'}</MenuItem>
@@ -166,11 +180,11 @@ const FormEditSelectedDevice = props => {
                 <MenuItem value={12}>{'12'}</MenuItem>
               </Select>
             </Box>
-            {/* 2.  LoRa ID */}
+            {/* 2.  LoRa ID ----> TODO: Needs to be Changed to Select ?? */}
             <TextAndInputComponent 
               required = {false}
               name 
-              value
+              value = {selectedDeviceBody != {} ? selectedDeviceBody.lora_id : ''}
               inputTxt ={'LoRa ID'}
               labelTxt ={'LoRa ID'}
               edit   = {true}
@@ -183,7 +197,7 @@ const FormEditSelectedDevice = props => {
             <TextAndInputComponent 
               required = {false}
               name 
-              value
+              value = {selectedDeviceBody != {} ? selectedDeviceBody.Equipment.prod_comp : ''}
               inputTxt ={'제조사'}
               labelTxt ={'제조사'}
               edit   = {true}
@@ -205,19 +219,13 @@ const FormEditSelectedDevice = props => {
                 labelID={'moduleModelName'}
                 label={'모듈 모델명'}
                 onChange={handleChangeEquiNum}
+                value = {selectedDeviceBody != {} ? selectedDeviceBody.Equipment.model_no : ''}
               >
-                <MenuItem value={1}>{'008A'}</MenuItem>
-                <MenuItem value={2}>{'0010A'}</MenuItem>
-                <MenuItem value={3}>{'3'}</MenuItem>
-                <MenuItem value={4}>{'4'}</MenuItem>
-                <MenuItem value={5}>{'5'}</MenuItem>
-                <MenuItem value={6}>{'6'}</MenuItem>
-                <MenuItem value={7}>{'7'}</MenuItem>
-                <MenuItem value={8}>{'8'}</MenuItem>
-                <MenuItem value={9}>{'9'}</MenuItem>
-                <MenuItem value={10}>{'10'}</MenuItem>
-                <MenuItem value={11}>{'11'}</MenuItem>
-                <MenuItem value={12}>{'12'}</MenuItem>
+              {
+                deviceModels.map(model => (
+                  <MenuItem key={'model-'+model.id} value={model.id}>{model.model_name}</MenuItem>
+                ))
+              }
               </Select>
             </Box>
             {/* 5.  모듈 교체일자 */}
@@ -231,9 +239,9 @@ const FormEditSelectedDevice = props => {
               >{'모듈 교체일자'}</Typography>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
-                  value={replacementDeviceDate}
                   label={'모듈 교체일자'}
                   onChange={handleChangeReplacementDeviceDate}
+                  value={selectedDeviceBody != {} ? dayjs(selectedDeviceBody.Equipment.prod_date) : ''}
                 />
               </LocalizationProvider>
             </Box>
@@ -250,6 +258,7 @@ const FormEditSelectedDevice = props => {
                 labelID={'powerModelName'}
                 label={'파워 모델명'}
                 onChange={handleChangeEquiNum}
+                value={1}
               >
                 <MenuItem value={1}>{'HG - 17A'}</MenuItem>
                 <MenuItem value={2}>{'0010A'}</MenuItem>
@@ -282,19 +291,6 @@ const FormEditSelectedDevice = props => {
                 />
               </LocalizationProvider>
             </Box>
-            {/* 8.  CPU Version */}
-            <TextAndInputComponent 
-              required = {false} 
-              name 
-              value
-              inputTxt ={'CPU Version'}
-              labelTxt ={'CPU Version'}
-              edit   = {true}
-              create = {false}
-              textError = {'text Error'}
-              error = {false}
-              type
-            />
             {/* 9.  부품교체 */}
             <Box
               sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px'}}
@@ -308,6 +304,7 @@ const FormEditSelectedDevice = props => {
                 labelID={'partReplacement'}
                 label={'부품교체'}
                 onChange={handleChangeEquiNum}
+                value={1}
               >
                 <MenuItem value={1}>{'HG - 17A'}</MenuItem>
                 <MenuItem value={2}>{'0010A'}</MenuItem>
@@ -342,174 +339,192 @@ const FormEditSelectedDevice = props => {
               </LocalizationProvider>
             </Box>
           </Box>
-        {/* Right Panel Form */}
-        <Box
-          className={'formColumn'}
+          {/* Midle Panel Form */}
+          <Box
+            className={'formColumn'}
           >
-          {/* 11. 네오 IoT No. */}
-          <TextAndInputComponent 
-            required = {false}
-            name 
-            value
-            inputTxt ={'네오 IoT No.'}
-            labelTxt ={'네오 IoT No.'}
-            edit   = {true}
-            create = {false}
-            textError = {'text Error'}
-            error = {false}
-            type
-          />
-          {/* 12. 네오 BLE No. */}
-          <TextAndInputComponent 
-            required = {false}
-            name 
-            value
-            inputTxt ={'네오 BLE No.'}
-            labelTxt ={'네오 BLE No.'}
-            edit   = {true}
-            create = {false}
-            textError = {'text Error'}
-            error = {false}
-            type
-          />
-          {/* 13. 제조일자 */}
-          <Box
-              sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px'}}
-            >
-            <Typography
-              sx = {{
-                paddingRight: '5px'
-              }}
-            >{'제조일자'}</Typography>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                value={replacementDeviceDate}
-                label={'제조일자'}
-                onChange={handleChangeReplacementDeviceDate}
-              />
-            </LocalizationProvider>
-          </Box>
-          {/* 14. 설치일자 */}
-          <Box
-              sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px'}}
-            >
-            <Typography
-              sx = {{
-                paddingRight: '5px'
-              }}
-            >{'설치일자'}</Typography>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                value={replacementDeviceDate}
-                label={'설치일자'}
-                onChange={handleChangeReplacementDeviceDate}
-              />
-            </LocalizationProvider>
-          </Box>
-          {/* 15. 설치담당 */}
-          <TextAndInputComponent 
-            required = {false}
-            name 
-            value
-            inputTxt ={'설치담당'}
-            labelTxt ={'설치담당'}
-            edit   = {true}
-            create = {false}
-            textError = {'text Error'}
-            error = {false}
-            type
-          />
-          {/* 16. 검사담당 */}
-          <TextAndInputComponent 
-            required = {false}
-            name 
-            value
-            inputTxt ={'검사담당'}
-            labelTxt ={'검사담당'}
-            edit   = {true}
-            create = {false}
-            textError = {'text Error'}
-            error = {false}
-            type
-          />
-          {/* 17. 음원텍스트 */}
-          <TextAndInputComponent 
-            required = {false}
-            name 
-            value
-            inputTxt ={'음원텍스트'}
-            labelTxt ={'음원텍스트'}
-            edit   = {true}
-            create = {false}
-            textError = {'text Error'}
-            error = {false}
-            type
-          />
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'row'
-            }}
-          >
-            {/* 18. 죄표 */}
+            {/* 8.  CPU Version */}
             <TextAndInputComponent 
-              required = {false}
+              required = {false} 
               name 
               value
-              inputTxt ={'죄표 X'}
-              labelTxt ={'죄표 X'}
+              inputTxt ={'CPU Version'}
+              labelTxt ={'CPU Version'}
               edit   = {true}
               create = {false}
               textError = {'text Error'}
               error = {false}
               type
             />
+            {/* 11. 네오 IoT No. */}
             <TextAndInputComponent 
               required = {false}
               name 
               value
-              inputTxt ={'죄표 Y'}
-              labelTxt ={'죄표 Y'}
+              inputTxt ={'네오 IoT No.'}
+              labelTxt ={'네오 IoT No.'}
               edit   = {true}
               create = {false}
               textError = {'text Error'}
               error = {false}
               type
             />
+            {/* 12. 네오 BLE No. */}
+            <TextAndInputComponent 
+              required = {false}
+              name 
+              value
+              inputTxt ={'네오 BLE No.'}
+              labelTxt ={'네오 BLE No.'}
+              edit   = {true}
+              create = {false}
+              textError = {'text Error'}
+              error = {false}
+              type
+            />
+            {/* 13. 제조일자 */}
+            <Box
+                sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px'}}
+              >
+              <Typography
+                sx = {{
+                  paddingRight: '5px'
+                }}
+              >{'제조일자'}</Typography>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  value={replacementDeviceDate}
+                  label={'제조일자'}
+                  onChange={handleChangeReplacementDeviceDate}
+                />
+              </LocalizationProvider>
+            </Box>
+            {/* 14. 설치일자 */}
+            <Box
+                sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px'}}
+              >
+              <Typography
+                sx = {{
+                  paddingRight: '5px'
+                }}
+              >{'설치일자'}</Typography>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  value={replacementDeviceDate}
+                  label={'설치일자'}
+                  onChange={handleChangeReplacementDeviceDate}
+                />
+              </LocalizationProvider>
+            </Box>
+            {/* 15. 설치담당 */}
+            <TextAndInputComponent 
+              required = {false}
+              name 
+              value
+              inputTxt ={'설치담당'}
+              labelTxt ={'설치담당'}
+              edit   = {true}
+              create = {false}
+              textError = {'text Error'}
+              error = {false}
+              type
+            />
+            {/* 16. 검사담당 */}
+            <TextAndInputComponent 
+              required = {false}
+              name 
+              value
+              inputTxt ={'검사담당'}
+              labelTxt ={'검사담당'}
+              edit   = {true}
+              create = {false}
+              textError = {'text Error'}
+              error = {false}
+              type
+            />
+            {/* 17. 음원텍스트 */}
+            <TextAndInputComponent 
+              required = {false}
+              name 
+              value
+              inputTxt ={'음원텍스트'}
+              labelTxt ={'음원텍스트'}
+              edit   = {true}
+              create = {false}
+              textError = {'text Error'}
+              error = {false}
+              multiline ={ true }
+            />
           </Box>
-          {/* 19. 비고 */}
-          <TextAndInputComponent 
-            required = {false}
-            name 
-            value
-            inputTxt ={'비고'}
-            labelTxt ={'비고'}
-            edit   = {true}
-            create = {false}
-            textError = {'text Error'}
-            error = {false}
-            multiline ={ true }
-          />
-          <Box 
-            sx={{
-              display: 'flex',
-              justifyContent: 'space-evenly'
-            }}
+          {/* Midle Panel Form */}
+          <Box
+            className={'formColumn'}
           >
-            <Button
-              color={'error'}
-              variant={'outlined'}
-              //onClick={}
-            >{'최소'}</Button>
-            <Button
-              color={'success'}
-              variant={'contained'}
-              type='submit'
-            >{'저장'}</Button>
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'row'
+              }}
+            >
+              {/* 18. 죄표 */}
+              <TextAndInputComponent 
+                required = {false}
+                name 
+                value
+                inputTxt ={'죄표 X'}
+                labelTxt ={'죄표 X'}
+                edit   = {true}
+                create = {false}
+                textError = {'text Error'}
+                error = {false}
+                type
+              />
+              <TextAndInputComponent 
+                required = {false}
+                name 
+                value
+                inputTxt ={'죄표 Y'}
+                labelTxt ={'죄표 Y'}
+                edit   = {true}
+                create = {false}
+                textError = {'text Error'}
+                error = {false}
+                type
+              />
+            </Box>
+            {/* 19. 비고 */}
+            <TextAndInputComponent 
+              required = {false}
+              name 
+              value
+              inputTxt ={'비고'}
+              labelTxt ={'비고'}
+              edit   = {true}
+              create = {false}
+              textError = {'text Error'}
+              error = {false}
+              multiline ={ true }
+            />
+            <Box 
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-evenly'
+              }}
+            >
+              <Button
+                color={'error'}
+                variant={'outlined'}
+                //onClick={}
+              >{'최소'}</Button>
+              <Button
+                    color={'success'}
+                    variant={'contained'}
+                    type='submit'
+              >{'저장'}</Button>
+            </Box>
           </Box>
         </Box>
-      </Box>
-    </FormGroup>
+      </FormGroup>
   </Box>
   )
 }

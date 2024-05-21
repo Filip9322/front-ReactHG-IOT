@@ -35,6 +35,7 @@ const ControllerInformation = props => {
   const [mapStyles, setMapStyles] = useState({});
   const [editDevices, setEditDevices] = useState(false);
   const [selectedDevice, setSelectedDevice] = useState(0);
+  const [selectedDeviceBody, setSelectedDeviceBody] = useState({});
   
   const [kakaoInitated, setKakaoInitiated] = useState(false);
 
@@ -105,6 +106,7 @@ const ControllerInformation = props => {
     setEditDevices(!editDevices);
     setMapStyles(editDevicesMapStyle);
     setSelectedDevice(0);
+    setSelectedDeviceBody({});
   }
 
   const handleDragEndMapMarker = event => {
@@ -314,6 +316,7 @@ const ControllerInformation = props => {
           <TableCompanyModel
             selectedDevice = {selectedDevice}
             setSelectedDevice = {setSelectedDevice}
+            setSelectedDeviceBody = {setSelectedDeviceBody}
             devices = {devices} 
             showDevices={showDevices} 
             deviceModels={deviceModels} /> : ''
@@ -476,7 +479,12 @@ const ControllerInformation = props => {
         <EquipmentTableDetails devices = {devices} showDevices={showDevices} />
       : '' }
       { action == 'edit' && editDevices && selectedDevice != 0 ?
-        <FormEditSelectedDevice selectedDevice = {selectedDevice} devices={devices} />
+        <FormEditSelectedDevice 
+          devices = {devices}
+          deviceModels = {deviceModels}
+          selectedDevice = {selectedDevice}
+          selectedDeviceBody = {selectedDeviceBody}
+        />
       : '' }
     </Box>
   )
@@ -706,7 +714,7 @@ const EquipmentTableDetails = props => {
 
 const TableCompanyModel = props => {
 
-  const { devices, showDevices, deviceModels, selectedDevice, setSelectedDevice } = props;
+  const { devices, showDevices, deviceModels, selectedDevice, setSelectedDevice, setSelectedDeviceBody } = props;
 
   const [tableKey, setTableKey] = useState(1);
 
@@ -734,14 +742,21 @@ const TableCompanyModel = props => {
   // * Handle Functions
   const handleSelectDeviceRadio = event => {
     setSelectedDevice(event.target.value);
-  }
 
+    let searchDevice =  devices.find(device => device.equi_num == event.target.value);
+    setSelectedDeviceBody(searchDevice);
+  }
+  
   const handleClickTableRow = deviceID => {
     setSelectedDevice(deviceID);
+
+    let searchDevice =  devices.find(device => device.equi_num == deviceID);
+    setSelectedDeviceBody(searchDevice);
   }
 
   const handleResetSelectedDevice = event => {
     setSelectedDevice(0);
+    setSelectedDeviceBody({});
   }
 
   useEffect (() =>{
