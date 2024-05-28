@@ -11,6 +11,7 @@ import { AdapterDayjs } from         '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
 // ** Icons Imports
+import { MapMarker } from 'mdi-material-ui'
 import { ChevronDown } from 'mdi-material-ui'
 
 import { TextAndInputComponent } from 'src/pages/map_monitor_location/lateralDetailPanel'
@@ -180,7 +181,7 @@ const FormEditSelectedDevice = props => {
                 <MenuItem value={12}>{'12'}</MenuItem>
               </Select>
             </Box>
-            {/* 2.  LoRa ID ----> TODO: Needs to be Changed to Select ?? */}
+            {/* 2.  LoRa ID  */}
             <TextAndInputComponent 
               required = {false}
               name 
@@ -193,7 +194,7 @@ const FormEditSelectedDevice = props => {
               error = {false}
               type
             />
-            {/* 3.  제조사 */}
+            {/* 3.  제조사 ----> TODO: Needs to be Changed to Select ?? */}
             <TextAndInputComponent 
               required = {false}
               name 
@@ -245,7 +246,7 @@ const FormEditSelectedDevice = props => {
                 />
               </LocalizationProvider>
             </Box>
-            {/* 6.  파워 모델명 */}
+            {/* 6.  파워 모델명 ----> TODO: Needs to be get possible Values to fill select accordingly */}
             <Box
               sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px'}}
             >
@@ -258,20 +259,10 @@ const FormEditSelectedDevice = props => {
                 labelID={'powerModelName'}
                 label={'파워 모델명'}
                 onChange={handleChangeEquiNum}
-                value={1}
+                value={selectedDeviceBody != {} ? selectedDeviceBody.Equipment.model_no : ''}
               >
-                <MenuItem value={1}>{'HG - 17A'}</MenuItem>
-                <MenuItem value={2}>{'0010A'}</MenuItem>
-                <MenuItem value={3}>{'3'}</MenuItem>
-                <MenuItem value={4}>{'4'}</MenuItem>
-                <MenuItem value={5}>{'5'}</MenuItem>
-                <MenuItem value={6}>{'6'}</MenuItem>
-                <MenuItem value={7}>{'7'}</MenuItem>
-                <MenuItem value={8}>{'8'}</MenuItem>
-                <MenuItem value={9}>{'9'}</MenuItem>
-                <MenuItem value={10}>{'10'}</MenuItem>
-                <MenuItem value={11}>{'11'}</MenuItem>
-                <MenuItem value={12}>{'12'}</MenuItem>
+                <MenuItem value={0} disable selected>{'선택: '}</MenuItem>
+                <MenuItem value={selectedDeviceBody.Equipment.model_no}>{selectedDeviceBody.Equipment.model_no}</MenuItem>
               </Select>
             </Box>
             {/* 7.  파워 교체일자 */}
@@ -285,7 +276,7 @@ const FormEditSelectedDevice = props => {
               >{'파워 교체일자'}</Typography>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
-                  value={replacementDeviceDate}
+                  value={selectedDeviceBody != {}  ? (selectedDeviceBody.Equipment.support_size != null ? dayjs(selectedDeviceBody.Equipment.support_size) : null) : null}
                   label={'파워 교체일자'}
                   onChange={handleChangeReplacementDeviceDate}
                 />
@@ -304,20 +295,10 @@ const FormEditSelectedDevice = props => {
                 labelID={'partReplacement'}
                 label={'부품교체'}
                 onChange={handleChangeEquiNum}
-                value={1}
+                value={selectedDeviceBody != {} ? selectedDeviceBody.Equipment.prod_type : ''}
               >
-                <MenuItem value={1}>{'HG - 17A'}</MenuItem>
-                <MenuItem value={2}>{'0010A'}</MenuItem>
-                <MenuItem value={3}>{'3'}</MenuItem>
-                <MenuItem value={4}>{'4'}</MenuItem>
-                <MenuItem value={5}>{'5'}</MenuItem>
-                <MenuItem value={6}>{'6'}</MenuItem>
-                <MenuItem value={7}>{'7'}</MenuItem>
-                <MenuItem value={8}>{'8'}</MenuItem>
-                <MenuItem value={9}>{'9'}</MenuItem>
-                <MenuItem value={10}>{'10'}</MenuItem>
-                <MenuItem value={11}>{'11'}</MenuItem>
-                <MenuItem value={12}>{'12'}</MenuItem>
+                <MenuItem value={0} disable selected>{'선택: '}</MenuItem>
+                <MenuItem value={selectedDeviceBody.Equipment.prod_type}>{selectedDeviceBody.Equipment.prod_type}</MenuItem>
               </Select>
             </Box>
             {/* 10. 부품교체일자 */}
@@ -331,7 +312,7 @@ const FormEditSelectedDevice = props => {
               >{'부품교체일자'}</Typography>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
-                  value={replacementDeviceDate}
+                  value={selectedDeviceBody != {}  ? dayjs(selectedDeviceBody.Equipment.button_type) : ''}
                   label={'부품교체일자'}
                   onChange={handleChangeReplacementDeviceDate}
                   name={'partReplacementDate'}
@@ -347,7 +328,7 @@ const FormEditSelectedDevice = props => {
             <TextAndInputComponent 
               required = {false} 
               name 
-              value
+              value = {selectedDeviceBody != {} ? selectedDeviceBody.Equipment.cpu_version : ''}
               inputTxt ={'CPU Version'}
               labelTxt ={'CPU Version'}
               edit   = {true}
@@ -360,7 +341,7 @@ const FormEditSelectedDevice = props => {
             <TextAndInputComponent 
               required = {false}
               name 
-              value
+              value = {selectedDeviceBody != {} ? (selectedDeviceBody.Equipment.neoiotnum  != null ? selectedDeviceBody.Equipment.neoiotnum  != null : '-' ) : ''}
               inputTxt ={'네오 IoT No.'}
               labelTxt ={'네오 IoT No.'}
               edit   = {true}
@@ -373,7 +354,7 @@ const FormEditSelectedDevice = props => {
             <TextAndInputComponent 
               required = {false}
               name 
-              value
+              value = {selectedDeviceBody != {} ? (selectedDeviceBody.Equipment.neoblenum  != null ? selectedDeviceBody.Equipment.neoblenum  != null : '-' ): ''}
               inputTxt ={'네오 BLE No.'}
               labelTxt ={'네오 BLE No.'}
               edit   = {true}
@@ -393,7 +374,7 @@ const FormEditSelectedDevice = props => {
               >{'제조일자'}</Typography>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
-                  value={replacementDeviceDate}
+                  value={selectedDeviceBody != {}  ? dayjs(selectedDeviceBody.Equipment.prod_date) : ''}
                   label={'제조일자'}
                   onChange={handleChangeReplacementDeviceDate}
                 />
@@ -410,7 +391,7 @@ const FormEditSelectedDevice = props => {
               >{'설치일자'}</Typography>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
-                  value={replacementDeviceDate}
+                  value={selectedDeviceBody != {}  ? dayjs(selectedDeviceBody.Equipment.install_date) : ''}
                   label={'설치일자'}
                   onChange={handleChangeReplacementDeviceDate}
                 />
@@ -420,7 +401,7 @@ const FormEditSelectedDevice = props => {
             <TextAndInputComponent 
               required = {false}
               name 
-              value
+              value = {selectedDeviceBody != {} ? selectedDeviceBody.Equipment.install_man : ''}
               inputTxt ={'설치담당'}
               labelTxt ={'설치담당'}
               edit   = {true}
@@ -433,7 +414,7 @@ const FormEditSelectedDevice = props => {
             <TextAndInputComponent 
               required = {false}
               name 
-              value
+              value = {selectedDeviceBody != {} ? selectedDeviceBody.Equipment.check_man : ''}
               inputTxt ={'검사담당'}
               labelTxt ={'검사담당'}
               edit   = {true}
@@ -446,7 +427,7 @@ const FormEditSelectedDevice = props => {
             <TextAndInputComponent 
               required = {false}
               name 
-              value
+              value = {selectedDeviceBody != {} ? selectedDeviceBody.Equipment.sound_text : ''}
               inputTxt ={'음원텍스트'}
               labelTxt ={'음원텍스트'}
               edit   = {true}
@@ -463,40 +444,57 @@ const FormEditSelectedDevice = props => {
             <Box
               sx={{
                 display: 'flex',
-                flexDirection: 'row'
+                flexDirection: 'row',
+                alignItems: 'center',
+                '& button.ButtonIconSVG': {
+                  display:'flex',
+                  marginLeft: '10px',
+                  position: 'relative',
+                  alignItems:'center',
+                  backgroundColor: '#dfdfdf',
+                  minWidth: '1.6em',
+                  marginTop: '11px',
+                  ':hover':{ cursor: 'pointer', backgroundColor: 'rgba(241, 74, 74, 0.9)', '& svg':{ color: '#fff'}},
+                  '& svg':{ color: '#777'}
+                }
               }}
             >
               {/* 18. 죄표 */}
               <TextAndInputComponent 
                 required = {false}
                 name 
-                value
+                value = {selectedDeviceBody != {} ? selectedDeviceBody.Equipment.map_x : ''}
                 inputTxt ={'죄표 X'}
                 labelTxt ={'죄표 X'}
-                edit   = {true}
+                edit ={false}
                 create = {false}
                 textError = {'text Error'}
                 error = {false}
-                type
               />
               <TextAndInputComponent 
                 required = {false}
                 name 
-                value
+                value = {selectedDeviceBody != {} ? selectedDeviceBody.Equipment.map_y : ''}
                 inputTxt ={'죄표 Y'}
                 labelTxt ={'죄표 Y'}
-                edit   = {true}
+                edit   = {false}
                 create = {false}
                 textError = {'text Error'}
                 error = {false}
-                type
               />
+              <Tooltip>
+                <Button
+                  className = { 'ButtonIconSVG' }
+                >
+                  <MapMarker />
+                </Button>
+              </Tooltip>
             </Box>
             {/* 19. 비고 */}
             <TextAndInputComponent 
               required = {false}
               name 
-              value
+              value = {selectedDeviceBody != {} ? selectedDeviceBody.Equipment.bigo : ''}
               inputTxt ={'비고'}
               labelTxt ={'비고'}
               edit   = {true}
