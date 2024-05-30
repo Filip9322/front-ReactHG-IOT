@@ -312,7 +312,7 @@ const FormEditSelectedDevice = props => {
               >{'부품교체일자'}</Typography>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
-                  value={selectedDeviceBody != {}  ? dayjs(selectedDeviceBody.Equipment.button_type) : ''}
+                  value={selectedDeviceBody != {}  ? (selectedDeviceBody.Equipment.button_type != null ? dayjs(selectedDeviceBody.Equipment.button_type) : null) : null}
                   label={'부품교체일자'}
                   onChange={handleChangeReplacementDeviceDate}
                   name={'partReplacementDate'}
