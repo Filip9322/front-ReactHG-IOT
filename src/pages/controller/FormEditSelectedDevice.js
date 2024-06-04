@@ -222,11 +222,12 @@ const FormEditSelectedDevice = props => {
                 onChange={handleChangeEquiNum}
                 value = {selectedDeviceBody != {} ? selectedDeviceBody.Equipment.model_no : ''}
               >
-              {
-                deviceModels.map(model => (
-                  <MenuItem key={'model-'+model.id} value={model.id}>{model.model_name}</MenuItem>
-                ))
-              }
+                <MenuItem value={0} disable selected>{'선택: '}</MenuItem>
+                {
+                  deviceModels.filter(modelCode => modelCode.model_code == '0007').map(model => (
+                    <MenuItem key={'model-'+model.id} value={model.model_subcode}>{model.model_name}</MenuItem>
+                  ))
+                }
               </Select>
             </Box>
             {/* 5.  모듈 교체일자 */}
@@ -262,7 +263,11 @@ const FormEditSelectedDevice = props => {
                 value={selectedDeviceBody != {} ? selectedDeviceBody.Equipment.model_no : ''}
               >
                 <MenuItem value={0} disable selected>{'선택: '}</MenuItem>
-                <MenuItem value={selectedDeviceBody.Equipment.model_no}>{selectedDeviceBody.Equipment.model_no}</MenuItem>
+                {
+                  deviceModels.filter(modelCode => modelCode.model_code == '0006').map(model => (
+                    <MenuItem key={'powerModel-'+model.id} value={model.model_subcode}>{model.model_name}</MenuItem>
+                  ))
+                }
               </Select>
             </Box>
             {/* 7.  파워 교체일자 */}
@@ -298,7 +303,11 @@ const FormEditSelectedDevice = props => {
                 value={selectedDeviceBody != {} ? selectedDeviceBody.Equipment.prod_type : ''}
               >
                 <MenuItem value={0} disable selected>{'선택: '}</MenuItem>
-                <MenuItem value={selectedDeviceBody.Equipment.prod_type}>{selectedDeviceBody.Equipment.prod_type}</MenuItem>
+                {
+                  deviceModels.filter(modelCode => modelCode.model_code == '0005').map(model => (
+                    <MenuItem key={'partReplacementModel-'+model.id} value={model.model_subcode}>{model.model_name + ' '+ selectedDeviceBody.Equipment.prod_type}</MenuItem>
+                  ))
+                }
               </Select>
             </Box>
             {/* 10. 부품교체일자 */}
