@@ -8,7 +8,7 @@ import { styled } from '@mui/material/styles';
 import { Box, Typography, CircularProgress, Button, Tooltip, tableCellClasses } from '@mui/material'
 import { Paper, Table, TableHead, TableBody, TableRow, TableCell, TableContainer, Divider, Radio  } from '@mui/material'
 
-import { Plus, PencilOutline, PencilOffOutline, Reload } from 'mdi-material-ui'
+import { Plus, WindowClose, PencilOutline, PencilOffOutline, Reload } from 'mdi-material-ui'
 
 // ** Utils
 import { getFetchURL } from 'src/@core/utils/fetchHelper';
@@ -34,6 +34,7 @@ const ControllerInformation = props => {
   const [deviceLocations, setDevicesLocations] = useState([]);
   const [mapStyles, setMapStyles] = useState({});
   const [editDevices, setEditDevices] = useState(false);
+  const [createDevice, setCreateDevice ] = useState(false);
   const [selectedDevice, setSelectedDevice] = useState(0);
   const [selectedDeviceBody, setSelectedDeviceBody] = useState({});
   
@@ -109,6 +110,16 @@ const ControllerInformation = props => {
     setSelectedDeviceBody({});
   }
 
+  const handleAddResetDevice = event => {
+    event.preventDefault();
+    
+    if(editDevices && action == 'edit' && selectedDevice == 0){
+      setCreateDevice(true);
+    } else if (editDevices && action == 'edit' && selectedDevice != 0){
+      setSelectedDevice(0);
+    }
+  }
+
   const handleDragEndMapMarker = event => {
     setLat(event.getPosition().Ma);
     setLng(event.getPosition().La);
@@ -162,7 +173,6 @@ const ControllerInformation = props => {
       }
     }
 
-    
     hasPageBeenRendered.current['effect1'] = true;
   },[devices]);
   
@@ -227,7 +237,24 @@ const ControllerInformation = props => {
       }
     },[])
     useEffect(()=>{
-      if(equi_state.state_code != 0) {setIconState('o'); console.log('state_code: '+equi_state.state_code)}
+      // Defining Icon Color (o_ green, p_ black, o_ red, l_ yellow )
+      if(equi_state.equi_num == selectedDevice) {
+        setIconState('l');
+      } else {
+        if(equi_state.state_code == 0) {
+          setIconState('b');
+        } else {
+          if(equi_state.Equipment) {
+            if(equi_state.Equipment.install_date == null || equi_state.Equipment.lora_id == null) {
+              setIconState('p');
+            } else {
+              setIconState('o');
+            }
+          } else {
+            setIconState('o');
+          }
+        }
+      }
 
       if(prevController.current !== controller) console.log(`${iconState}_${equi_state.equi_num}.png ${prevController.current} - ${controller}`)
     },[controller])
@@ -326,11 +353,9 @@ const ControllerInformation = props => {
             width: 'fit-content',
             position: 'relative',
             '& button.IconButtonSVG, & button.CBActionButton':{
-              bottom: 5, right: 35,
               height: '4rem',
               zIndex: 10,
               display:'flex',
-              marginLeft: '10px',
               position: 'absolute',
               alignItems:'center',
               border: 'solid 1px #aaa',
@@ -338,14 +363,36 @@ const ControllerInformation = props => {
               backgroundColor: '#fff',
               ':hover':{ cursor: 'pointer', backgroundColor: 'rgba(241, 74, 74, 0.9)', '& svg':{ color: '#fff'}},
               '& svg':{ color: '#777'}
+            },
+            '& .IconRight': {
+              marginLeft: '10px',
+              bottom: 5, right: 35,
+            },
+            '& .IconLeft': {
+              marginLeft: '20px',
+              bottom: 5, left: 15
             }
           }}
         >
-          { action == 'edit'  ?
+          { editDevices && action == 'edit'  ?
+          <Tooltip title={"설정"}>
+            <Button 
+              onClick = { handleAddResetDevice }
+              className={'IconButtonSVG IconLeft'}
+            >
+              { editDevices && action == 'edit' && selectedDevice == 0 ?
+                <Plus />
+              :
+                <Reload />
+              }
+            </Button>
+          </Tooltip>
+          : '' }
+          { action == 'edit' ?
           <Tooltip title={"추가"}>
             <Button 
               onClick = { handleClickAdd }
-              className={'IconButtonSVG'}
+              className={'IconButtonSVG IconRight'}
             >
               {editDevices && action == 'edit' ?
                 <PencilOffOutline />
@@ -354,7 +401,7 @@ const ControllerInformation = props => {
               }
             </Button>
           </Tooltip>
-          : '' }
+          : ''}
           <Box
             className="content-map"
             sx={{
@@ -475,9 +522,11 @@ const ControllerInformation = props => {
         </Box>
       </Box>
       <Divider />
+      {/** -- Table with Full Details of All Devices */}
       { action == 'view' && !editDevices || action == 'edit' && !editDevices ?
         <EquipmentTableDetails devices = {devices} showDevices={showDevices} />
       : '' }
+      {/** -- Table to edit a device */}
       { action == 'edit' && editDevices && selectedDevice != 0 ?
         <FormEditSelectedDevice 
           devices = {devices}
@@ -486,6 +535,16 @@ const ControllerInformation = props => {
           selectedDeviceBody = {selectedDeviceBody}
         />
       : '' }
+      {/** -- Table to create a device */}
+      { action == 'edit' && editDevices && selectedDevice == 0 && createDevice ?
+        <FormEditSelectedDevice 
+          devices = {devices}
+          deviceModels = {deviceModels}
+          selectedDevice = {{}}
+          selectedDeviceBody = {{}}
+        />
+      : '' }
+
     </Box>
   )
 }
