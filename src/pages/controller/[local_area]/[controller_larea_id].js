@@ -31,6 +31,7 @@ const ControllerInformation = props => {
   const [lng, setLng] = useState(controller.map_y);
   const [spinner, setSpinner] = useState(true);
   const [devices, setDevices] = useState([]);
+  const [devicesNumbersArray, updateDevicesNumbersArray] = useState([]);
   const [deviceLocations, setDevicesLocations] = useState([]);
   const [mapStyles, setMapStyles] = useState({});
   const [editDevices, setEditDevices] = useState(false);
@@ -114,8 +115,9 @@ const ControllerInformation = props => {
     event.preventDefault();
     
     if(editDevices && action == 'edit' && selectedDevice == 0){
-      setCreateDevice(true);
+      setCreateDevice(!createDevice);
     } else if (editDevices && action == 'edit' && selectedDevice != 0){
+      setCreateDevice(false);
       setSelectedDevice(0);
     }
   }
@@ -171,6 +173,13 @@ const ControllerInformation = props => {
         setMapKey(mapKey+1);
         if( devices[0].id != undefined ) { setShowDevices(true) } else { setShowDevices(false) }
       }
+
+      // Extract DevicesNumber into Array
+      let tempArray = [];
+      devices.map(device => {
+        tempArray.push(device.equi_num);
+      })
+      updateDevicesNumbersArray(tempArray);
     }
 
     hasPageBeenRendered.current['effect1'] = true;
@@ -375,12 +384,12 @@ const ControllerInformation = props => {
           }}
         >
           { editDevices && action == 'edit'  ?
-          <Tooltip title={"설정"}>
+          <Tooltip title={editDevices && action == 'edit' && selectedDevice == 0 && !createDevice ? "추가":"리셋" }>
             <Button 
               onClick = { handleAddResetDevice }
               className={'IconButtonSVG IconLeft'}
             >
-              { editDevices && action == 'edit' && selectedDevice == 0 ?
+              { editDevices && action == 'edit' && selectedDevice == 0 && !createDevice ?
                 <Plus />
               :
                 <Reload />
@@ -529,7 +538,7 @@ const ControllerInformation = props => {
       {/** -- Table to edit a device */}
       { action == 'edit' && editDevices && selectedDevice != 0 ?
         <FormEditSelectedDevice 
-          devices = {devices}
+          devices = {devicesNumbersArray}
           deviceModels = {deviceModels}
           selectedDevice = {selectedDevice}
           selectedDeviceBody = {selectedDeviceBody}
@@ -538,7 +547,7 @@ const ControllerInformation = props => {
       {/** -- Table to create a device */}
       { action == 'edit' && editDevices && selectedDevice == 0 && createDevice ?
         <FormEditSelectedDevice 
-          devices = {devices}
+          devices = {devicesNumbersArray}
           deviceModels = {deviceModels}
           selectedDevice = {{}}
           selectedDeviceBody = {{}}

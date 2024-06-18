@@ -58,7 +58,7 @@ const FormEditSelectedDevice = props => {
 
   useEffect(()=>{
     if(hasPageBeenRendered.current['effect1']){
-      console.log(selectedDeviceBody);
+      console.log(devices);
     }
     hasPageBeenRendered.current['effect1'] = true;  // TODO: COuld be deleted, not actually using
   },[])
@@ -175,18 +175,18 @@ const FormEditSelectedDevice = props => {
                 onChange={handleChangeEquiNum}
                 value={selectedDevice}
               >
-                <MenuItem value={1}>{'1'}</MenuItem>
-                <MenuItem value={2}>{'2'}</MenuItem>
-                <MenuItem value={3}>{'3'}</MenuItem>
-                <MenuItem value={4}>{'4'}</MenuItem>
-                <MenuItem value={5}>{'5'}</MenuItem>
-                <MenuItem value={6}>{'6'}</MenuItem>
-                <MenuItem value={7}>{'7'}</MenuItem>
-                <MenuItem value={8}>{'8'}</MenuItem>
-                <MenuItem value={9}>{'9'}</MenuItem>
-                <MenuItem value={10}>{'10'}</MenuItem>
-                <MenuItem value={11}>{'11'}</MenuItem>
-                <MenuItem value={12}>{'12'}</MenuItem>
+                <MenuItem disabled= {devices.includes(1)} value={1}>{'1'}</MenuItem>
+                <MenuItem disabled= {devices.includes(2)} value={2}>{'2'}</MenuItem>
+                <MenuItem disabled= {devices.includes(3)} value={3}>{'3'}</MenuItem>
+                <MenuItem disabled= {devices.includes(4)} value={4}>{'4'}</MenuItem>
+                <MenuItem disabled= {devices.includes(5)} value={5}>{'5'}</MenuItem>
+                <MenuItem disabled= {devices.includes(6)} value={6}>{'6'}</MenuItem>
+                <MenuItem disabled= {devices.includes(7)} value={7}>{'7'}</MenuItem>
+                <MenuItem disabled= {devices.includes(8)} value={8}>{'8'}</MenuItem>
+                <MenuItem disabled= {devices.includes(9)} value={9}>{'9'}</MenuItem>
+                <MenuItem disabled= {devices.includes(10)} value={10}>{'10'}</MenuItem>
+                <MenuItem disabled= {devices.includes(11)} value={11}>{'11'}</MenuItem>
+                <MenuItem disabled= {devices.includes(12)} value={12}>{'12'}</MenuItem>
               </Select>
             </Box>
             {/* 2.  LoRa ID  */}
