@@ -398,12 +398,12 @@ const ControllerInformation = props => {
           </Tooltip>
           : '' }
           { action == 'edit' ?
-          <Tooltip title={"추가"}>
+          <Tooltip title={editDevices && action == 'edit' ?'닫기':'설정'}>
             <Button 
               onClick = { handleClickAdd }
               className={'IconButtonSVG IconRight'}
             >
-              {editDevices && action == 'edit' ?
+              { editDevices && action == 'edit' ?
                 <PencilOffOutline />
               :
                 <PencilOutline />
@@ -549,7 +549,7 @@ const ControllerInformation = props => {
         <FormEditSelectedDevice 
           devices = {devicesNumbersArray}
           deviceModels = {deviceModels}
-          selectedDevice = {{}}
+          selectedDevice = {0}
           selectedDeviceBody = {{}}
         />
       : '' }

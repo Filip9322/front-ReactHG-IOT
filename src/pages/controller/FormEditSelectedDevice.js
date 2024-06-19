@@ -175,15 +175,16 @@ const FormEditSelectedDevice = props => {
                 onChange={handleChangeEquiNum}
                 value={selectedDevice}
               >
-                <MenuItem disabled= {devices.includes(1)} value={1}>{'1'}</MenuItem>
-                <MenuItem disabled= {devices.includes(2)} value={2}>{'2'}</MenuItem>
-                <MenuItem disabled= {devices.includes(3)} value={3}>{'3'}</MenuItem>
-                <MenuItem disabled= {devices.includes(4)} value={4}>{'4'}</MenuItem>
-                <MenuItem disabled= {devices.includes(5)} value={5}>{'5'}</MenuItem>
-                <MenuItem disabled= {devices.includes(6)} value={6}>{'6'}</MenuItem>
-                <MenuItem disabled= {devices.includes(7)} value={7}>{'7'}</MenuItem>
-                <MenuItem disabled= {devices.includes(8)} value={8}>{'8'}</MenuItem>
-                <MenuItem disabled= {devices.includes(9)} value={9}>{'9'}</MenuItem>
+                <MenuItem disabled selected ={selectedDevice == null || selectedDevice == 0 ? true : false } value={0}>{'선택: '}</MenuItem>
+                <MenuItem disabled= {devices.includes(1)}  value={1}>{'1'}</MenuItem>
+                <MenuItem disabled= {devices.includes(2)}  value={2}>{'2'}</MenuItem>
+                <MenuItem disabled= {devices.includes(3)}  value={3}>{'3'}</MenuItem>
+                <MenuItem disabled= {devices.includes(4)}  value={4}>{'4'}</MenuItem>
+                <MenuItem disabled= {devices.includes(5)}  value={5}>{'5'}</MenuItem>
+                <MenuItem disabled= {devices.includes(6)}  value={6}>{'6'}</MenuItem>
+                <MenuItem disabled= {devices.includes(7)}  value={7}>{'7'}</MenuItem>
+                <MenuItem disabled= {devices.includes(8)}  value={8}>{'8'}</MenuItem>
+                <MenuItem disabled= {devices.includes(9)}  value={9}>{'9'}</MenuItem>
                 <MenuItem disabled= {devices.includes(10)} value={10}>{'10'}</MenuItem>
                 <MenuItem disabled= {devices.includes(11)} value={11}>{'11'}</MenuItem>
                 <MenuItem disabled= {devices.includes(12)} value={12}>{'12'}</MenuItem>
@@ -228,9 +229,9 @@ const FormEditSelectedDevice = props => {
                 labelID={'moduleModelName'}
                 label={'모듈 모델명'}
                 onChange={handleChangeEquiNum}
-                value = { Object.keys(selectedDeviceBody).length > 1 ? selectedDeviceBody.Equipment.model_no : ''}
+                value = { Object.keys(selectedDeviceBody).length > 1 ? selectedDeviceBody.Equipment.model_no : 0}
               >
-                <MenuItem value={0} disable selected>{'선택: '}</MenuItem>
+                <MenuItem disabled selected ={selectedDevice == null || selectedDevice == 0 ? true : false } value={0}>{'선택: '}</MenuItem>
                 {
                   deviceModels.filter(modelCode => modelCode.model_code == '0007').map(model => (
                     <MenuItem key={'model-'+model.id} value={model.model_subcode}>{model.model_name}</MenuItem>
@@ -268,9 +269,9 @@ const FormEditSelectedDevice = props => {
                 labelID={'powerModelName'}
                 label={'파워 모델명'}
                 onChange={handleChangeEquiNum}
-                value={ Object.keys(selectedDeviceBody).length > 1 ? selectedDeviceBody.Equipment.model_no : ''}
+                value={ Object.keys(selectedDeviceBody).length > 1 ? selectedDeviceBody.Equipment.model_no : 0}
               >
-                <MenuItem value={0} disable selected>{'선택: '}</MenuItem>
+                <MenuItem disabled selected ={selectedDevice == null || selectedDevice == 0 ? true : false } value={0}>{'선택: '}</MenuItem>
                 {
                   deviceModels.filter(modelCode => modelCode.model_code == '0006').map(model => (
                     <MenuItem key={'powerModel-'+model.id} value={model.model_subcode}>{model.model_name}</MenuItem>
@@ -308,9 +309,9 @@ const FormEditSelectedDevice = props => {
                 labelID={'partReplacement'}
                 label={'부품교체'}
                 onChange={handleChangeEquiNum}
-                value={ Object.keys(selectedDeviceBody).length > 1 ? selectedDeviceBody.Equipment.prod_type : ''}
+                value={ Object.keys(selectedDeviceBody).length > 1 ? selectedDeviceBody.Equipment.prod_type : 0}
               >
-                <MenuItem value={0} disable selected>{'선택: '}</MenuItem>
+                <MenuItem disabled selected ={selectedDevice == null || selectedDevice == 0 ? true : false } value={0}>{'선택: '}</MenuItem>
                 {
                   deviceModels.filter(modelCode => modelCode.model_code == '0005').map(model => (
                     <MenuItem key={'partReplacementModel-'+model.id} value={model.model_subcode}>{model.model_name}</MenuItem>
