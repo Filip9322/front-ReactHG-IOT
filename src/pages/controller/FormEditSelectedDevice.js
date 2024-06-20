@@ -14,6 +14,8 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { MapMarker } from 'mdi-material-ui'
 import { ChevronDown } from 'mdi-material-ui'
 
+// ** Import External Customed Components
+import { CheckStateValue } from 'src/@core/utils/checkStateValue';
 import { TextAndInputComponent } from 'src/pages/map_monitor_location/lateralDetailPanel'
 
 const FormEditSelectedDevice = props => {
@@ -58,8 +60,11 @@ const FormEditSelectedDevice = props => {
 
   useEffect(()=>{
     if(hasPageBeenRendered.current['effect1']){
-      console.log(devices);
+      console.log(selectedDeviceBody);
     }
+    /** {selectedDevice != 0 && selectedDevice != null ?
+              <CheckStateValue stateValue={ selectedDeviceBody.state_code } />
+    :''}*/
     hasPageBeenRendered.current['effect1'] = true;  // TODO: COuld be deleted, not actually using
   },[])
 
@@ -69,7 +74,7 @@ const FormEditSelectedDevice = props => {
         <ToggleButtonGroup
           color='primary'
           value={1}
-          exvlusive
+          exclusive
           aria-label={'시설물 수정'}
           sx={{
             width: '100%',
@@ -89,8 +94,7 @@ const FormEditSelectedDevice = props => {
             }}
             disabled
           >
-            {'시설물 수정'}
-
+            {'시설물 수정 - 상태:'}
           </ToggleButton>
           <ToggleButton
             sx={{
@@ -229,7 +233,7 @@ const FormEditSelectedDevice = props => {
                 labelID={'moduleModelName'}
                 label={'모듈 모델명'}
                 onChange={handleChangeEquiNum}
-                value = { Object.keys(selectedDeviceBody).length > 1 ? selectedDeviceBody.Equipment.model_no : 0}
+                value = { Object.keys(selectedDeviceBody).length > 1 ? (selectedDeviceBody.Equipment.model_no != null ? selectedDeviceBody.Equipment.model_no : 0) : 0}
               >
                 <MenuItem disabled selected ={selectedDevice == null || selectedDevice == 0 ? true : false } value={0}>{'선택: '}</MenuItem>
                 {
@@ -269,7 +273,7 @@ const FormEditSelectedDevice = props => {
                 labelID={'powerModelName'}
                 label={'파워 모델명'}
                 onChange={handleChangeEquiNum}
-                value={ Object.keys(selectedDeviceBody).length > 1 ? selectedDeviceBody.Equipment.model_no : 0}
+                value={ Object.keys(selectedDeviceBody).length > 1 ? (selectedDeviceBody.Equipment.model_no != null ? selectedDeviceBody.Equipment.model_no : 0 ) : 0}
               >
                 <MenuItem disabled selected ={selectedDevice == null || selectedDevice == 0 ? true : false } value={0}>{'선택: '}</MenuItem>
                 {
@@ -309,7 +313,7 @@ const FormEditSelectedDevice = props => {
                 labelID={'partReplacement'}
                 label={'부품교체'}
                 onChange={handleChangeEquiNum}
-                value={ Object.keys(selectedDeviceBody).length > 1 ? selectedDeviceBody.Equipment.prod_type : 0}
+                value={ Object.keys(selectedDeviceBody).length > 1 ? (selectedDeviceBody.Equipment.prod_type != null ? selectedDeviceBody.Equipment.prod_type : 0 ) : 0}
               >
                 <MenuItem disabled selected ={selectedDevice == null || selectedDevice == 0 ? true : false } value={0}>{'선택: '}</MenuItem>
                 {

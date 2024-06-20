@@ -13,6 +13,7 @@ import { Plus, WindowClose, PencilOutline, PencilOffOutline, Reload } from 'mdi-
 // ** Utils
 import { getFetchURL } from 'src/@core/utils/fetchHelper';
 import { useKakaoLoader } from 'src/@core/utils/kakao_map_api';
+import { CheckStateValue } from 'src/@core/utils/checkStateValue';
 import { FormEditSelectedDevice } from 'src/pages/controller/FormEditSelectedDevice';
 
 const ControllerInformation = props => {
@@ -558,41 +559,6 @@ const ControllerInformation = props => {
   )
 }
 
-const CheckStateValue = props => {
-  
-  const {stateValue} = props;
-  var color, text;
-
-  if (stateValue == 0){
-    color = 'green';
-    text = '정상';
-  } else {
-    color = 'red';
-    switch(stateValue){
-      case 1: {
-        text = '이상';
-        break;
-      }
-      case 88: {
-        text = '통신에러';
-        break;
-      }
-      case 98: {
-        text = '보고중단'
-        break;
-      } 
-      default: { //  TODO: Check '이상' code: 99 ?
-        text = '이상';
-        break;
-      }
-    }
-  }
-
-  return (
-    <span style={{color: color}}>{text}</span>
-  );
-}
-
 const CheckButtonStateValue = props => {
   const {buttonState} = props;
   var color, text;
@@ -865,7 +831,7 @@ const TableCompanyModel = props => {
                   value={equi_state.equi_num}
                   checked={selectedDevice == equi_state.equi_num}
                   onChange={handleSelectDeviceRadio}
-                />
+                />{equi_state.state_code != 0 ? <CheckStateValue stateValue={equi_state.state_code}/> : ''}
               </StyledTableCell>
               <StyledTableCell>{equi_state.equi_num}</StyledTableCell>
               <StyledTableCell align='center'>{equi_state.lora_id}</StyledTableCell>
