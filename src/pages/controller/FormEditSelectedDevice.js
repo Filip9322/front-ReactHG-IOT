@@ -20,12 +20,14 @@ import { TextAndInputComponent } from 'src/pages/map_monitor_location/lateralDet
 
 const FormEditSelectedDevice = props => {
 
-  
   const { selectedDevice, selectedDeviceBody, deviceModels, devices } = props;
-  const [replacementDeviceDate, setReplacementDeviceDate] = useState(dayjs('2022-04-17'))
+  
   const [anchorEl, setAnchorEl] = useState();
   const [selectMenuTitle, setSelectMenuTitle] = useState('활성');
-  //const [openActivationSelect, updateOpenActivationSelect] = useState(false);
+  
+  const [equinumSelect, setEquinumSelect] = useState(selectedDevice);
+  const [replacementDeviceDate, setReplacementDeviceDate] = useState(dayjs('2022-04-17'))
+
   const openActivationSelect = Boolean(anchorEl);
   
   // ** UseRef
@@ -55,6 +57,10 @@ const FormEditSelectedDevice = props => {
   
   //--- Select EquiNum
   const handleChangeEquiNum = event => {
+    setEquinumSelect(event.target.value);
+  }
+
+  const handleChangeSelectStandard = event => {
     console.log(event);
   }
 
@@ -65,9 +71,12 @@ const FormEditSelectedDevice = props => {
     /** {selectedDevice != 0 && selectedDevice != null ?
               <CheckStateValue stateValue={ selectedDeviceBody.state_code } />
     :''}*/
-    hasPageBeenRendered.current['effect1'] = true;  // TODO: COuld be deleted, not actually using
+    hasPageBeenRendered.current['effect1'] = true;  // TODO: Could be deleted, not actually using
   },[])
 
+  useEffect(() => {
+    setEquinumSelect(selectedDevice);
+  }, [selectedDevice])
   return(
     <Box>
       <Box>
@@ -156,6 +165,12 @@ const FormEditSelectedDevice = props => {
             },
             '& .MuiInputBase-input, & .MuiOutlinedInput-input': {
               padding: '10px 14px'
+            },
+            '& .selectInput fieldset legend': {
+              height: 'auto',
+              '& span': {
+                opacity: 100
+              }
             }
           }}
           >
@@ -174,10 +189,11 @@ const FormEditSelectedDevice = props => {
               >{'부착번호'}</Typography>
               <InputLabel id={'deviceEquiNum'} >{'부착번호'}</InputLabel>
               <Select
+                className={'selectInput'}
                 labelID={'deviceEquiNum'}
                 label={'부착번호'}
                 onChange={handleChangeEquiNum}
-                value={selectedDevice}
+                value={equinumSelect}
               >
                 <MenuItem disabled selected ={selectedDevice == null || selectedDevice == 0 ? true : false } value={0}>{'선택: '}</MenuItem>
                 <MenuItem disabled= {devices.includes(1)}  value={1}>{'1'}</MenuItem>
@@ -230,9 +246,10 @@ const FormEditSelectedDevice = props => {
                 }}
               >{'모듈 모델명'}</Typography>
               <Select
+                className={'selectInput'}
                 labelID={'moduleModelName'}
                 label={'모듈 모델명'}
-                onChange={handleChangeEquiNum}
+                onChange={handleChangeSelectStandard}
                 value = { Object.keys(selectedDeviceBody).length > 1 ? (selectedDeviceBody.Equipment.model_no != null ? selectedDeviceBody.Equipment.model_no : 0) : 0}
               >
                 <MenuItem disabled selected ={selectedDevice == null || selectedDevice == 0 ? true : false } value={0}>{'선택: '}</MenuItem>
@@ -270,9 +287,10 @@ const FormEditSelectedDevice = props => {
                 }}
               >{'파워 모델명'}</Typography> 
               <Select
+                className={'selectInput'}
                 labelID={'powerModelName'}
                 label={'파워 모델명'}
-                onChange={handleChangeEquiNum}
+                onChange={handleChangeSelectStandard}
                 value={ Object.keys(selectedDeviceBody).length > 1 ? (selectedDeviceBody.Equipment.model_no != null ? selectedDeviceBody.Equipment.model_no : 0 ) : 0}
               >
                 <MenuItem disabled selected ={selectedDevice == null || selectedDevice == 0 ? true : false } value={0}>{'선택: '}</MenuItem>
@@ -310,9 +328,10 @@ const FormEditSelectedDevice = props => {
                 }}
               >{'부품교체'}</Typography> 
               <Select
+                className={'selectInput'}
                 labelID={'partReplacement'}
                 label={'부품교체'}
-                onChange={handleChangeEquiNum}
+                onChange={handleChangeSelectStandard}
                 value={ Object.keys(selectedDeviceBody).length > 1 ? (selectedDeviceBody.Equipment.prod_type != null ? selectedDeviceBody.Equipment.prod_type : 0 ) : 0}
               >
                 <MenuItem disabled selected ={selectedDevice == null || selectedDevice == 0 ? true : false } value={0}>{'선택: '}</MenuItem>
