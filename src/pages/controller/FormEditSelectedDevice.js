@@ -12,50 +12,33 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
 // ** Icons Imports
 import { MapMarker } from 'mdi-material-ui'
-import { ChevronDown } from 'mdi-material-ui'
+
 
 // ** Import External Customed Components
 import { CheckStateValue } from 'src/@core/utils/checkStateValue';
 import { TextAndInputComponent } from 'src/pages/map_monitor_location/lateralDetailPanel'
 
 const FormEditSelectedDevice = props => {
-
+  
   const { selectedDevice, selectedDeviceBody, deviceModels, devices } = props;
   
-  const [anchorEl, setAnchorEl] = useState();
-  const [selectMenuTitle, setSelectMenuTitle] = useState('활성');
-  
   const [equinumSelect, setEquinumSelect] = useState(selectedDevice);
-  const [replacementDeviceDate, setReplacementDeviceDate] = useState(dayjs('2022-04-17'))
-
-  const openActivationSelect = Boolean(anchorEl);
   
+  // ** Form Delivery
+  const [formValues, setFormValues] = useState({id: null });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   // ** UseRef
   const hasPageBeenRendered = useRef({
     effect1: false
   });
 
   // ** Handlers Functions
-  const handleClickActivationSelect = event => {
-    setAnchorEl(event.currentTarget)
-  }
-
-  const handleCloseActivationSelect = event => {
-    setAnchorEl(event.target.value)
-  }
-
-  const handleChangeActivationSelect = event => {
-    let value = event.target.getAttribute('data-option');
-
-    setSelectMenuTitle(value);
-    handleCloseActivationSelect(event);
-  }
-
   const handleChangeReplacementDeviceDate = event => {
     console.log(event);
   }
   
-  //--- Select EquiNum
+  //--- Handle Form Field Changes
   const handleChangeEquiNum = event => {
     setEquinumSelect(event.target.value);
   }
@@ -63,19 +46,76 @@ const FormEditSelectedDevice = props => {
   const handleChangeSelectStandard = event => {
     console.log(event);
   }
+  
+  const handleChangeInputComponent = event => {
+    const { name, value } = event.target;
+    setFormValues({...formValues, [name]: value});
+  }
+
+  // ** Handle Form Submit
+
+  const  handleSubmitFormDeviceCreation = event => {
+    event.preventDefault();
+    console.log(event);
+
+    try{
+      let validateSubmit = false;
+
+      //Check Errors
+      //let errors = validate
+    } catch(error) {
+      if(error !== undefined) console.error(error)
+    }
+
+    console.log('Creation');
+  }
+  
+  const handleSubmitFormDeviceEdition = event => {
+    event.preventDefault();
+    console.log('Edition');
+  }
+
+  const restoreInitialValuesSelectedBody = () => {
+    if (Object.keys(selectedDeviceBody).length > 1 ) {
+      let tempObject = {
+        lora_id      : selectedDeviceBody.lora_id,
+        prod_comp    : selectedDeviceBody.Equipment.prod_comp, 
+        model_no     : selectedDeviceBody.Equipment.model_no,
+        prod_date    : selectedDeviceBody.Equipment.prod_date,
+        support_type : selectedDeviceBody.Equipment.support_type,
+        support_size : selectedDeviceBody.Equipment.support_size,
+        prod_type    : selectedDeviceBody.Equipment.prod_type,
+        button_type  : selectedDeviceBody.Equipment.button_type,
+        cpu_version  : selectedDeviceBody.Equipment.cpu_version,
+        neoiotnum    : selectedDeviceBody.Equipment.neoiotnum,
+        neoblenum    : selectedDeviceBody.Equipment.neoblenum,
+        prod_date    : selectedDeviceBody.Equipment.prod_date,
+        install_date : selectedDeviceBody.Equipment.install_date,
+        install_man  : selectedDeviceBody.Equipment.install_man,
+        check_man    : selectedDeviceBody.Equipment.check_man,
+        sound_text   : selectedDeviceBody.Equipment.sound_text,
+        map_y        : selectedDeviceBody.Equipment.map_y,
+        map_x        : selectedDeviceBody.Equipment.map_x,
+        bigo         : selectedDeviceBody.Equipment.bigo
+      };
+      setFormValues(tempObject);
+    } else {
+      setFormValues({id: null });
+    }
+  }
 
   useEffect(()=>{
-    if(hasPageBeenRendered.current['effect1']){
-      console.log(selectedDeviceBody);
-    }
-    /** {selectedDevice != 0 && selectedDevice != null ?
-              <CheckStateValue stateValue={ selectedDeviceBody.state_code } />
-    :''}*/
-    hasPageBeenRendered.current['effect1'] = true;  // TODO: Could be deleted, not actually using
+    restoreInitialValuesSelectedBody();
   },[])
 
   useEffect(() => {
+    console.log(formValues)
+  },[formValues])
+
+  useEffect(() => {
     setEquinumSelect(selectedDevice);
+        
+    restoreInitialValuesSelectedBody();
   }, [selectedDevice])
   return(
     <Box>
@@ -103,467 +143,441 @@ const FormEditSelectedDevice = props => {
             }}
             disabled
           >
-            {'시설물 수정 - 상태:'}
+            { selectedDevice != 0 && selectedDevice != null ?
+            '시설물 수정 - 상태:' : '시설물 추가: '}
           </ToggleButton>
           <ToggleButton
             sx={{
               backgroundColor: 'white',
               border: 'solid 1px #3a35412e'
-            }}
+              }}
             value='area'
           > 
-            <Box
-              color={selectMenuTitle == '비활성'?'red':'#189127'}
-              aria-controls = {openActivationSelect ? 'basic-menu': undefined}
-              aria-haspopup = {true}
-              aria-expanded = {openActivationSelect ? true: undefined}
-              onClick ={handleClickActivationSelect}
-            >
-              {selectMenuTitle}
-              <ListItemIcon>
-                <ChevronDown fontSize="small" />
-              </ListItemIcon>
-            </Box>
-            <Menu
-              id= {'selectActivationDevice'}
-              MenuListProps={{'aria-labelledby': 'fade-button'}}
-              anchorEl={anchorEl}
-              open={openActivationSelect}
-              onClose={handleCloseActivationSelect}
-              onClick={handleChangeActivationSelect}
-              TransitionComponent={Fade}
-              sx={{
-                border: '0'
-              }}
-            >
-              <MenuItem
-                data-option={'활성'} sx={{color: '#189127'}}
-              >{'활성'}</MenuItem>
-              <MenuItem
-                data-option={'비활성'} sx={{color: '#f00'}}
-              >{'비활성'}</MenuItem>
-            </Menu>
+          { selectedDevice != 0 && selectedDevice != null ?
+            <CheckStateValue stateValue={ selectedDeviceBody.state_code } />
+          :'#'}
           </ToggleButton>
         </ToggleButtonGroup>
       </Box>
-      <FormGroup>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-evenly',
-            '& .formColumn': {
-              width: '50%',
-              margin: '2% 1%',
-              paddingRight: '5px',
-              borderRight: 'dashed 1px #dbdce3'
-            },
-            '& .formColumn:last-child': {
-              border: 0
-            },
-            '& .MuiInputBase-input, & .MuiOutlinedInput-input, & .MuiTypography-root':{
-              fontSize: '0.875rem'
-            },
-            '& .MuiInputBase-input, & .MuiOutlinedInput-input': {
-              padding: '10px 14px'
-            },
-            '& .selectInput fieldset legend': {
-              height: 'auto',
-              '& span': {
-                opacity: 100
+      <form
+        onSubmit={ selectedDevice != 0 && selectedDevice != null ? handleSubmitFormDeviceEdition : handleSubmitFormDeviceCreation }
+      >
+        <FormGroup>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-evenly',
+              '& .formColumn': {
+                width: '50%',
+                margin: '2% 1%',
+                paddingRight: '5px',
+                borderRight: 'dashed 1px #dbdce3'
+              },
+              '& .formColumn:last-child': {
+                border: 0
+              },
+              '& .MuiInputBase-input, & .MuiOutlinedInput-input, & .MuiTypography-root':{
+                fontSize: '0.875rem'
+              },
+              '& .MuiInputBase-input, & .MuiOutlinedInput-input': {
+                padding: '10px 14px'
+              },
+              '& .selectInput fieldset legend': {
+                height: 'auto',
+                '& span': {
+                  opacity: 100
+                }
               }
-            }
-          }}
-          >
-          {/* Left Panel Form */}
-          <Box
-            className={'formColumn'}
+            }}
             >
-            {/* 1.  부착번호 */}
+            {/* Left Panel Form */}
             <Box
-              sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px'}}
-            >
-              <Typography
-                sx = {{
-                  paddingRight: '5px'
-                }}
-              >{'부착번호'}</Typography>
-              <InputLabel id={'deviceEquiNum'} >{'부착번호'}</InputLabel>
-              <Select
-                className={'selectInput'}
-                labelID={'deviceEquiNum'}
-                label={'부착번호'}
-                onChange={handleChangeEquiNum}
-                value={equinumSelect}
+              className={'formColumn'}
               >
-                <MenuItem disabled selected ={selectedDevice == null || selectedDevice == 0 ? true : false } value={0}>{'선택: '}</MenuItem>
-                <MenuItem disabled= {devices.includes(1)}  value={1}>{'1'}</MenuItem>
-                <MenuItem disabled= {devices.includes(2)}  value={2}>{'2'}</MenuItem>
-                <MenuItem disabled= {devices.includes(3)}  value={3}>{'3'}</MenuItem>
-                <MenuItem disabled= {devices.includes(4)}  value={4}>{'4'}</MenuItem>
-                <MenuItem disabled= {devices.includes(5)}  value={5}>{'5'}</MenuItem>
-                <MenuItem disabled= {devices.includes(6)}  value={6}>{'6'}</MenuItem>
-                <MenuItem disabled= {devices.includes(7)}  value={7}>{'7'}</MenuItem>
-                <MenuItem disabled= {devices.includes(8)}  value={8}>{'8'}</MenuItem>
-                <MenuItem disabled= {devices.includes(9)}  value={9}>{'9'}</MenuItem>
-                <MenuItem disabled= {devices.includes(10)} value={10}>{'10'}</MenuItem>
-                <MenuItem disabled= {devices.includes(11)} value={11}>{'11'}</MenuItem>
-                <MenuItem disabled= {devices.includes(12)} value={12}>{'12'}</MenuItem>
-              </Select>
-            </Box>
-            {/* 2.  LoRa ID  */}
-            <TextAndInputComponent 
-              required = {false}
-              name 
-              value = { Object.keys(selectedDeviceBody).length > 1 ? selectedDeviceBody.lora_id : ''}
-              inputTxt ={'LoRa ID'}
-              labelTxt ={'LoRa ID'}
-              edit   = {true}
-              create = {false}
-              textError = {'text Error'}
-              error = {false}
-              type
-            />
-            {/* 3.  제조사 ----> TODO: Needs to be Changed to Select ?? */}
-            <TextAndInputComponent 
-              required = {false}
-              name 
-              value = { Object.keys(selectedDeviceBody).length > 1 ? selectedDeviceBody.Equipment.prod_comp : ''}
-              inputTxt ={'제조사'}
-              labelTxt ={'제조사'}
-              edit   = {true}
-              create = {false}
-              textError = {'text Error'}
-              error = {false}
-              type
-            />
-            {/* 4.  모듈 모델명 */}
-            <Box
-              sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px'}}
-            >
-              <Typography
-                sx = {{
-                  paddingRight: '5px'
-                }}
-              >{'모듈 모델명'}</Typography>
-              <Select
-                className={'selectInput'}
-                labelID={'moduleModelName'}
-                label={'모듈 모델명'}
-                onChange={handleChangeSelectStandard}
-                value = { Object.keys(selectedDeviceBody).length > 1 ? (selectedDeviceBody.Equipment.model_no != null ? selectedDeviceBody.Equipment.model_no : 0) : 0}
-              >
-                <MenuItem disabled selected ={selectedDevice == null || selectedDevice == 0 ? true : false } value={0}>{'선택: '}</MenuItem>
-                {
-                  deviceModels.filter(modelCode => modelCode.model_code == '0007').map(model => (
-                    <MenuItem key={'model-'+model.id} value={model.model_subcode}>{model.model_name}</MenuItem>
-                  ))
-                }
-              </Select>
-            </Box>
-            {/* 5.  모듈 교체일자 */}
-            <Box
-              sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px'}}
-            >
-              <Typography
-                sx = {{
-                  paddingRight: '5px'
-                }}
-              >{'모듈 교체일자'}</Typography>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  label={'모듈 교체일자'}
-                  onChange={handleChangeReplacementDeviceDate}
-                  value={ Object.keys(selectedDeviceBody).length > 1 ? (selectedDeviceBody.Equipment.prod_date != null ? dayjs(selectedDeviceBody.Equipment.prod_date) : null) : null}
-                />
-              </LocalizationProvider>
-            </Box>
-            {/* 6.  파워 모델명 ----> TODO: Needs to be get possible Values to fill select accordingly */}
-            <Box
-              sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px'}}
-            >
-              <Typography
-                sx = {{
-                  paddingRight: '5px'
-                }}
-              >{'파워 모델명'}</Typography> 
-              <Select
-                className={'selectInput'}
-                labelID={'powerModelName'}
-                label={'파워 모델명'}
-                onChange={handleChangeSelectStandard}
-                value={ Object.keys(selectedDeviceBody).length > 1 ? (selectedDeviceBody.Equipment.model_no != null ? selectedDeviceBody.Equipment.model_no : 0 ) : 0}
-              >
-                <MenuItem disabled selected ={selectedDevice == null || selectedDevice == 0 ? true : false } value={0}>{'선택: '}</MenuItem>
-                {
-                  deviceModels.filter(modelCode => modelCode.model_code == '0006').map(model => (
-                    <MenuItem key={'powerModel-'+model.id} value={model.model_subcode}>{model.model_name}</MenuItem>
-                  ))
-                }
-              </Select>
-            </Box>
-            {/* 7.  파워 교체일자 */}
-            <Box
-              sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px'}}
-            >
-              <Typography
-                sx = {{
-                  paddingRight: '5px'
-                }}
-              >{'파워 교체일자'}</Typography>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  value={ Object.keys(selectedDeviceBody).length > 1  ? (selectedDeviceBody.Equipment.support_size != null ? dayjs(selectedDeviceBody.Equipment.support_size) : null) : null}
-                  label={'파워 교체일자'}
-                  onChange={handleChangeReplacementDeviceDate}
-                />
-              </LocalizationProvider>
-            </Box>
-            {/* 9.  부품교체 */}
-            <Box
-              sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px'}}
-            >
-              <Typography
-                sx = {{
-                  paddingRight: '5px'
-                }}
-              >{'부품교체'}</Typography> 
-              <Select
-                className={'selectInput'}
-                labelID={'partReplacement'}
-                label={'부품교체'}
-                onChange={handleChangeSelectStandard}
-                value={ Object.keys(selectedDeviceBody).length > 1 ? (selectedDeviceBody.Equipment.prod_type != null ? selectedDeviceBody.Equipment.prod_type : 0 ) : 0}
-              >
-                <MenuItem disabled selected ={selectedDevice == null || selectedDevice == 0 ? true : false } value={0}>{'선택: '}</MenuItem>
-                {
-                  deviceModels.filter(modelCode => modelCode.model_code == '0005').map(model => (
-                    <MenuItem key={'partReplacementModel-'+model.id} value={model.model_subcode}>{model.model_name}</MenuItem>
-                  ))
-                }
-              </Select>
-            </Box>
-            {/* 10. 부품교체일자 */}
-            <Box
-              sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px'}}
-            >
-              <Typography
-                sx = {{
-                  paddingRight: '5px'
-                }}
-              >{'부품교체일자'}</Typography>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  value={ Object.keys(selectedDeviceBody).length > 1   ? (selectedDeviceBody.Equipment.button_type != null ? dayjs(selectedDeviceBody.Equipment.button_type) : null) : null}
-                  label={'부품교체일자'}
-                  onChange={handleChangeReplacementDeviceDate}
-                  name={'partReplacementDate'}
-                />
-              </LocalizationProvider>
-            </Box>
-          </Box>
-          {/* Midle Panel Form */}
-          <Box
-            className={'formColumn'}
-          >
-            {/* 8.  CPU Version */}
-            <TextAndInputComponent 
-              required = {false} 
-              name 
-              value = { Object.keys(selectedDeviceBody).length > 1 ? selectedDeviceBody.Equipment.cpu_version : ''}
-              inputTxt ={'CPU Version'}
-              labelTxt ={'CPU Version'}
-              edit   = {true}
-              create = {false}
-              textError = {'text Error'}
-              error = {false}
-              type
-            />
-            {/* 11. 네오 IoT No. */}
-            <TextAndInputComponent 
-              required = {false}
-              name 
-              value = { Object.keys(selectedDeviceBody).length > 1 ? (selectedDeviceBody.Equipment.neoiotnum  != null ? selectedDeviceBody.Equipment.neoiotnum  != null : '-' ) : ''}
-              inputTxt ={'네오 IoT No.'}
-              labelTxt ={'네오 IoT No.'}
-              edit   = {true}
-              create = {false}
-              textError = {'text Error'}
-              error = {false}
-              type
-            />
-            {/* 12. 네오 BLE No. */}
-            <TextAndInputComponent 
-              required = {false}
-              name 
-              value = { Object.keys(selectedDeviceBody).length > 1 ? (selectedDeviceBody.Equipment.neoblenum  != null ? selectedDeviceBody.Equipment.neoblenum  != null : '-' ): ''}
-              inputTxt ={'네오 BLE No.'}
-              labelTxt ={'네오 BLE No.'}
-              edit   = {true}
-              create = {false}
-              textError = {'text Error'}
-              error = {false}
-              type
-            />
-            {/* 13. 제조일자 */}
-            <Box
+              {/* 1.  부착번호 */}
+              <Box
                 sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px'}}
               >
-              <Typography
-                sx = {{
-                  paddingRight: '5px'
-                }}
-              >{'제조일자'}</Typography>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  value={ Object.keys(selectedDeviceBody).length > 1  ? ( selectedDeviceBody.Equipment.prod_date != null ? dayjs(selectedDeviceBody.Equipment.prod_date) : null): null}
-                  label={'제조일자'}
-                  onChange={handleChangeReplacementDeviceDate}
-                />
-              </LocalizationProvider>
-            </Box>
-            {/* 14. 설치일자 */}
-            <Box
-                sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px'}}
-              >
-              <Typography
-                sx = {{
-                  paddingRight: '5px'
-                }}
-              >{'설치일자'}</Typography>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  value={ Object.keys(selectedDeviceBody).length > 1 ? ( selectedDeviceBody.Equipment.install_date != null ? dayjs(selectedDeviceBody.Equipment.install_date) : null): null}
-                  label={'설치일자'}
-                  onChange={handleChangeReplacementDeviceDate}
-                />
-              </LocalizationProvider>
-            </Box>
-            {/* 15. 설치담당 */}
-            <TextAndInputComponent 
-              required = {false}
-              name 
-              value = { Object.keys(selectedDeviceBody).length > 1 ? selectedDeviceBody.Equipment.install_man : ''}
-              inputTxt ={'설치담당'}
-              labelTxt ={'설치담당'}
-              edit   = {true}
-              create = {false}
-              textError = {'text Error'}
-              error = {false}
-              type
-            />
-            {/* 16. 검사담당 */}
-            <TextAndInputComponent 
-              required = {false}
-              name 
-              value = { Object.keys(selectedDeviceBody).length > 1 ? selectedDeviceBody.Equipment.check_man : ''}
-              inputTxt ={'검사담당'}
-              labelTxt ={'검사담당'}
-              edit   = {true}
-              create = {false}
-              textError = {'text Error'}
-              error = {false}
-              type
-            />
-            {/* 17. 음원텍스트 */}
-            <TextAndInputComponent 
-              required = {false}
-              name 
-              value = { Object.keys(selectedDeviceBody).length > 1 ? selectedDeviceBody.Equipment.sound_text : ''}
-              inputTxt ={'음원텍스트'}
-              labelTxt ={'음원텍스트'}
-              edit   = {true}
-              create = {false}
-              textError = {'text Error'}
-              error = {false}
-              multiline ={ true }
-            />
-          </Box>
-          {/* Midle Panel Form */}
-          <Box
-            className={'formColumn'}
-          >
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-                '& button.ButtonIconSVG': {
-                  display:'flex',
-                  marginLeft: '10px',
-                  position: 'relative',
-                  alignItems:'center',
-                  backgroundColor: '#dfdfdf',
-                  minWidth: '1.6em',
-                  marginTop: '11px',
-                  ':hover':{ cursor: 'pointer', backgroundColor: 'rgba(241, 74, 74, 0.9)', '& svg':{ color: '#fff'}},
-                  '& svg':{ color: '#777'}
-                }
-              }}
-            >
-              {/* 18. 죄표 */}
-              <TextAndInputComponent 
-                required = {false}
-                name 
-                value = { Object.keys(selectedDeviceBody).length > 1 ? selectedDeviceBody.Equipment.map_x : ''}
-                inputTxt ={'죄표 X'}
-                labelTxt ={'죄표 X'}
-                edit ={false}
-                create = {false}
-                textError = {'text Error'}
-                error = {false}
-              />
-              <TextAndInputComponent 
-                required = {false}
-                name 
-                value = { Object.keys(selectedDeviceBody).length > 1 ? selectedDeviceBody.Equipment.map_y : ''}
-                inputTxt ={'죄표 Y'}
-                labelTxt ={'죄표 Y'}
-                edit   = {false}
-                create = {false}
-                textError = {'text Error'}
-                error = {false}
-              />
-              <Tooltip>
-                <Button
-                  className = { 'ButtonIconSVG' }
+                <InputLabel id={'deviceEquiNum'} >{'부착번호'}</InputLabel>
+                <Select
+                  className={'selectInput'}
+                  labelID={'deviceEquiNum'}
+                  label={'부착번호'}
+                  onChange={handleChangeEquiNum}
+                  value={equinumSelect}
+                  required
                 >
-                  <MapMarker />
-                </Button>
-              </Tooltip>
+                  <MenuItem disabled selected ={selectedDevice == null || selectedDevice == 0 ? true : false } value={0}>{'선택: '}</MenuItem>
+                  <MenuItem disabled= {devices.includes(1)}  value={1}>{'1'}</MenuItem>
+                  <MenuItem disabled= {devices.includes(2)}  value={2}>{'2'}</MenuItem>
+                  <MenuItem disabled= {devices.includes(3)}  value={3}>{'3'}</MenuItem>
+                  <MenuItem disabled= {devices.includes(4)}  value={4}>{'4'}</MenuItem>
+                  <MenuItem disabled= {devices.includes(5)}  value={5}>{'5'}</MenuItem>
+                  <MenuItem disabled= {devices.includes(6)}  value={6}>{'6'}</MenuItem>
+                  <MenuItem disabled= {devices.includes(7)}  value={7}>{'7'}</MenuItem>
+                  <MenuItem disabled= {devices.includes(8)}  value={8}>{'8'}</MenuItem>
+                  <MenuItem disabled= {devices.includes(9)}  value={9}>{'9'}</MenuItem>
+                  <MenuItem disabled= {devices.includes(10)} value={10}>{'10'}</MenuItem>
+                  <MenuItem disabled= {devices.includes(11)} value={11}>{'11'}</MenuItem>
+                  <MenuItem disabled= {devices.includes(12)} value={12}>{'12'}</MenuItem>
+                </Select>
+              </Box>  
+              {/* 2.  LoRa ID  */}
+              <TextAndInputComponent 
+                required = {false}
+                name = {'lora_id'}
+                inputTxt = {'LoRa ID'}
+                valueTxt = { Object.keys(selectedDeviceBody).length > 1 ? selectedDeviceBody.lora_id : ''}
+                labelTxt = {'LoRa ID'}
+                textError = {'text Error'}
+                edit   = {true}
+                create = {false}
+                onChange={handleChangeInputComponent}
+                value = { Object.keys(selectedDeviceBody).length > 1 ? formValues.lora_id : ''}
+                error = {false}
+              />
+              {/* 3.  제조사 ----> TODO: Needs to be Changed to Select ?? */}
+              <TextAndInputComponent 
+                required = {false}
+                name = {'prod_comp'}
+                inputTxt ={'제조사'}
+                valueTxt = { Object.keys(selectedDeviceBody).length > 1 ? selectedDeviceBody.Equipment.prod_comp : ''}
+                labelTxt ={'제조사'}
+                textError = {'text Error'}
+                edit   = {true}
+                create = {false}
+                onChange={handleChangeInputComponent}
+                value = { Object.keys(selectedDeviceBody).length > 1 ? formValues.prod_comp : ''}
+                error = {false}
+              />
+              {/* 4.  모듈 모델명 */}
+              <Box
+                sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px'}}
+              >
+                <Typography
+                  sx = {{
+                    paddingRight: '5px'
+                  }}
+                >{'모듈 모델명'}</Typography>
+                <Select
+                  className={'selectInput'}
+                  labelID={'moduleModelName'}
+                  label={'모듈 모델명'}
+                  onChange={handleChangeSelectStandard}
+                  value = { Object.keys(selectedDeviceBody).length > 1 ? (selectedDeviceBody.Equipment.model_no != null ? selectedDeviceBody.Equipment.model_no : 0) : 0}
+                >
+                  <MenuItem disabled selected ={selectedDevice == null || selectedDevice == 0 ? true : false } value={0}>{'선택: '}</MenuItem>
+                  {
+                    deviceModels.filter(modelCode => modelCode.model_code == '0007').map(model => (
+                      <MenuItem key={'model-'+model.id} value={model.model_subcode}>{model.model_name}</MenuItem>
+                    ))
+                  }
+                </Select>
+              </Box>
+              {/* 5.  모듈 교체일자 */}
+              <Box
+                sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px'}}
+              >
+                <Typography
+                  sx = {{
+                    paddingRight: '5px'
+                  }}
+                >{'모듈 교체일자'}</Typography>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                    label={'모듈 교체일자'}
+                    onChange={handleChangeReplacementDeviceDate}
+                    value={ Object.keys(selectedDeviceBody).length > 1 ? (selectedDeviceBody.Equipment.prod_date != null ? dayjs(selectedDeviceBody.Equipment.prod_date) : null) : null}
+                  />
+                </LocalizationProvider>
+              </Box>
+              {/* 6.  파워 모델명 ----> TODO: Needs to be get possible Values to fill select accordingly */}
+              <Box
+                sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px'}}
+              >
+                <Typography
+                  sx = {{
+                    paddingRight: '5px'
+                  }}
+                >{'파워 모델명'}</Typography> 
+                <Select
+                  className={'selectInput'}
+                  labelID={'powerModelName'}
+                  label={'파워 모델명'}
+                  onChange={handleChangeSelectStandard}
+                  value={ Object.keys(selectedDeviceBody).length > 1 ? (selectedDeviceBody.Equipment.support_type != null ? selectedDeviceBody.Equipment.support_type : 0 ) : 0}
+                >
+                  <MenuItem disabled selected ={selectedDevice == null || selectedDevice == 0 ? true : false } value={0}>{'선택: '}</MenuItem>
+                  {
+                    deviceModels.filter(modelCode => modelCode.model_code == '0006').map(model => (
+                      <MenuItem key={'powerModel-'+model.id} value={model.model_subcode}>{model.model_name}</MenuItem>
+                    ))
+                  }
+                </Select>
+              </Box>
+              {/* 7.  파워 교체일자 */}
+              <Box
+                sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px'}}
+              >
+                <Typography
+                  sx = {{
+                    paddingRight: '5px'
+                  }}
+                >{'파워 교체일자'}</Typography>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                    value={ Object.keys(selectedDeviceBody).length > 1  ? (selectedDeviceBody.Equipment.support_size != null ? dayjs(selectedDeviceBody.Equipment.support_size) : null) : null}
+                    label={'파워 교체일자'}
+                    onChange={handleChangeReplacementDeviceDate}
+                  />
+                </LocalizationProvider>
+              </Box>
+              {/* 9.  부품교체 */}
+              <Box
+                sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px'}}
+              >
+                <Typography
+                  sx = {{
+                    paddingRight: '5px'
+                  }}
+                >{'부품교체'}</Typography> 
+                <Select
+                  className={'selectInput'}
+                  labelID={'partReplacement'}
+                  label={'부품교체'}
+                  onChange={handleChangeSelectStandard}
+                  value={ Object.keys(selectedDeviceBody).length > 1 ? (selectedDeviceBody.Equipment.prod_type != null ? selectedDeviceBody.Equipment.prod_type : 0 ) : 0}
+                >
+                  <MenuItem disabled selected ={selectedDevice == null || selectedDevice == 0 ? true : false } value={0}>{'선택: '}</MenuItem>
+                  {
+                    deviceModels.filter(modelCode => modelCode.model_code == '0005').map(model => (
+                      <MenuItem key={'partReplacementModel-'+model.id} value={model.model_subcode}>{model.model_name}</MenuItem>
+                    ))
+                  }
+                </Select>
+              </Box>
+              {/* 10. 부품교체일자 */}
+              <Box
+                sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px'}}
+              >
+                <Typography
+                  sx = {{
+                    paddingRight: '5px'
+                  }}
+                >{'부품교체일자'}</Typography>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                    value={ Object.keys(selectedDeviceBody).length > 1   ? (selectedDeviceBody.Equipment.button_type != null ? dayjs(selectedDeviceBody.Equipment.button_type) : null) : null}
+                    label={'부품교체일자'}
+                    onChange={handleChangeReplacementDeviceDate}
+                    name={'partReplacementDate'}
+                  />
+                </LocalizationProvider>
+              </Box>
             </Box>
-            {/* 19. 비고 */}
-            <TextAndInputComponent 
-              required = {false}
-              name 
-              value = { Object.keys(selectedDeviceBody).length > 1 ? selectedDeviceBody.Equipment.bigo : ''}
-              inputTxt ={'비고'}
-              labelTxt ={'비고'}
-              edit   = {true}
-              create = {false}
-              textError = {'text Error'}
-              error = {false}
-              multiline ={ true }
-            />
-            <Box 
-              sx={{
-                display: 'flex',
-                justifyContent: 'space-evenly'
-              }}
+            {/* Midle Panel Form */}
+            <Box
+              className={'formColumn'}
             >
-              <Button
-                color={'error'}
-                variant={'outlined'}
-                //onClick={}
-              >{'최소'}</Button>
-              <Button
-                    color={'success'}
-                    variant={'contained'}
-                    type='submit'
-              >{'저장'}</Button>
+              {/* 8.  CPU Version */}
+              <TextAndInputComponent 
+                required = {false} 
+                name = {'cpu_version'}
+                inputTxt ={'CPU Version'}
+                value = { Object.keys(selectedDeviceBody).length > 1 ? selectedDeviceBody.Equipment.cpu_version : ''}
+                labelTxt ={'CPU Version'}
+                edit   = {true}
+                create = {false}
+                textError = {'text Error'}
+                onChange={ handleChangeInputComponent }
+                error = {false}
+              />
+              {/* 11. 네오 IoT No. */}
+              <TextAndInputComponent 
+                required = {false}
+                name 
+                value = { Object.keys(selectedDeviceBody).length > 1 ? (selectedDeviceBody.Equipment.neoiotnum  != null ? selectedDeviceBody.Equipment.neoiotnum  != null : '-' ) : ''}
+                inputTxt ={'네오 IoT No.'}
+                labelTxt ={'네오 IoT No.'}
+                edit   = {true}
+                create = {false}
+                textError = {'text Error'}
+                error = {false}
+                type
+              />
+              {/* 12. 네오 BLE No. */}
+              <TextAndInputComponent 
+                required = {false}
+                name 
+                value = { Object.keys(selectedDeviceBody).length > 1 ? (selectedDeviceBody.Equipment.neoblenum  != null ? selectedDeviceBody.Equipment.neoblenum  != null : '-' ): ''}
+                inputTxt ={'네오 BLE No.'}
+                labelTxt ={'네오 BLE No.'}
+                edit   = {true}
+                create = {false}
+                textError = {'text Error'}
+                error = {false}
+                type
+              />
+              {/* 13. 제조일자 */}
+              <Box
+                  sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px'}}
+                >
+                <Typography
+                  sx = {{
+                    paddingRight: '5px'
+                  }}
+                >{'제조일자'}</Typography>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                    value={ Object.keys(selectedDeviceBody).length > 1  ? ( selectedDeviceBody.Equipment.prod_date != null ? dayjs(selectedDeviceBody.Equipment.prod_date) : null): null}
+                    label={'제조일자'}
+                    onChange={handleChangeReplacementDeviceDate}
+                  />
+                </LocalizationProvider>
+              </Box>
+              {/* 14. 설치일자 */}
+              <Box
+                  sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px'}}
+                >
+                <Typography
+                  sx = {{
+                    paddingRight: '5px'
+                  }}
+                >{'설치일자'}</Typography>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                    value={ Object.keys(selectedDeviceBody).length > 1 ? ( selectedDeviceBody.Equipment.install_date != null ? dayjs(selectedDeviceBody.Equipment.install_date) : null): null}
+                    label={'설치일자'}
+                    onChange={handleChangeReplacementDeviceDate}
+                  />
+                </LocalizationProvider>
+              </Box>
+              {/* 15. 설치담당 */}
+              <TextAndInputComponent 
+                required = {false}
+                name 
+                value = { Object.keys(selectedDeviceBody).length > 1 ? selectedDeviceBody.Equipment.install_man : ''}
+                inputTxt ={'설치담당'}
+                labelTxt ={'설치담당'}
+                edit   = {true}
+                create = {false}
+                textError = {'text Error'}
+                error = {false}
+                type
+              />
+              {/* 16. 검사담당 */}
+              <TextAndInputComponent 
+                required = {false}
+                name 
+                value = { Object.keys(selectedDeviceBody).length > 1 ? selectedDeviceBody.Equipment.check_man : ''}
+                inputTxt ={'검사담당'}
+                labelTxt ={'검사담당'}
+                edit   = {true}
+                create = {false}
+                textError = {'text Error'}
+                error = {false}
+                type
+              />
+              {/* 17. 음원텍스트 */}
+              <TextAndInputComponent 
+                required = {false}
+                name 
+                value = { Object.keys(selectedDeviceBody).length > 1 ? selectedDeviceBody.Equipment.sound_text : ''}
+                inputTxt ={'음원텍스트'}
+                labelTxt ={'음원텍스트'}
+                edit   = {true}
+                create = {false}
+                textError = {'text Error'}
+                error = {false}
+                multiline ={ true }
+              />
+            </Box>
+            {/* Midle Panel Form */}
+            <Box
+              className={'formColumn'}
+            >
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  '& button.ButtonIconSVG': {
+                    display:'flex',
+                    marginLeft: '10px',
+                    position: 'relative',
+                    alignItems:'center',
+                    backgroundColor: '#dfdfdf',
+                    minWidth: '1.6em',
+                    marginTop: '11px',
+                    ':hover':{ cursor: 'pointer', backgroundColor: 'rgba(241, 74, 74, 0.9)', '& svg':{ color: '#fff'}},
+                    '& svg':{ color: '#777'}
+                  }
+                }}
+              >
+                {/* 18. 죄표 */}
+                <TextAndInputComponent 
+                  required = {false}
+                  name 
+                  value = { Object.keys(selectedDeviceBody).length > 1 ? selectedDeviceBody.Equipment.map_x : ''}
+                  inputTxt ={'죄표 X'}
+                  labelTxt ={'죄표 X'}
+                  edit ={false}
+                  create = {false}
+                  textError = {'text Error'}
+                  error = {false}
+                />
+                <TextAndInputComponent 
+                  required = {false}
+                  name 
+                  value = { Object.keys(selectedDeviceBody).length > 1 ? selectedDeviceBody.Equipment.map_y : ''}
+                  inputTxt ={'죄표 Y'}
+                  labelTxt ={'죄표 Y'}
+                  edit   = {false}
+                  create = {false}
+                  textError = {'text Error'}
+                  error = {false}
+                />
+                <Tooltip>
+                  <Button
+                    className = { 'ButtonIconSVG' }
+                  >
+                    <MapMarker />
+                  </Button>
+                </Tooltip>
+              </Box>
+              {/* 19. 비고 */}
+              <TextAndInputComponent 
+                required = {false}
+                name 
+                value = { Object.keys(selectedDeviceBody).length > 1 ? selectedDeviceBody.Equipment.bigo : ''}
+                inputTxt ={'비고'}
+                labelTxt ={'비고'}
+                edit   = {true}
+                create = {false}
+                textError = {'text Error'}
+                error = {false}
+                multiline ={ true }
+              />
+              <Box 
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'space-evenly'
+                }}
+              >
+                <Button
+                  color={'error'}
+                  variant={'outlined'}
+                >{'최소'}</Button>
+                <Button
+                  color={'success'}
+                  variant={'contained'}
+                  type='submit'
+                >{'저장'}</Button>
+              </Box>
             </Box>
           </Box>
-        </Box>
-      </FormGroup>
+        </FormGroup>
+      </form>
   </Box>
   )
 }
