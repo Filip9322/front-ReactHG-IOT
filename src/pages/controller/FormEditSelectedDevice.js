@@ -34,8 +34,11 @@ const FormEditSelectedDevice = props => {
   });
 
   // ** Handlers Functions
-  const handleChangeReplacementDeviceDate = event => {
-    console.log(event);
+  const handleChangeReplacementDeviceDate = (event) => {
+    const { name, newDate, validationError } = event;
+    console.log(name);
+    console.log(newDate);
+    console.log(validationError);
   }
   
   //--- Handle Form Field Changes
@@ -44,7 +47,8 @@ const FormEditSelectedDevice = props => {
   }
 
   const handleChangeSelectStandard = event => {
-    console.log(event);
+    const { name, value } = event.target;
+    setFormValues({...formValues, [name]: value});
   }
   
   const handleChangeInputComponent = event => {
@@ -53,7 +57,6 @@ const FormEditSelectedDevice = props => {
   }
 
   // ** Handle Form Submit
-
   const  handleSubmitFormDeviceCreation = event => {
     event.preventDefault();
     console.log(event);
@@ -260,11 +263,12 @@ const FormEditSelectedDevice = props => {
                   }}
                 >{'모듈 모델명'}</Typography>
                 <Select
+                  name = {'model_no'}
                   className={'selectInput'}
                   labelID={'moduleModelName'}
                   label={'모듈 모델명'}
                   onChange={handleChangeSelectStandard}
-                  value = { Object.keys(selectedDeviceBody).length > 1 ? (selectedDeviceBody.Equipment.model_no != null ? selectedDeviceBody.Equipment.model_no : 0) : 0}
+                  value = { Object.keys(selectedDeviceBody).length > 1 ? (formValues.model_no != null ? formValues.model_no : 0) : 0}
                 >
                   <MenuItem disabled selected ={selectedDevice == null || selectedDevice == 0 ? true : false } value={0}>{'선택: '}</MenuItem>
                   {
@@ -285,9 +289,11 @@ const FormEditSelectedDevice = props => {
                 >{'모듈 교체일자'}</Typography>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
+                    timezone='system'
+                    name = {'prod_no'}
                     label={'모듈 교체일자'}
-                    onChange={handleChangeReplacementDeviceDate}
-                    value={ Object.keys(selectedDeviceBody).length > 1 ? (selectedDeviceBody.Equipment.prod_date != null ? dayjs(selectedDeviceBody.Equipment.prod_date) : null) : null}
+                    onChange={(newDate, validationError) => handleChangeReplacementDeviceDate({ name: "prod_no", newDate: newDate, validationError: validationError })}
+                    value={ Object.keys(selectedDeviceBody).length > 1 ? (formValues.prod_date != null ? dayjs(formValues.prod_date) : null) : null}
                   />
                 </LocalizationProvider>
               </Box>
@@ -301,11 +307,12 @@ const FormEditSelectedDevice = props => {
                   }}
                 >{'파워 모델명'}</Typography> 
                 <Select
+                  name = {'support_type'}
                   className={'selectInput'}
                   labelID={'powerModelName'}
                   label={'파워 모델명'}
                   onChange={handleChangeSelectStandard}
-                  value={ Object.keys(selectedDeviceBody).length > 1 ? (selectedDeviceBody.Equipment.support_type != null ? selectedDeviceBody.Equipment.support_type : 0 ) : 0}
+                  value={ Object.keys(selectedDeviceBody).length > 1 ? (formValues.support_type != null ? formValues.support_type : 0 ) : 0}
                 >
                   <MenuItem disabled selected ={selectedDevice == null || selectedDevice == 0 ? true : false } value={0}>{'선택: '}</MenuItem>
                   {
@@ -326,9 +333,10 @@ const FormEditSelectedDevice = props => {
                 >{'파워 교체일자'}</Typography>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
+                    name={'support_size'}
                     value={ Object.keys(selectedDeviceBody).length > 1  ? (selectedDeviceBody.Equipment.support_size != null ? dayjs(selectedDeviceBody.Equipment.support_size) : null) : null}
                     label={'파워 교체일자'}
-                    onChange={handleChangeReplacementDeviceDate}
+                    onChange={(newDate, validationError) => handleChangeReplacementDeviceDate({ name: "support_size", newDate: newDate, validationError: validationError })}
                   />
                 </LocalizationProvider>
               </Box>
@@ -342,11 +350,12 @@ const FormEditSelectedDevice = props => {
                   }}
                 >{'부품교체'}</Typography> 
                 <Select
+                  name = {'prod_type'}
                   className={'selectInput'}
                   labelID={'partReplacement'}
                   label={'부품교체'}
                   onChange={handleChangeSelectStandard}
-                  value={ Object.keys(selectedDeviceBody).length > 1 ? (selectedDeviceBody.Equipment.prod_type != null ? selectedDeviceBody.Equipment.prod_type : 0 ) : 0}
+                  value={ Object.keys(selectedDeviceBody).length > 1 ? (formValues.prod_type != null ? formValues.prod_type : 0 ) : 0}
                 >
                   <MenuItem disabled selected ={selectedDevice == null || selectedDevice == 0 ? true : false } value={0}>{'선택: '}</MenuItem>
                   {
@@ -367,10 +376,10 @@ const FormEditSelectedDevice = props => {
                 >{'부품교체일자'}</Typography>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
-                    value={ Object.keys(selectedDeviceBody).length > 1   ? (selectedDeviceBody.Equipment.button_type != null ? dayjs(selectedDeviceBody.Equipment.button_type) : null) : null}
-                    label={'부품교체일자'}
-                    onChange={handleChangeReplacementDeviceDate}
                     name={'partReplacementDate'}
+                    value={ Object.keys(selectedDeviceBody).length > 1   ? (formValues.button_type != null ? dayjs(formValues.button_type) : null) : null}
+                    label={'부품교체일자'}
+                    onChange={(newDate, validationError) => handleChangeReplacementDeviceDate({ name: "partReplacementDate", newDate: newDate, validationError: validationError })}
                   />
                 </LocalizationProvider>
               </Box>
@@ -384,7 +393,7 @@ const FormEditSelectedDevice = props => {
                 required = {false} 
                 name = {'cpu_version'}
                 inputTxt ={'CPU Version'}
-                value = { Object.keys(selectedDeviceBody).length > 1 ? selectedDeviceBody.Equipment.cpu_version : ''}
+                value = { Object.keys(selectedDeviceBody).length > 1 ? (formValues.cpu_version != null ? formValues.cpu_version : '-') : ''}
                 labelTxt ={'CPU Version'}
                 edit   = {true}
                 create = {false}
@@ -395,28 +404,28 @@ const FormEditSelectedDevice = props => {
               {/* 11. 네오 IoT No. */}
               <TextAndInputComponent 
                 required = {false}
-                name 
-                value = { Object.keys(selectedDeviceBody).length > 1 ? (selectedDeviceBody.Equipment.neoiotnum  != null ? selectedDeviceBody.Equipment.neoiotnum  != null : '-' ) : ''}
+                name = {'neoiotnum'}
                 inputTxt ={'네오 IoT No.'}
+                value = { Object.keys(selectedDeviceBody).length > 1 ? (formValues.neoiotnum  != null ? formValues.neoiotnum : '-' ) : ''}
                 labelTxt ={'네오 IoT No.'}
                 edit   = {true}
                 create = {false}
                 textError = {'text Error'}
+                onChange={ handleChangeInputComponent }
                 error = {false}
-                type
               />
               {/* 12. 네오 BLE No. */}
               <TextAndInputComponent 
                 required = {false}
-                name 
-                value = { Object.keys(selectedDeviceBody).length > 1 ? (selectedDeviceBody.Equipment.neoblenum  != null ? selectedDeviceBody.Equipment.neoblenum  != null : '-' ): ''}
+                name = {'neoblenum'}
                 inputTxt ={'네오 BLE No.'}
+                value = { Object.keys(selectedDeviceBody).length > 1 ? (formValues.neoblenum  != null ? formValues.neoblenum  : '-' ): ''}
                 labelTxt ={'네오 BLE No.'}
                 edit   = {true}
                 create = {false}
                 textError = {'text Error'}
+                onChange={ handleChangeInputComponent }
                 error = {false}
-                type
               />
               {/* 13. 제조일자 */}
               <Box
@@ -429,9 +438,10 @@ const FormEditSelectedDevice = props => {
                 >{'제조일자'}</Typography>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
+                    name={'prod_date'}
                     value={ Object.keys(selectedDeviceBody).length > 1  ? ( selectedDeviceBody.Equipment.prod_date != null ? dayjs(selectedDeviceBody.Equipment.prod_date) : null): null}
                     label={'제조일자'}
-                    onChange={handleChangeReplacementDeviceDate}
+                    onChange={(newDate, validationError) => handleChangeReplacementDeviceDate({ name: "prod_date", newDate: newDate, validationError: validationError })}
                   />
                 </LocalizationProvider>
               </Box>
@@ -446,50 +456,52 @@ const FormEditSelectedDevice = props => {
                 >{'설치일자'}</Typography>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
-                    value={ Object.keys(selectedDeviceBody).length > 1 ? ( selectedDeviceBody.Equipment.install_date != null ? dayjs(selectedDeviceBody.Equipment.install_date) : null): null}
+                    name={'install_date'}
+                    value={ Object.keys(selectedDeviceBody).length > 1 ? ( formValues.install_date != null ? dayjs(formValues.install_date) : null): null}
                     label={'설치일자'}
-                    onChange={handleChangeReplacementDeviceDate}
+                    onChange={(newDate, validationError) => handleChangeReplacementDeviceDate({ name: "install_date", newDate: newDate, validationError: validationError })}
                   />
                 </LocalizationProvider>
               </Box>
               {/* 15. 설치담당 */}
               <TextAndInputComponent 
                 required = {false}
-                name 
-                value = { Object.keys(selectedDeviceBody).length > 1 ? selectedDeviceBody.Equipment.install_man : ''}
+                name = {'install_man'}
+                value = { Object.keys(selectedDeviceBody).length > 1 ? (formValues.install_man != null ? formValues.install_man : '-') : ''}
                 inputTxt ={'설치담당'}
                 labelTxt ={'설치담당'}
                 edit   = {true}
                 create = {false}
                 textError = {'text Error'}
+                onChange={ handleChangeInputComponent }
                 error = {false}
-                type
               />
               {/* 16. 검사담당 */}
               <TextAndInputComponent 
+                name  = {'check_man'}
                 required = {false}
-                name 
-                value = { Object.keys(selectedDeviceBody).length > 1 ? selectedDeviceBody.Equipment.check_man : ''}
+                value = { Object.keys(selectedDeviceBody).length > 1 ? (formValues.check_man  != null ? formValues.check_man  : '-'): ''}
                 inputTxt ={'검사담당'}
                 labelTxt ={'검사담당'}
                 edit   = {true}
                 create = {false}
                 textError = {'text Error'}
+                onChange={ handleChangeInputComponent }
                 error = {false}
-                type
               />
               {/* 17. 음원텍스트 */}
               <TextAndInputComponent 
+                name = {'sound_text'}
                 required = {false}
-                name 
-                value = { Object.keys(selectedDeviceBody).length > 1 ? selectedDeviceBody.Equipment.sound_text : ''}
+                value = { Object.keys(selectedDeviceBody).length > 1 ? (formValues.sound_text != null ? formValues.sound_text : '-') : ''}
                 inputTxt ={'음원텍스트'}
                 labelTxt ={'음원텍스트'}
                 edit   = {true}
                 create = {false}
                 textError = {'text Error'}
-                error = {false}
                 multiline ={ true }
+                onChange={ handleChangeInputComponent }
+                error = {false}
               />
             </Box>
             {/* Midle Panel Form */}
