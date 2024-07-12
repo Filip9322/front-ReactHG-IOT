@@ -36,9 +36,7 @@ const FormEditSelectedDevice = props => {
   // ** Handlers Functions
   const handleChangeReplacementDeviceDate = (event) => {
     const { name, newDate, validationError } = event;
-    console.log(name);
-    console.log(newDate);
-    console.log(validationError);
+    setFormValues({...formValues, [name]: dayjs(newDate.$d).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')});
   }
   
   //--- Handle Form Field Changes
@@ -81,25 +79,25 @@ const FormEditSelectedDevice = props => {
   const restoreInitialValuesSelectedBody = () => {
     if (Object.keys(selectedDeviceBody).length > 1 ) {
       let tempObject = {
-        lora_id      : selectedDeviceBody.lora_id,
-        prod_comp    : selectedDeviceBody.Equipment.prod_comp, 
+        lora_id      : selectedDeviceBody.lora_id != null ? selectedDeviceBody.lora_id : '',
+        prod_comp    : selectedDeviceBody.Equipment.prod_comp != null ? selectedDeviceBody.Equipment.prod_comp : '', 
         model_no     : selectedDeviceBody.Equipment.model_no,
-        prod_no      : selectedDeviceBody.Equipment.prod_no,
+        prod_no      : dayjs(selectedDeviceBody.Equipment.prod_no) != null ? selectedDeviceBody.Equipment.prod_no : null,
         support_type : selectedDeviceBody.Equipment.support_type,
         support_size : selectedDeviceBody.Equipment.support_size,
         prod_type    : selectedDeviceBody.Equipment.prod_type,
         button_type  : selectedDeviceBody.Equipment.button_type,
-        cpu_version  : selectedDeviceBody.Equipment.cpu_version,
-        neoiotnum    : selectedDeviceBody.Equipment.neoiotnum,
-        neoblenum    : selectedDeviceBody.Equipment.neoblenum,
-        prod_date    : selectedDeviceBody.Equipment.prod_date,
-        install_date : selectedDeviceBody.Equipment.install_date,
-        install_man  : selectedDeviceBody.Equipment.install_man,
-        check_man    : selectedDeviceBody.Equipment.check_man,
-        sound_text   : selectedDeviceBody.Equipment.sound_text,
-        map_y        : selectedDeviceBody.Equipment.map_y,
-        map_x        : selectedDeviceBody.Equipment.map_x,
-        bigo         : selectedDeviceBody.Equipment.bigo
+        cpu_version  : selectedDeviceBody.Equipment.cpu_version != null ? selectedDeviceBody.Equipment.cpu_version : '',
+        neoiotnum    : selectedDeviceBody.Equipment.neoiotnum   != null ? selectedDeviceBody.Equipment.neoiotnum : '',
+        neoblenum    : selectedDeviceBody.Equipment.neoblenum   != null ? selectedDeviceBody.Equipment.neoblenum : '',
+        prod_date    : dayjs(selectedDeviceBody.Equipment.prod_date)    != null ? selectedDeviceBody.Equipment.prod_date : null,
+        install_date : dayjs(selectedDeviceBody.Equipment.install_date) != null ? selectedDeviceBody.Equipment.install_date : null ,
+        install_man  : selectedDeviceBody.Equipment.install_man != null ? selectedDeviceBody.Equipment.install_man : '',
+        check_man    : selectedDeviceBody.Equipment.check_man   != null ? selectedDeviceBody.Equipment.check_man : '',
+        sound_text   : selectedDeviceBody.Equipment.sound_text  != null ? selectedDeviceBody.Equipment.sound_text: '',
+        map_y        : selectedDeviceBody.Equipment.map_y != null ? selectedDeviceBody.Equipment.map_y : '',
+        map_x        : selectedDeviceBody.Equipment.map_x != null ? selectedDeviceBody.Equipment.map_x : '',
+        bigo         : selectedDeviceBody.Equipment.bigo  != null ? selectedDeviceBody.Equipment.bigo  : ''
       };
       setFormValues(tempObject);
     } else {
@@ -307,7 +305,7 @@ const FormEditSelectedDevice = props => {
                   sx = {{
                     paddingRight: '5px'
                   }}
-                >{'모듈 교체일자'}</Typography>
+                >{'모듈 교체일자 :'+formValues.prod_date}</Typography>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
                     timezone='system'
@@ -351,7 +349,7 @@ const FormEditSelectedDevice = props => {
                   sx = {{
                     paddingRight: '5px'
                   }}
-                >{'파워 교체일자'}</Typography>
+                >{'파워 교체일자: '+ formValues.support_size}</Typography>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
                     name={'support_size'}
@@ -394,13 +392,13 @@ const FormEditSelectedDevice = props => {
                   sx = {{
                     paddingRight: '5px'
                   }}
-                >{'부품교체일자'}</Typography>
+                >{'부품교체일자 :' + formValues.button_type}</Typography>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
-                    name={'partReplacementDate'}
+                    name={'button_type'}
                     value={ dayjs(formValues.button_type)}
                     label={'부품교체일자'}
-                    onChange={(newDate, validationError) => handleChangeReplacementDeviceDate({ name: "partReplacementDate", newDate: newDate, validationError: validationError })}
+                    onChange={(newDate, validationError) => handleChangeReplacementDeviceDate({ name: "button_type", newDate: newDate, validationError: validationError })}
                   />
                 </LocalizationProvider>
               </Box>
@@ -413,26 +411,28 @@ const FormEditSelectedDevice = props => {
               <TextAndInputComponent 
                 required = {false} 
                 name = {'cpu_version'}
-                inputTxt ={'CPU Version'}
-                value = { formValues.cpu_version }
-                labelTxt ={'CPU Version'}
+                inputTxt = {'CPU Version'}
+                labelTxt = {'CPU Version'}
+                textError= {'text Error'}
+                valueTxt = { Object.keys(selectedDeviceBody).length > 1 ? selectedDeviceBody.Equipment.cpu_version : ''}
                 edit   = {true}
                 create = {false}
-                textError = {'text Error'}
                 onChange={ handleChangeInputComponent }
+                value = { formValues.cpu_version }
                 error = {false}
               />
               {/* 11. 네오 IoT No. */}
               <TextAndInputComponent 
                 required = {false}
                 name = {'neoiotnum'}
-                inputTxt ={'네오 IoT No.'}
-                value = { formValues.neoiotnum }
-                labelTxt ={'네오 IoT No.'}
+                inputTxt = {'네오 IoT No.'}
+                labelTxt = {'네오 IoT No.'}
+                textError= {'text Error'}
+                valueTxt = { Object.keys(selectedDeviceBody).length > 1 ? selectedDeviceBody.Equipment.neoiotnum : ''}
                 edit   = {true}
                 create = {false}
-                textError = {'text Error'}
                 onChange={ handleChangeInputComponent }
+                value = { formValues.neoiotnum }
                 error = {false}
               />
               {/* 12. 네오 BLE No. */}
@@ -456,7 +456,7 @@ const FormEditSelectedDevice = props => {
                   sx = {{
                     paddingRight: '5px'
                   }}
-                >{'제조일자'}</Typography>
+                >{'제조일자 :'+formValues.prod_date}</Typography>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
                     name={'prod_date'}
@@ -474,7 +474,7 @@ const FormEditSelectedDevice = props => {
                   sx = {{
                     paddingRight: '5px'
                   }}
-                >{'설치일자'}</Typography>
+                >{'설치일자 :'+formValues.install_date}</Typography>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
                     name={'install_date'}
@@ -601,11 +601,12 @@ const FormEditSelectedDevice = props => {
                 <Button
                   color={'error'}
                   variant={'outlined'}
+                  onClick={ restoreInitialValuesSelectedBody }
                 >{'최소'}</Button>
                 <Button
                   color={'success'}
                   variant={'contained'}
-                  type='submit'
+                  type={'submit'}
                 >{'저장'}</Button>
               </Box>
             </Box>
