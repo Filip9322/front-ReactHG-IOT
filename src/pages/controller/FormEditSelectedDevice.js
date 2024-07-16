@@ -39,6 +39,10 @@ const FormEditSelectedDevice = props => {
     setFormValues({...formValues, [name]: dayjs(newDate.$d).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')});
   }
   
+  const handleErrorDateField = (error,value) =>  {
+    console.log(error);
+  }
+
   //--- Handle Form Field Changes
   const handleChangeEquiNum = event => {
     setEquinumSelect(event.target.value);
@@ -63,7 +67,8 @@ const FormEditSelectedDevice = props => {
       let validateSubmit = false;
 
       //Check Errors
-      //let errors = validate
+      let errors = validate(formValues);
+      
     } catch(error) {
       if(error !== undefined) console.error(error)
     }
@@ -82,16 +87,16 @@ const FormEditSelectedDevice = props => {
         lora_id      : selectedDeviceBody.lora_id != null ? selectedDeviceBody.lora_id : '',
         prod_comp    : selectedDeviceBody.Equipment.prod_comp != null ? selectedDeviceBody.Equipment.prod_comp : '', 
         model_no     : selectedDeviceBody.Equipment.model_no,
-        prod_no      : dayjs(selectedDeviceBody.Equipment.prod_no) != null ? selectedDeviceBody.Equipment.prod_no : null,
+        prod_no      : dayjs(selectedDeviceBody.Equipment.prod_no,      'YYYY-MM-DD').isValid() ? selectedDeviceBody.Equipment.prod_no : null,
         support_type : selectedDeviceBody.Equipment.support_type,
-        support_size : selectedDeviceBody.Equipment.support_size,
+        support_size : dayjs(selectedDeviceBody.Equipment.support_size, 'YYYY-MM-DD').isValid() ? selectedDeviceBody.Equipment.support_size : null,
         prod_type    : selectedDeviceBody.Equipment.prod_type,
-        button_type  : selectedDeviceBody.Equipment.button_type,
+        button_type  : dayjs(selectedDeviceBody.Equipment.button_type,  'YYYY-MM-DD').isValid() ? selectedDeviceBody.Equipment.button_type : null,
         cpu_version  : selectedDeviceBody.Equipment.cpu_version != null ? selectedDeviceBody.Equipment.cpu_version : '',
         neoiotnum    : selectedDeviceBody.Equipment.neoiotnum   != null ? selectedDeviceBody.Equipment.neoiotnum : '',
         neoblenum    : selectedDeviceBody.Equipment.neoblenum   != null ? selectedDeviceBody.Equipment.neoblenum : '',
-        prod_date    : dayjs(selectedDeviceBody.Equipment.prod_date)    != null ? selectedDeviceBody.Equipment.prod_date : null,
-        install_date : dayjs(selectedDeviceBody.Equipment.install_date) != null ? selectedDeviceBody.Equipment.install_date : null ,
+        prod_date    : dayjs(selectedDeviceBody.Equipment.prod_date,     'YYYY-MM-DD').isValid() ? selectedDeviceBody.Equipment.prod_date : null,
+        install_date : dayjs(selectedDeviceBody.Equipment.install_date,  'YYYY-MM-DD').isValid() ? selectedDeviceBody.Equipment.install_date : null ,
         install_man  : selectedDeviceBody.Equipment.install_man != null ? selectedDeviceBody.Equipment.install_man : '',
         check_man    : selectedDeviceBody.Equipment.check_man   != null ? selectedDeviceBody.Equipment.check_man : '',
         sound_text   : selectedDeviceBody.Equipment.sound_text  != null ? selectedDeviceBody.Equipment.sound_text: '',
@@ -131,7 +136,7 @@ const FormEditSelectedDevice = props => {
   },[])
 
   useEffect(() => {
-    console.log(formValues)
+    
   },[formValues])
 
   useEffect(() => {
@@ -208,6 +213,14 @@ const FormEditSelectedDevice = props => {
                 height: 'auto',
                 '& span': {
                   opacity: 100
+                }
+              },
+              '& .DateSelectionContainer': {
+                '& label.Mui-error' : {
+                    color: 'rgba(58, 53, 65, 0.87)'
+                },
+                '& div.MuiOutlinedInput-root fieldset.MuiOutlinedInput-notchedOutline' : {
+                    borderColor: 'rgba(58, 53, 65, 0.22)'
                 }
               }
             }}
@@ -299,20 +312,23 @@ const FormEditSelectedDevice = props => {
               </Box>
               {/* 5.  모듈 교체일자 */}
               <Box
-                sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px'}}
+                className={'DateSelectionContainer'}
+                sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px' }}
               >
                 <Typography
                   sx = {{
                     paddingRight: '5px'
                   }}
-                >{'모듈 교체일자 :'+formValues.prod_date}</Typography>
+                >{'모듈 교체일자'}</Typography>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
+                    defaultValue={null}
                     timezone='system'
                     name = {'prod_no'}
                     label={'모듈 교체일자'}
                     onChange={(newDate, validationError) => handleChangeReplacementDeviceDate({ name: "prod_no", newDate: newDate, validationError: validationError })}
-                    value={ dayjs(formValues.prod_date) }
+                    value={ dayjs(formValues.prod_no) }
+                    onError={ handleErrorDateField }
                   />
                 </LocalizationProvider>
               </Box>
@@ -343,13 +359,14 @@ const FormEditSelectedDevice = props => {
               </Box>
               {/* 7.  파워 교체일자 */}
               <Box
+                className={'DateSelectionContainer'}
                 sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px'}}
               >
                 <Typography
                   sx = {{
                     paddingRight: '5px'
                   }}
-                >{'파워 교체일자: '+ formValues.support_size}</Typography>
+                >{'파워 교체일자'}</Typography>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
                     name={'support_size'}
@@ -386,13 +403,14 @@ const FormEditSelectedDevice = props => {
               </Box>
               {/* 10. 부품교체일자 */}
               <Box
+                className={'DateSelectionContainer'}
                 sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px'}}
               >
                 <Typography
                   sx = {{
                     paddingRight: '5px'
                   }}
-                >{'부품교체일자 :' + formValues.button_type}</Typography>
+                >{'부품교체일자'}</Typography>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
                     name={'button_type'}
@@ -450,13 +468,14 @@ const FormEditSelectedDevice = props => {
               />
               {/* 13. 제조일자 */}
               <Box
-                  sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px'}}
-                >
+                className={'DateSelectionContainer'}
+                sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px'}}
+              >
                 <Typography
                   sx = {{
                     paddingRight: '5px'
                   }}
-                >{'제조일자 :'+formValues.prod_date}</Typography>
+                >{'제조일자'}</Typography>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
                     name={'prod_date'}
@@ -468,13 +487,14 @@ const FormEditSelectedDevice = props => {
               </Box>
               {/* 14. 설치일자 */}
               <Box
-                  sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px'}}
-                >
+                className={'DateSelectionContainer'}
+                sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px'}}
+              >
                 <Typography
                   sx = {{
                     paddingRight: '5px'
                   }}
-                >{'설치일자 :'+formValues.install_date}</Typography>
+                >{'설치일자'}</Typography>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
                     name={'install_date'}
