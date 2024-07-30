@@ -18,20 +18,66 @@ import { MapMarker } from 'mdi-material-ui'
 import { CheckStateValue } from 'src/@core/utils/checkStateValue';
 import { TextAndInputComponent } from 'src/pages/map_monitor_location/lateralDetailPanel'
 
+// ** Utils
+import { postFetchURL } from 'src/@core/utils/fetchHelper'
+import { putFetchURL } from 'src/@core/utils/fetchHelper'
+
 const FormEditSelectedDevice = props => {
   
   const { selectedDevice, selectedDeviceBody, deviceModels, devices } = props;
   
-  const [equinumSelect, setEquinumSelect] = useState(selectedDevice);
-  
   // ** Form Delivery
   const [formValues, setFormValues] = useState({id: null });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  const errorsBody = {
+    lora_id: false,
+    prod_comp: false,
+    model_no: false,
+    prod_no: false,
+    support_type: false,
+    support_size: false,
+    prod_type: false,
+    button_type: false,
+    cpu_version: false,
+    neoiotnum: false,
+    neoblenum: false,
+    pro_date: false,
+    install_date: false,
+    install_man: false,
+    check_man: false,
+    sound_txt: false,
+    map_x: false,
+    map_y: false,
+    bigo: false
+  }
 
+  const [formErrors, setFormErrors] = useState(errorsBody);
+ 
   // ** UseRef
   const hasPageBeenRendered = useRef({
     effect1: false
   });
+
+  // ** Async Functions
+  async function fetchEditDevice(){
+    //putFetchURL
+  }
+
+  async function fetchCreateDevice(){
+    postFetchURL(
+      `${process.env.REACT_APP_APIURL}/API/equi_state/`,
+      formValues
+    ).then(response => {
+      if(response) {
+
+      }
+    }).catch( error => {
+      if (error) console.error(error);
+    }).finally(() => {
+      //something
+    })
+  }
 
   // ** Handlers Functions
   const handleChangeReplacementDeviceDate = (event) => {
@@ -44,10 +90,6 @@ const FormEditSelectedDevice = props => {
   }
 
   //--- Handle Form Field Changes
-  const handleChangeEquiNum = event => {
-    setEquinumSelect(event.target.value);
-  }
-
   const handleChangeSelectStandard = event => {
     const { name, value } = event.target;
     setFormValues({...formValues, [name]: value});
@@ -68,12 +110,22 @@ const FormEditSelectedDevice = props => {
 
       //Check Errors
       let errors = validate(formValues);
-      
+
+      if ( !formErrors.lora_id && !formErrors.prod_comp && !formErrors.model_no) {
+        fetchCreateDevice();
+      } else {
+        if(errors) console.error(errors);
+      }
+
     } catch(error) {
       if(error !== undefined) console.error(error)
     }
 
     console.log('Creation');
+  }
+
+  const handleResetErrors = () => {
+    setFormErrors(errorsBody);
   }
   
   const handleSubmitFormDeviceEdition = event => {
@@ -84,6 +136,7 @@ const FormEditSelectedDevice = props => {
   const restoreInitialValuesSelectedBody = () => {
     if (Object.keys(selectedDeviceBody).length > 1 ) {
       let tempObject = {
+        equi_num     : parseInt(selectedDevice),
         lora_id      : selectedDeviceBody.lora_id != null ? selectedDeviceBody.lora_id : '',
         prod_comp    : selectedDeviceBody.Equipment.prod_comp != null ? selectedDeviceBody.Equipment.prod_comp : '', 
         model_no     : selectedDeviceBody.Equipment.model_no,
@@ -107,6 +160,7 @@ const FormEditSelectedDevice = props => {
       setFormValues(tempObject);
     } else {
       let tempObject = {
+        equi_num     : parseInt(selectedDevice),
         lora_id      : '',
         prod_comp    : '', 
         model_no     : 0,
@@ -131,19 +185,56 @@ const FormEditSelectedDevice = props => {
     }
   }
 
+  const validate = formValues => {
+    let errors = {};
+
+    if(formValues.lora_id == '' || formValues.lora_id.length < 12 ){
+      errors.lora_id = true;
+    } else errors.lora_id = false;
+    if(formValues.local_num == '' || formValues.local_num == 0 || formValues.local_num == undefined){
+      errors.local_num = true;
+    } else errors.local_num = false;
+    if(formValues.equi_num == '' || formValues.equi_num == 0 || formValues.equi_num == undefined){
+      errors.equi_num = true
+    } else errors.equi_num = false;
+    if(formValues.controller_number == '' || formValues.controller_number == 0 || formValues.controller_number == undefined){
+      errors.controller_number = true
+    } else errors.controller_number = false;
+    if(formValues.prod_comp == '' || formValues.prod_comp == undefined) {
+      errors.prod_comp = true;
+    } else errors.prod_comp = true;
+    if(formValues.model_no == '' || formValues.model_no == undefined){
+      errors.model_no = true;
+    } else errors.model_no = false;
+    if(formValues.sound_text = '' || formValues.sound_text == undefined){
+      errors.sound_text = true;
+    } else errors.sound_text = false;
+    if(formValues.map_x == 0 || formValues.map_x == undefined){
+      errors.map_x = true;
+    } else errors.map_x = false;
+    if(formValues.map_y == 0 || formValues.map_y == undefined){
+      errors.map_y = true;
+    } else errors.map_y = false;
+
+    setFormErrors(errors);
+  }
+
+  // ** UseEffects
   useEffect(()=>{
     restoreInitialValuesSelectedBody();
   },[])
 
   useEffect(() => {
-    
-  },[formValues])
 
+  },[formValues])
+  
   useEffect(() => {
-    setEquinumSelect(selectedDevice);
-        
-    restoreInitialValuesSelectedBody();
+    if(hasPageBeenRendered.current['effect1']) {
+      restoreInitialValuesSelectedBody();
+      }
+    hasPageBeenRendered.current['effect1'] = true;
   }, [selectedDevice])
+
   return(
     <Box>
       <Box>
@@ -233,13 +324,14 @@ const FormEditSelectedDevice = props => {
               <Box
                 sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px'}}
               >
-                <InputLabel id={'deviceEquiNum'} >{'부착번호'}</InputLabel>
+                <InputLabel id={'deviceEquiNum'} >{'부착번호: -'+formValues.equi_num + '-'}</InputLabel>
                 <Select
+                  name={'equi_num'}
                   className={'selectInput'}
                   labelID={'deviceEquiNum'}
                   label={'부착번호'}
-                  onChange={handleChangeEquiNum}
-                  value={equinumSelect}
+                  onChange={handleChangeSelectStandard}
+                  value={parseInt(formValues.equi_num)}
                   required
                 >
                   <MenuItem disabled selected ={selectedDevice == null || selectedDevice == 0 ? true : false } value={0}>{'선택: '}</MenuItem>
@@ -263,13 +355,13 @@ const FormEditSelectedDevice = props => {
                 name = {'lora_id'}
                 inputTxt = {'LoRa ID'}
                 valueTxt = { Object.keys(selectedDeviceBody).length > 1 ? selectedDeviceBody.lora_id : ''}
-                labelTxt = {'LoRa ID'}
-                textError = {'text Error'}
+                error = {formErrors.lora_id}
+                textError = {'LoRa ID 입력하세요 '}
+                labelTxt = {'LoRa ID:'}
                 edit   = {true}
                 create = {false}
                 onChange={handleChangeInputComponent}
                 value = { formValues.lora_id }
-                error = {false}
               />
               {/* 3.  제조사 ----> TODO: Needs to be Changed to Select ?? */}
               <TextAndInputComponent 
