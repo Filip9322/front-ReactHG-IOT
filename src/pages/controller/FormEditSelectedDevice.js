@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 
 // **  Material Components Imports
-import { Box, Button, Tooltip, FormGroup, FormControlLabel, Checkbox, Fade,
+import { Box, Button, Tooltip, FormGroup, FormControl, FormControlLabel, Checkbox, Fade,
   Typography, TextField, Input, Select, Menu, MenuItem, ListItemIcon, ToggleButton, ToggleButtonGroup, InputLabel }  from '@mui/material';
 
 import dayjs from 'dayjs';
@@ -46,7 +46,7 @@ const FormEditSelectedDevice = props => {
     install_date: false,
     install_man: false,
     check_man: false,
-    sound_txt: false,
+    sound_text: false,
     map_x: false,
     map_y: false,
     bigo: false
@@ -97,6 +97,7 @@ const FormEditSelectedDevice = props => {
   
   const handleChangeInputComponent = event => {
     const { name, value } = event.target;
+    console.log(name + ' : '+ value);
     setFormValues({...formValues, [name]: value});
   }
 
@@ -111,7 +112,9 @@ const FormEditSelectedDevice = props => {
       //Check Errors
       let errors = validate(formValues);
 
-      if ( !formErrors.lora_id && !formErrors.prod_comp && !formErrors.model_no) {
+      if ( !formErrors.lora_id  && !formErrors.prod_comp && 
+           !formErrors.model_no && !formErrors.map_x && 
+           !formErrors.map_y    && !formErrors.sound_text) {
         fetchCreateDevice();
       } else {
         if(errors) console.error(errors);
@@ -202,17 +205,17 @@ const FormEditSelectedDevice = props => {
     } else errors.controller_number = false;
     if(formValues.prod_comp == '' || formValues.prod_comp == undefined) {
       errors.prod_comp = true;
-    } else errors.prod_comp = true;
+    } else errors.prod_comp = false;
     if(formValues.model_no == '' || formValues.model_no == undefined){
       errors.model_no = true;
     } else errors.model_no = false;
     if(formValues.sound_text = '' || formValues.sound_text == undefined){
       errors.sound_text = true;
     } else errors.sound_text = false;
-    if(formValues.map_x == 0 || formValues.map_x == undefined){
+    if(formValues.map_x = '' || formValues.map_x == 0 || formValues.map_x == undefined || typeof(formValues.map_x) != 'float'){
       errors.map_x = true;
     } else errors.map_x = false;
-    if(formValues.map_y == 0 || formValues.map_y == undefined){
+    if(formValues.map_y = '' || formValues.map_y == 0 || formValues.map_y == undefined || typeof(formValues.map_y) != 'float'){
       errors.map_y = true;
     } else errors.map_y = false;
 
@@ -229,9 +232,9 @@ const FormEditSelectedDevice = props => {
   },[formValues])
   
   useEffect(() => {
-    if(hasPageBeenRendered.current['effect1']) {
+    if(hasPageBeenRendered.current['effect1'] && selectedDevice != undefined) {
       restoreInitialValuesSelectedBody();
-      }
+    }
     hasPageBeenRendered.current['effect1'] = true;
   }, [selectedDevice])
 
@@ -324,34 +327,36 @@ const FormEditSelectedDevice = props => {
               <Box
                 sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px'}}
               >
-                <InputLabel id={'deviceEquiNum'} >{'부착번호: -'+formValues.equi_num + '-'}</InputLabel>
-                <Select
-                  name={'equi_num'}
-                  className={'selectInput'}
-                  labelID={'deviceEquiNum'}
-                  label={'부착번호'}
-                  onChange={handleChangeSelectStandard}
-                  value={parseInt(formValues.equi_num)}
-                  required
-                >
-                  <MenuItem disabled selected ={selectedDevice == null || selectedDevice == 0 ? true : false } value={0}>{'선택: '}</MenuItem>
-                  <MenuItem disabled= {devices.includes(1)}  value={1}>{'1'}</MenuItem>
-                  <MenuItem disabled= {devices.includes(2)}  value={2}>{'2'}</MenuItem>
-                  <MenuItem disabled= {devices.includes(3)}  value={3}>{'3'}</MenuItem>
-                  <MenuItem disabled= {devices.includes(4)}  value={4}>{'4'}</MenuItem>
-                  <MenuItem disabled= {devices.includes(5)}  value={5}>{'5'}</MenuItem>
-                  <MenuItem disabled= {devices.includes(6)}  value={6}>{'6'}</MenuItem>
-                  <MenuItem disabled= {devices.includes(7)}  value={7}>{'7'}</MenuItem>
-                  <MenuItem disabled= {devices.includes(8)}  value={8}>{'8'}</MenuItem>
-                  <MenuItem disabled= {devices.includes(9)}  value={9}>{'9'}</MenuItem>
-                  <MenuItem disabled= {devices.includes(10)} value={10}>{'10'}</MenuItem>
-                  <MenuItem disabled= {devices.includes(11)} value={11}>{'11'}</MenuItem>
-                  <MenuItem disabled= {devices.includes(12)} value={12}>{'12'}</MenuItem>
-                </Select>
+                <InputLabel id={'deviceEquiNum'} >{'부착번호'}</InputLabel>
+                <FormControl error={formErrors.equi_num}>
+                  <Select
+                    name={'equi_num'}
+                    className={'selectInput'}
+                    labelID={'deviceEquiNum'}
+                    label={formErrors.equi_num ? '부착번호 입력하세요':'부착번호'}
+                    onChange={handleChangeSelectStandard}
+                    value={formValues.equi_num != undefined ? parseInt(formValues.equi_num) : selectedDevice }
+                    required
+                  >
+                    <MenuItem disabled selected ={selectedDevice == null || selectedDevice == 0 ? true : false } value={0}>{'선택: '}</MenuItem>
+                    <MenuItem disabled= {devices.includes(1)}  value={1}>{'1'}</MenuItem>
+                    <MenuItem disabled= {devices.includes(2)}  value={2}>{'2'}</MenuItem>
+                    <MenuItem disabled= {devices.includes(3)}  value={3}>{'3'}</MenuItem>
+                    <MenuItem disabled= {devices.includes(4)}  value={4}>{'4'}</MenuItem>
+                    <MenuItem disabled= {devices.includes(5)}  value={5}>{'5'}</MenuItem>
+                    <MenuItem disabled= {devices.includes(6)}  value={6}>{'6'}</MenuItem>
+                    <MenuItem disabled= {devices.includes(7)}  value={7}>{'7'}</MenuItem>
+                    <MenuItem disabled= {devices.includes(8)}  value={8}>{'8'}</MenuItem>
+                    <MenuItem disabled= {devices.includes(9)}  value={9}>{'9'}</MenuItem>
+                    <MenuItem disabled= {devices.includes(10)} value={10}>{'10'}</MenuItem>
+                    <MenuItem disabled= {devices.includes(11)} value={11}>{'11'}</MenuItem>
+                    <MenuItem disabled= {devices.includes(12)} value={12}>{'12'}</MenuItem>
+                  </Select>
+                </FormControl>
               </Box>  
               {/* 2.  LoRa ID  */}
               <TextAndInputComponent 
-                required = {false}
+                required = {true}
                 name = {'lora_id'}
                 inputTxt = {'LoRa ID'}
                 valueTxt = { Object.keys(selectedDeviceBody).length > 1 ? selectedDeviceBody.lora_id : ''}
@@ -365,17 +370,17 @@ const FormEditSelectedDevice = props => {
               />
               {/* 3.  제조사 ----> TODO: Needs to be Changed to Select ?? */}
               <TextAndInputComponent 
-                required = {false}
+                required = {true}
                 name = {'prod_comp'}
                 inputTxt ={'제조사'}
                 valueTxt = { Object.keys(selectedDeviceBody).length > 1 ? selectedDeviceBody.Equipment.prod_comp : ''}
+                error = {formErrors.prod_comp}
+                textError = {'제조사 입력하세요'}
                 labelTxt ={'제조사'}
-                textError = {'text Error'}
                 edit   = {true}
                 create = {false}
                 onChange={handleChangeInputComponent}
                 value = { formValues.prod_comp }
-                error = {false}
               />
               {/* 4.  모듈 모델명 */}
               <Box
@@ -386,21 +391,23 @@ const FormEditSelectedDevice = props => {
                     paddingRight: '5px'
                   }}
                 >{'모듈 모델명'}</Typography>
-                <Select
-                  name = {'model_no'}
-                  className={'selectInput'}
-                  labelID={'moduleModelName'}
-                  label={'모듈 모델명'}
-                  onChange={handleChangeSelectStandard}
-                  value = { formValues.model_no != null ? parseInt(formValues.model_no) : 0}
-                >
-                  <MenuItem disabled selected ={selectedDevice == null || selectedDevice == 0 ? true : false } value={0}>{'선택: '}</MenuItem>
-                  {
-                    deviceModels.filter(modelCode => modelCode.model_code == '0007').map(model => (
-                      <MenuItem key={'model-'+model.id} value={model.model_subcode}>{model.model_name}</MenuItem>
-                    ))
-                  }
-                </Select>
+                <FormControl error={formErrors.model_no}>
+                  <Select
+                    name = {'model_no'}
+                    className={'selectInput'}
+                    labelID={'moduleModelName'}
+                    label={'모듈 모델명'}
+                    onChange={handleChangeSelectStandard}
+                    value = { formValues.model_no != null ? parseInt(formValues.model_no) : 0}
+                  >
+                    <MenuItem disabled selected ={selectedDevice == null || selectedDevice == 0 ? true : false } value={0}>{'선택: '}</MenuItem>
+                    {
+                      deviceModels.filter(modelCode => modelCode.model_code == '0007').map(model => (
+                        <MenuItem key={'model-'+model.id} value={model.model_subcode}>{model.model_name}</MenuItem>
+                      ))
+                    }
+                  </Select>
+                </FormControl>
               </Box>
               {/* 5.  모듈 교체일자 */}
               <Box
@@ -414,9 +421,9 @@ const FormEditSelectedDevice = props => {
                 >{'모듈 교체일자'}</Typography>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
+                    name = {'prod_no'}
                     defaultValue={null}
                     timezone='system'
-                    name = {'prod_no'}
                     label={'모듈 교체일자'}
                     onChange={(newDate, validationError) => handleChangeReplacementDeviceDate({ name: "prod_no", newDate: newDate, validationError: validationError })}
                     value={ dayjs(formValues.prod_no) }
@@ -634,7 +641,7 @@ const FormEditSelectedDevice = props => {
                 textError = {'text Error'}
                 multiline ={ true }
                 onChange={ handleChangeInputComponent }
-                error = {false}
+                error = { formErrors.sound_text }
               />
             </Box>
             {/* Midle Panel Form */}
@@ -656,35 +663,44 @@ const FormEditSelectedDevice = props => {
                     marginTop: '11px',
                     ':hover':{ cursor: 'pointer', backgroundColor: 'rgba(241, 74, 74, 0.9)', '& svg':{ color: '#fff'}},
                     '& svg':{ color: '#777'}
-                  }
+                  },
+                  '& button.MapIcon':{backgroundColor: (formErrors.map_x || formErrors.map_y ? 'rgba(241, 74, 74, 0.9)': '#a188b5fa'),
+                    '& svg':{ color: 'white'}
+                  },
+                  '& button.MapIcon:hover':{ backgroundColor: '#3d7a6b'}
                 }}
               >
                 {/* 18. 죄표 */}
                 <TextAndInputComponent 
-                  required = {false}
-                  name 
-                  value = { formValues.map_x }
+                  required = {true}
+                  name = {'map_x'}
                   inputTxt ={'죄표 X'}
+                  valueTxt = { Object.keys(selectedDeviceBody).length > 1 ? selectedDeviceBody.Equipment.map_x : ''}
+                  error ={ formErrors.map_x }
+                  textError = {'지도에서 위치 저장하세요'}
                   labelTxt ={'죄표 X'}
                   edit ={false}
                   create = {false}
-                  textError = {'text Error'}
-                  error = {false}
+                  onChange = {handleChangeInputComponent}
+                  value = { typeof(formValues.map_x) != 'number' ? '' : parseFloat(formValues.map_x) }
                 />
-                <TextAndInputComponent 
-                  required = {false}
-                  name 
-                  value = { formValues.map_y }
+                <TextAndInputComponent
+                  required = {true}
+                  name = {'map_y'}
                   inputTxt ={'죄표 Y'}
+                  valueTxt = { Object.keys(selectedDeviceBody).length > 1 ? selectedDeviceBody.Equipment.map_y : ''}
+                  error = {formErrors.map_y }
+                  textError = {'지도에서 위치 저장하세요'}
                   labelTxt ={'죄표 Y'}
                   edit   = {false}
                   create = {false}
-                  textError = {'text Error'}
-                  error = {false}
+                  onChange = {handleChangeInputComponent}
+                  value = { typeof(formValues.map_y) != 'number' ? '' : parseFloat(formValues.map_y) }
                 />
+                {formErrors.map_x || formErrors.map_y ? '지도에서 위치 저장하세요': ''}
                 <Tooltip>
                   <Button
-                    className = { 'ButtonIconSVG' }
+                    className = { 'ButtonIconSVG MapIcon' }
                   >
                     <MapMarker />
                   </Button>

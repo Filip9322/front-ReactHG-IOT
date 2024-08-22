@@ -142,8 +142,7 @@ const Map_Monitor_Location_Page = () => {
     //console.log('Lat: ' + lat + ' Lng: '+ lng);
     //console.log(event);
   }
-
-  
+   
   // ** Update Triggers useEffect
   useEffect(() => {
     // ** Set Page Name and MetaData
