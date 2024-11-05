@@ -151,7 +151,6 @@ const LateralCreateControllerPanel = props =>{
       errors[name+'_hasError'] = false;
       setValues({...values, errors: errors});
     }
-
   }
 
   const resetForm = () => {

@@ -24,7 +24,7 @@ import { putFetchURL } from 'src/@core/utils/fetchHelper'
 
 const FormEditSelectedDevice = props => {
   
-  const { selectedDevice, selectedDeviceBody, deviceModels, devices } = props;
+  const { selectedDevice, selectedDeviceBody, deviceModels, devices, deviceLat, deviceLng } = props;
   
   // ** Form Delivery
   const [formValues, setFormValues] = useState({id: null });
@@ -62,6 +62,7 @@ const FormEditSelectedDevice = props => {
   // ** Async Functions
   async function fetchEditDevice(){
     //putFetchURL
+
   }
 
   async function fetchCreateDevice(){
@@ -69,11 +70,12 @@ const FormEditSelectedDevice = props => {
       `${process.env.REACT_APP_APIURL}/API/equi_state/`,
       formValues
     ).then(response => {
+      setIsSubmitting(false);
       if(response) {
 
       }
     }).catch( error => {
-      if (error) console.error(error);
+      if (error) console.error(error); setIsSubmitting(false);
     }).finally(() => {
       //something
     })
@@ -107,14 +109,14 @@ const FormEditSelectedDevice = props => {
     console.log(event);
 
     try{
-      let validateSubmit = false;
-
       //Check Errors
       let errors = validate(formValues);
-
-      if ( !formErrors.lora_id  && !formErrors.prod_comp && 
-           !formErrors.model_no && !formErrors.map_x && 
-           !formErrors.map_y    && !formErrors.sound_text) {
+      setFormErrors(errors);
+      
+      if ( !errors.lora_id  && !errors.prod_comp && 
+           !errors.model_no && !errors.map_x && 
+           !errors.map_y    && !errors.sound_text) {
+        setIsSubmitting(true);
         fetchCreateDevice();
       } else {
         if(errors) console.error(errors);
@@ -156,8 +158,8 @@ const FormEditSelectedDevice = props => {
         install_man  : selectedDeviceBody.Equipment.install_man != null ? selectedDeviceBody.Equipment.install_man : '',
         check_man    : selectedDeviceBody.Equipment.check_man   != null ? selectedDeviceBody.Equipment.check_man : '',
         sound_text   : selectedDeviceBody.Equipment.sound_text  != null ? selectedDeviceBody.Equipment.sound_text: '',
-        map_y        : selectedDeviceBody.Equipment.map_y != null ? selectedDeviceBody.Equipment.map_y : '',
         map_x        : selectedDeviceBody.Equipment.map_x != null ? selectedDeviceBody.Equipment.map_x : '',
+        map_y        : selectedDeviceBody.Equipment.map_y != null ? selectedDeviceBody.Equipment.map_y : '',
         bigo         : selectedDeviceBody.Equipment.bigo  != null ? selectedDeviceBody.Equipment.bigo  : ''
       };
       setFormValues(tempObject);
@@ -212,14 +214,14 @@ const FormEditSelectedDevice = props => {
     if(formValues.sound_text = '' || formValues.sound_text == undefined){
       errors.sound_text = true;
     } else errors.sound_text = false;
-    if(formValues.map_x = '' || formValues.map_x == 0 || formValues.map_x == undefined || typeof(formValues.map_x) != 'float'){
+    if(formValues.map_x = '' || formValues.map_x == 0 || formValues.map_x == undefined || typeof(formValues.map_x) != 'number'){
       errors.map_x = true;
     } else errors.map_x = false;
-    if(formValues.map_y = '' || formValues.map_y == 0 || formValues.map_y == undefined || typeof(formValues.map_y) != 'float'){
+    if(formValues.map_y = '' || formValues.map_y == 0 || formValues.map_y == undefined || typeof(formValues.map_y) != 'number'){
       errors.map_y = true;
     } else errors.map_y = false;
 
-    setFormErrors(errors);
+    return (errors);
   }
 
   // ** UseEffects
@@ -228,7 +230,6 @@ const FormEditSelectedDevice = props => {
   },[])
 
   useEffect(() => {
-
   },[formValues])
   
   useEffect(() => {
@@ -237,6 +238,10 @@ const FormEditSelectedDevice = props => {
     }
     hasPageBeenRendered.current['effect1'] = true;
   }, [selectedDevice])
+
+  useEffect(() => {
+    setFormValues({...formValues, map_x: parseFloat(deviceLat), map_y: parseFloat(deviceLng)});
+  },[deviceLat,deviceLng])
 
   return(
     <Box>
@@ -672,32 +677,32 @@ const FormEditSelectedDevice = props => {
               >
                 {/* 18. 죄표 */}
                 <TextAndInputComponent 
-                  required = {true}
                   name = {'map_x'}
-                  inputTxt ={'죄표 X'}
-                  valueTxt = { Object.keys(selectedDeviceBody).length > 1 ? selectedDeviceBody.Equipment.map_x : ''}
-                  error ={ formErrors.map_x }
+                  required = {true}
+                  value = { typeof(formValues.map_x) != 'number' ? (deviceLat != undefined ? deviceLat : '') : parseFloat(formValues.map_x) }
+                  inputTxt  = {'죄표 X : '+ formValues.map_x }
+                  labelTxt  = {'죄표 X'}
+                  valueTxt  = { Object.keys(selectedDeviceBody).length > 1 ? selectedDeviceBody.Equipment.map_y : ''}
                   textError = {'지도에서 위치 저장하세요'}
-                  labelTxt ={'죄표 X'}
                   edit ={false}
                   create = {false}
                   onChange = {handleChangeInputComponent}
-                  value = { typeof(formValues.map_x) != 'number' ? '' : parseFloat(formValues.map_x) }
+                  error ={ formErrors.map_x }
                 />
                 <TextAndInputComponent
-                  required = {true}
                   name = {'map_y'}
-                  inputTxt ={'죄표 Y'}
-                  valueTxt = { Object.keys(selectedDeviceBody).length > 1 ? selectedDeviceBody.Equipment.map_y : ''}
-                  error = {formErrors.map_y }
+                  required = {true}
+                  value = { typeof(formValues.map_y) != 'number' ? (deviceLng != undefined  ? deviceLng: '') : parseFloat(formValues.map_y) }
+                  inputTxt  = {'죄표 Y'}
+                  labelTxt  = {'죄표 Y'}
+                  valueTxt  = { Object.keys(selectedDeviceBody).length > 1 ? selectedDeviceBody.Equipment.map_y : ''}
                   textError = {'지도에서 위치 저장하세요'}
-                  labelTxt ={'죄표 Y'}
                   edit   = {false}
                   create = {false}
                   onChange = {handleChangeInputComponent}
-                  value = { typeof(formValues.map_y) != 'number' ? '' : parseFloat(formValues.map_y) }
+                  error = {formErrors.map_y }
                 />
-                {formErrors.map_x || formErrors.map_y ? '지도에서 위치 저장하세요': ''}
+                { formErrors.map_x || formErrors.map_y ? '지도에서 위치 저장하세요': '' }
                 <Tooltip>
                   <Button
                     className = { 'ButtonIconSVG MapIcon' }

@@ -39,6 +39,10 @@ const ControllerInformation = props => {
   const [createDevice, setCreateDevice ] = useState(false);
   const [selectedDevice, setSelectedDevice] = useState(0);
   const [selectedDeviceBody, setSelectedDeviceBody] = useState({});
+  // Device Variables
+  const [deviceLat, setDeviceLat] = useState(0.0);
+  const [deviceLng, setDeviceLng] = useState(0.0);
+  const [deviceFomKey, serDeviceFormKey]= useState(100);
   
   const [kakaoInitated, setKakaoInitiated] = useState(false);
 
@@ -129,6 +133,12 @@ const ControllerInformation = props => {
     UpdateNewLocationMapMarker({lat: event.getPosition().Ma, lng: event.getPosition().La});
   }
 
+  const handleDragEndMapMarkerCreateEquiState = event => {
+    setDeviceLat(event.getPosition().Ma);
+    setDeviceLng(event.getPosition().La);
+    serDeviceFormKey(deviceFomKey+1);
+  }
+
   // ** UpdateMarkers Div Container
   const updateMapMarkers = () => {
     const divContainMapMarkers = document.getElementsByClassName('MessageMapMarker');
@@ -217,7 +227,6 @@ const ControllerInformation = props => {
         setMapStyles(initialMapStyles);
       }
     }
-    
   },[mapKey])
 
   useEffect(() => {
@@ -228,6 +237,9 @@ const ControllerInformation = props => {
     }
     setMapKey(mapKey+1);
   },[editDevices])
+
+  useEffect(() => {
+  },[deviceLat, deviceLng])
   
   //** -- Custom Marker Component */
   const CustomMarkerComponent = props => {
@@ -442,6 +454,8 @@ const ControllerInformation = props => {
               }
             }}
           >
+          {/*editDevices && action == 'edit' && selectedDevice == 0 && !createDevice */}
+          {action + ' !! ' + showDevices}
           { (kakaoInitated && !spinner && devices.length > 0 ) ? (
           <Map
             center={{ lat: lat, lng: lng }}
@@ -505,6 +519,23 @@ const ControllerInformation = props => {
               </div>
               </MapMarker>
             :''}
+            { /* -- Draggable Marker when creating a new equi_state -- */}
+            {editDevices && action == 'edit' && selectedDevice == 0 && createDevice ? 
+            <MapMarker
+              position={{
+                lat: lat,
+                lng: lng
+              }}
+              draggable = { true }
+              clickable = { true }
+              onDragStart= {handleDragStartMapMarker}
+              onDragEnd  = {handleDragEndMapMarkerCreateEquiState}
+            >
+            </MapMarker>
+            : ''
+            }
+              
+
             { /* -- Listing All Equi_states -- */ }
             { action == 'view' && showDevices || action == 'edit' && showDevices
             ?
@@ -552,6 +583,9 @@ const ControllerInformation = props => {
           deviceModels = {deviceModels}
           selectedDevice = {0}
           selectedDeviceBody = {{}}
+          deviceLat = { deviceLat }
+          deviceLng = { deviceLng }
+          
         />
       : '' }
 
