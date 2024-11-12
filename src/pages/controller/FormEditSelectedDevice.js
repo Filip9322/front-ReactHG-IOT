@@ -84,6 +84,7 @@ const FormEditSelectedDevice = props => {
   // ** Handlers Functions
   const handleChangeReplacementDeviceDate = (event) => {
     const { name, newDate, validationError } = event;
+    console.log('handleChangeReplacementDeviceDate');
     setFormValues({...formValues, [name]: dayjs(newDate.$d).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')});
   }
   
@@ -94,12 +95,13 @@ const FormEditSelectedDevice = props => {
   //--- Handle Form Field Changes
   const handleChangeSelectStandard = event => {
     const { name, value } = event.target;
+    console.log('handleChangeSelectStandard');
     setFormValues({...formValues, [name]: value});
   }
   
   const handleChangeInputComponent = event => {
     const { name, value } = event.target;
-    console.log(name + ' : '+ value);
+    console.log(name + ' : '+ value);  
     setFormValues({...formValues, [name]: value});
   }
 
@@ -125,7 +127,7 @@ const FormEditSelectedDevice = props => {
     } catch(error) {
       if(error !== undefined) console.error(error)
     }
-
+    console.log(formValues);
     console.log('Creation');
   }
 
@@ -214,10 +216,10 @@ const FormEditSelectedDevice = props => {
     if(formValues.sound_text = '' || formValues.sound_text == undefined){
       errors.sound_text = true;
     } else errors.sound_text = false;
-    if(formValues.map_x = '' || formValues.map_x == 0 || formValues.map_x == undefined || typeof(formValues.map_x) != 'number'){
+    if(formValues.map_x == '' || formValues.map_x == 0 || formValues.map_x == undefined || typeof(formValues.map_x) != 'number'){
       errors.map_x = true;
     } else errors.map_x = false;
-    if(formValues.map_y = '' || formValues.map_y == 0 || formValues.map_y == undefined || typeof(formValues.map_y) != 'number'){
+    if(formValues.map_y == '' || formValues.map_y == 0 || formValues.map_y == undefined || typeof(formValues.map_y) != 'number'){
       errors.map_y = true;
     } else errors.map_y = false;
 
@@ -230,7 +232,7 @@ const FormEditSelectedDevice = props => {
   },[])
 
   useEffect(() => {
-  },[formValues])
+  },[formValues]) 
   
   useEffect(() => {
     if(hasPageBeenRendered.current['effect1'] && selectedDevice != undefined) {
@@ -677,22 +679,22 @@ const FormEditSelectedDevice = props => {
               >
                 {/* 18. 죄표 */}
                 <TextAndInputComponent 
-                  name = {'map_x'}
                   required = {true}
-                  value = { typeof(formValues.map_x) != 'number' ? (deviceLat != undefined ? deviceLat : '') : parseFloat(formValues.map_x) }
-                  inputTxt  = {'죄표 X : '+ formValues.map_x }
-                  labelTxt  = {'죄표 X'}
-                  valueTxt  = { Object.keys(selectedDeviceBody).length > 1 ? selectedDeviceBody.Equipment.map_y : ''}
+                  name = {'map_x'}
+                  inputTxt  = {'죄표 X : ' }
+                  valueTxt  = { Object.keys(selectedDeviceBody).length > 1 ? selectedDeviceBody.Equipment.map_x : ''}
+                  error ={ formErrors.map_x }
                   textError = {'지도에서 위치 저장하세요'}
+                  labelTxt  = {'죄표 X'}
                   edit ={false}
                   create = {false}
                   onChange = {handleChangeInputComponent}
-                  error ={ formErrors.map_x }
+                  value = { typeof(formValues.map_x) != 'number' ? '' : parseFloat(formValues.map_x) }
                 />
                 <TextAndInputComponent
                   name = {'map_y'}
                   required = {true}
-                  value = { typeof(formValues.map_y) != 'number' ? (deviceLng != undefined  ? deviceLng: '') : parseFloat(formValues.map_y) }
+                  value = { typeof(formValues.map_y) != 'number' ? '' : parseFloat(formValues.map_y) }
                   inputTxt  = {'죄표 Y'}
                   labelTxt  = {'죄표 Y'}
                   valueTxt  = { Object.keys(selectedDeviceBody).length > 1 ? selectedDeviceBody.Equipment.map_y : ''}
