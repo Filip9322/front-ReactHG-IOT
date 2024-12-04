@@ -572,6 +572,7 @@ const TextAndInputComponent = props => {
     }
 
     //console.log(opLabel + 'error: ' + error+ ' txtError: '+textError)
+    
   },[labelTxt, error, textError])
 
   useEffect(() => {
