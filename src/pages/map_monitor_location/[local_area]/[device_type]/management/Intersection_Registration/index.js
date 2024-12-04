@@ -1,6 +1,5 @@
 // ** React Imports
 import { useState, useEffect, useRef, useMemo } from 'react'
-import { MapTypeControl } from "react-kakao-maps-sdk";
 
 // ** Redux
 import { useDispatch } from 'react-redux'
@@ -11,14 +10,14 @@ import { useRouter } from 'next/router'
 
 // ** MUI Components
 import { Box, Typography, CircularProgress, Tooltip, Button, Checkbox } from '@mui/material'
-import { TableContainer, Table, TableHead, TableBody, TableRow, TableCell, TableSortLabel } from '@mui/material'
+import { TableContainer, Table, TableBody, TableRow, TableCell } from '@mui/material'
 import { Reload, Plus, MicrosoftExcel, PencilOutline } from 'mdi-material-ui'
 
 // ** Utils
-import { visuallyHidden } from '@mui/utils'
 import { useKakaoLoader } from 'src/@core/utils/kakao_map_api'
 import { getFetchURL }  from 'src/@core/utils/fetchHelper'
 import { SearchBar } from 'src/pages/map_monitor_location/searchBar'
+import { EnhancedTableHead, ChecboxListItem, tableContainerCSS } from '../../tableComponents'
 import { LateralDetailPanel } from 'src/pages/map_monitor_location/lateralDetailPanel'
 import { LateralCreateControllerPanel } from 'src/pages/map_monitor_location/lateralCreatePanel'
 
@@ -109,91 +108,7 @@ const headCells = [
     classes: 'TableCellSmall'
   }
 ]
-// ** Enhanced Table Head ------------
-const EnhancedTableHead = props => {
-  
-  const { onSelectAllClick, order, orderBy, indeterminateMCheckbox, rowCount, onRequestSort, masterCheckBoxChecked } = props;
-  const [stateMCheckBox, setStateMCheckBox] = useState(false);
 
-  const createSortHandler = property => (event) => {
-    onRequestSort(event, property);
-  }
-
-  useEffect(() =>{
-    setStateMCheckBox(masterCheckBoxChecked);
-  },[masterCheckBoxChecked])
-
-  return (
-    <TableHead>
-      <TableRow>
-        <TableCell padding='checkbox'>
-          <Checkbox 
-            color = {'primary'}
-            indeterminate = {indeterminateMCheckbox}
-            checked={stateMCheckBox}
-            onClick = {onSelectAllClick}
-            aria-label='모드 기기 선택'
-            name="allDevices_checkbox"
-          />
-        </TableCell>
-        { headCells.map((headCell) => (
-          <TableCell
-            key={headCell.id}
-            align={headCell.numeric ? 'right' : 'left'}
-            padding={headCell.disablePadding ? 'none' : 'normal'}
-            sortDirection={orderBy === headCell.id ? order : false }
-            className={headCell.classes?headCell.classes:'notFOUND'}
-          >
-            <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : 'asc'}
-              onClick={createSortHandler(headCell.id)}
-            >
-              {headCell.label}
-              {orderBy === headCell.id ? (
-                <Box component={'span'} sx={visuallyHidden}>
-                  {order === 'desc' ? 'sorted descending': 'sorted ascending'}
-                </Box>
-              ):null}
-            </TableSortLabel>
-          </TableCell>
-        ))}
-      </TableRow>
-    </TableHead>
-  );
-}
-
-const ChecboxListItem = props => {
-  const { dataID, handleChangeCheckBoxItem, cleanAllCheckbox, masterCheckBoxChecked } = props;
-  const [ checkState, setCheckState ] = useState(false);
-
-  const handleClickCheckBoxItem = event =>{
-    event.preventDefault();
-    
-    console.log('subComponent: '+checkState);
-    handleChangeCheckBoxItem(event, !checkState);
-    
-    setCheckState(!checkState);
-  }
-
-  useEffect(()=>{
-    setCheckState(false);
-  },[cleanAllCheckbox]);
-
-  useEffect(() =>{
-    setCheckState(masterCheckBoxChecked);
-  },[masterCheckBoxChecked]);
-
-  return (
-    <Checkbox 
-      data-id = { dataID }
-      onClick={ handleClickCheckBoxItem }
-      checked={ checkState }
-      value={ dataID }
-      name={ dataID +'_checkbox' }
-    />
-  );
-}
 
 // ** Main COMPONENT: IntersectionRegistration -----------------------------------
 const IntersectionRegistration = () => {
@@ -571,24 +486,11 @@ const IntersectionRegistration = () => {
       </Box>
       )}
       <TableContainer
-        sx={{
-          maxHeight: 800,
-          '& th.MuiTableCell-head':{
-            boxSizing: 'content-box'
-          },
-          '& th.TableCellMinimun':{
-            width: '5rem'
-          },
-          '& th.TableCellSmall':{
-            width: '20rem'
-          },
-          '& th.TableCellMedium':{
-            width: '30rem'
-          }
-        }}
+        sx={ tableContainerCSS }
       >
         <Table stickyHeader >
           <EnhancedTableHead
+            headCells = { headCells }
             indeterminateMCheckbox ={indeterminateMCheckbox}
             numSelected ={0} // TODO: Update
             order ={order}

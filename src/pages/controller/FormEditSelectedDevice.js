@@ -213,7 +213,7 @@ const FormEditSelectedDevice = props => {
     if(formValues.model_no == '' || formValues.model_no == undefined){
       errors.model_no = true;
     } else errors.model_no = false;
-    if(formValues.sound_text = '' || formValues.sound_text == undefined){
+    if(formValues.sound_text == '' || formValues.sound_text == undefined){
       errors.sound_text = true;
     } else errors.sound_text = false;
     if(formValues.map_x == '' || formValues.map_x == 0 || formValues.map_x == undefined || typeof(formValues.map_x) != 'number'){
@@ -645,7 +645,7 @@ const FormEditSelectedDevice = props => {
                 labelTxt ={'음원텍스트'}
                 edit   = {true}
                 create = {false}
-                textError = {'text Error'}
+                textError = {'음원텍스트 입력하세요'}
                 multiline ={ true }
                 onChange={ handleChangeInputComponent }
                 error = { formErrors.sound_text }
