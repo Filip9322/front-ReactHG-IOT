@@ -84,9 +84,11 @@ const UsersPage = () => {
         setBtRightDialog(btRight);
         setDialogDescription(description);
     }
+
     const handleClose = () => {
         setOpen(false);
     }
+
     const handleActionDialog = (event) => {
         event.preventDefault()
         var action = event.currentTarget.getAttribute('data-action');
@@ -99,6 +101,7 @@ const UsersPage = () => {
                     "id": parseInt(dialogUser),
                     "user_mod": user_id
                 }
+
                 //postFetchEditUser(url="",data = {});
                 break;
             case 'activate':
@@ -158,6 +161,7 @@ const UsersPage = () => {
 
     async function postFetchEditUser(url="",data = {}) {
         setIsSubmitting(true);
+
         const response = await fetch(url, {
             method: 'PUT',
             mode: 'cors',
@@ -178,6 +182,7 @@ const UsersPage = () => {
     const [user_id, setUser_id] = useState([]);
     const [access_token, setAccess_token] = useState([]);
     const [userAuthenticated, setUserAuthenticated] = useState([]);
+
     const fetchUsers = () =>{
         getFetchUsers(
             `${process.env.REACT_APP_APIURL}/api/users`,

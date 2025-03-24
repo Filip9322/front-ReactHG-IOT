@@ -32,7 +32,8 @@ const UserLayout = ({ children }) => {
 
   const LogoTemp = () => {
     var wide_area_logo = '1-서울특별시'
-    return (
+    
+return (
       <Box>
         <a target='_blank' rel='noreferrer' href=''>
           <img width={230} alt='test' src={`/images/wide-areas/${wide_area_logo}.png`} />
@@ -40,6 +41,7 @@ const UserLayout = ({ children }) => {
       </Box>
     )
   }
+
   const UpgradeToProImg = () => {
     return (
       <Box sx={{ mx: 'auto' }}>

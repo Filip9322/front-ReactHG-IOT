@@ -21,6 +21,7 @@ let ExtError;
 const bIsKakaoMapLoaded = () => {
   return ExtLoading;
 }
+
 const useKakaoLoader = (options) => {
   const [loading, setLoading] = useState(ExtLoading);
   const [error, setError] = useState(undefined);

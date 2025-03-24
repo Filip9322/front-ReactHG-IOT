@@ -46,23 +46,29 @@ const WideAreasPage = () => {
   const [user_id, setUser_id] = useState([]);
   const [access_token, setAccess_token] = useState(null);
   const [userAuthenticated, setUserAuthenticated] = useState(null);
+
   // -- Tabs Status
   const [valueTab, setValueTab] = useState('0');
+
   // -- Map Status
   const initialMapSelected = {id: 1, wa_name: '서울', subs: [1]};
   const [mapSelectedArea, updateMapSelectedArea] = useState(initialMapSelected);
+
   // -- Highlight Card status
   const [highLightCard, updateHighLightCard] = useState(0);
   const [searchMatchArea, updateSearchMatchArea] = useState({});
   const [textButtonDetails, setTextButtonDetails] = useState('자세히');
   const [showHighLightCard, updateShowHighLightCard] = useState(false);
+
   // -- Wide Area List status
   const initialWideArea = [{id:1, wa_name: 'test', wa_logo: ''}];
   const [showCardWidearea, setShowCardWidearea] = useState(false);
   const [wideAreasList, updateWideAreasList] = useState(initialWideArea);
   const [typeDeviceSelected, setTypeDeviceSelected]= useState(0);
+
   // -- Local areas list Status
   const [showLocalAreasCard, setShowLocalAreaCard] = useState(false);
+
   // -- Fetch User Access
   const [wideAreasAccessList, setWideAreasAccessList] = useState(initialWideArea);
   const [localAreasAccessList, setLocalAreasAccessList] = useState([]);

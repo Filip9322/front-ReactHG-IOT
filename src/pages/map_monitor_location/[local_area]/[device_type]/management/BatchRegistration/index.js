@@ -16,6 +16,7 @@ import { Typography } from '@mui/material'
 const BatchRegistration = () => {
   // ** Hooks
   const router = useRouter();
+
   // ** Redux
 	const dispatch  = useDispatch();
 

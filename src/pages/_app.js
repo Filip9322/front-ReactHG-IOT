@@ -1,6 +1,7 @@
 // ** Next Imports
 import Head from 'next/head'
 import { Router } from 'next/router'
+
 // ** Loader Import
 import NProgress from 'nprogress'
 
@@ -91,6 +92,7 @@ const App = props => {
 
     }else return true;
   }
+
   // Checking if running on client side
   if (typeof window !== 'undefined') {
     var authenticated = verifyAccessToken().then((result) => {

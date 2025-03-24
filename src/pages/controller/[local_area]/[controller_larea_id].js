@@ -39,6 +39,7 @@ const ControllerInformation = props => {
   const [createDevice, setCreateDevice ] = useState(false);
   const [selectedDevice, setSelectedDevice] = useState(0);
   const [selectedDeviceBody, setSelectedDeviceBody] = useState({});
+
   // Device Variables
   const [deviceLat, setDeviceLat] = useState(0.0);
   const [deviceLng, setDeviceLng] = useState(0.0);
@@ -72,6 +73,7 @@ const ControllerInformation = props => {
         let ArrayLocations = [];
         response.map((equi_state, rowID) => {
           let location = equi_state.gwl.split(',');
+
           let locObject = 
           {
             'id': rowID,
@@ -79,6 +81,7 @@ const ControllerInformation = props => {
             'posY': location[1]
           }
           ArrayLocations.push(locObject);
+
           //console.log('posX: '+location[0]+' posY: '+location[1]);
         })
         setDevices(response);
@@ -168,6 +171,7 @@ const ControllerInformation = props => {
         console.error('Missing local_area id or controller ID');
       }
     }
+
     /*const element = document.querySelectorAll("button[title='스카이뷰']")[1]; refButton = element; //refButton.click();*/
   },[]);
 
@@ -540,6 +544,7 @@ const ControllerInformation = props => {
             { action == 'view' && showDevices || action == 'edit' && showDevices
             ?
               devices.map((row, rowID) => (
+
               //*********** */
               <CustomMarkerComponent
                 selectedDevice ={selectedDevice}
@@ -603,7 +608,8 @@ const CheckButtonStateValue = props => {
     color = 'red';
     text = '이상';
   }
-  return (
+  
+return (
     <span style={{color: color}}>{text}</span>
   );
 }
@@ -618,7 +624,8 @@ const CheckSpeakeStateValue = props => {
     color = 'red';
     text = '이상';
   }
-  return (
+  
+return (
     <span style={{color: color}}>{text}</span>
   );
 }
@@ -654,7 +661,8 @@ const CheckLightStateValue = props => {
       break;
     }
   }
-  return (
+  
+return (
     <span style={{color: color}}>{text}</span>
   );
 }

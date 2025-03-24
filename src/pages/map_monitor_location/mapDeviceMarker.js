@@ -33,6 +33,7 @@ const MapDeviceMarker = props =>{
   useEffect(()=>{
     if (controller.id == searchedController) {
       setViewDeviceInfo(true)
+
       //updateMapMarkers();
     }
   }, [searchedController])

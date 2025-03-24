@@ -64,6 +64,7 @@ const LateralDetailPanel = props => {
   const open = Boolean(anchorEl);
   const handleClick = event => { setAnchorEl(event.currentTarget)};
   const handleClose = event => { setAnchorEl(event.target.value)};
+
   const handleChange = event => {
     let value = event.target.getAttribute('data-option');
     
@@ -159,6 +160,7 @@ const LateralDetailPanel = props => {
     if(event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
       return;
     }
+
     //setOpenDrawer(false);
     setOpenEquiStatus(open);
   }
@@ -524,6 +526,7 @@ const LateralDetailPanel = props => {
             </Box>
           </form>
           <Box
+
             //hidden={!openEquiStatus}
             sx={{display:openEquiStatus?'':'none'}}
           >

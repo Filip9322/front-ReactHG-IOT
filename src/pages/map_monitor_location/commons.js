@@ -24,6 +24,7 @@ const set_ControllerStatusAndLogo = controller => {
         state = 3; // State 3: School Zone NO abnormalities - Yellow
         logo  = 'icon_school';
       }
+
       //**----- */
       if(controller.has_abnormalities && !controller.is_school_zone){
         state = 2; // State 2: Active Abnormal State - Red
