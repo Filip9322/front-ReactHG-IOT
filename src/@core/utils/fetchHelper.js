@@ -14,6 +14,7 @@ export async function getFetchURL ( url = '',  data = {}){
 
   return response.json();
 }
+
 export async function postFetchURL (url = "", data = {}){
   const response = await fetch(url, {
     method: "POST",
@@ -28,7 +29,10 @@ export async function postFetchURL (url = "", data = {}){
   });
 
   return response.json();
-};
+}
+
+;
+
 export async function putFetchURL (url = "", data = {}){
   const response = await fetch(url, {
     method: "PUT",
@@ -43,4 +47,6 @@ export async function putFetchURL (url = "", data = {}){
   });
 
   return response;
-};
+}
+
+;

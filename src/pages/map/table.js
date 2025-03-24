@@ -178,6 +178,7 @@ const TableWideAreas =  props => {
             {!row.locals.length > 0? (
               <Typography sx={{textAlign: 'center', fontSize:'1.2rem', padding:'1rem 0'}} >No local Areas</Typography>
             ):(
+
               /* LOCAL TABLE BEGIN ---------------------------------------------------------*/
               <Table aria-label='list locals'>
                 <TableHead>
@@ -246,6 +247,7 @@ const TableWideAreas =  props => {
                 ))}
                 </TableBody>
               </Table>
+
               /* LOCAL TABLE END ---------------------------------------------------------*/
             )}
             </Collapse>

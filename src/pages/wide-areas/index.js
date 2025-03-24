@@ -76,7 +76,8 @@ const WAreasPage = () => {
       })
       Object.assign(warea,{locals: localAreas})
     })
-    return wareas;
+    
+return wareas;
   }
 
   // ** Initial Load -> Authenticate
@@ -134,7 +135,8 @@ const WAreasPage = () => {
 
   let tempInput = '서울';
   var seoul = tempInput.match(/[\u1100-\u11FF\u3130-\u318F\uA960-\uA97F\uAC00-\uD7AF\uD7B0-\uD7FF]/g)
-    return (
+    
+return (
       <Box className="content-center">
         <Grid item xs={12} sm={9}>
           <Card>

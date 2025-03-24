@@ -98,6 +98,7 @@ const LoginPage = () => {
         {user_ID: formValues.user_id, user_pw:formValues.password }    
     ).then((response) => {
       setIsSubmitting(false);
+
       // Sucessful Authentication
       localStorage.setItem("accessToken", response.access_token);
 
@@ -108,6 +109,7 @@ const LoginPage = () => {
       };
 
       localStorage.setItem("user_ID", JSON.stringify(storedUser) );
+
       // Redirect to Home
       window.location.href = '/';
 

@@ -47,6 +47,7 @@ const TableWideAreas =  props => {
     setOpenModal(true);
     console.log('Open Modal');
   }
+
   const handleCloseModal = event => {
     setOpenModal(false);
     console.log('Close Modal');
@@ -75,6 +76,7 @@ const TableWideAreas =  props => {
 
     setOpenModal(true);
     console.log('open Collap: ' + open + ' open Modal: ' + openModal);
+
     //setDialogAction(action);
     //setDialogLArea (larea);
     console.log( 'action: ' + action + ' larea: ' + larea )
@@ -148,8 +150,10 @@ const TableWideAreas =  props => {
             {!row.locals.length > 0? (
               <Typography sx={{textAlign: 'center', fontSize:'1.2rem', padding:'1rem 0'}} >No local Areas</Typography>
               ):(
+
               /* LOCAL TABLE BEGIN ---------------------------------------------------------*/
               <TableLocals lareas={row.locals} wareaID={row.id} clickActionButton={clickActionButton}/>
+
               /* LOCAL TABLE END ---------------------------------------------------------*/
             )}
             </Collapse>

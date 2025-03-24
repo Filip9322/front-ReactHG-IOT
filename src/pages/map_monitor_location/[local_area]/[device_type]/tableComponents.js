@@ -23,6 +23,8 @@ const tableContainerCSS = {
     width: '30rem'
   }
 }
+
+
 // ** CheckBoxListItem CHeckALL --------
 const ChecboxListItem = props => {
   const { dataID, handleChangeCheckBoxItem, cleanAllCheckbox, masterCheckBoxChecked } = props;

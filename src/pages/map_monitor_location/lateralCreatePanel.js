@@ -62,6 +62,7 @@ const LateralCreateControllerPanel = props =>{
   };
   const [ formValues, setFormValues ] = useState( initialValues );
   const [ controller, setController ] = useState( initialValues );
+
   const [ values , setValues ] = useState({
     local_area_controller_number: '',
     local_goverment_controller_number: '',
@@ -102,6 +103,8 @@ const LateralCreateControllerPanel = props =>{
               break;
             default: break;
           }
+
+
           // Update Errors
           let errors = {
             local_area_controller_number_hasError: true
@@ -144,6 +147,7 @@ const LateralCreateControllerPanel = props =>{
   const handleChangeInputComponent = event =>{
     const { name, value } = event.target;
     setFormValues({...formValues, [name]: value});
+
     //console.log('['+name+']:'+value)
     
     if(value != '' || value != 0) {

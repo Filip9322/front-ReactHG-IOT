@@ -1,6 +1,6 @@
 // ** React Imports
 import { useState, useEffect } from 'react'
-
+  
 // ** Redux
 import { useDispatch } from 'react-redux'
 import { rootActions } from 'src/@core/redux/reducer'
@@ -10,9 +10,15 @@ import { useRouter } from 'next/router'
 
 // ** MUI Components
 import { Box, Button, Tooltip, Typography } from '@mui/material'
-import { Table, TableContainer, TableBody, TableCell, TableRow } from '@mui/material'
+import { Table, TableContainer, TableBody, TableFooter, TableCell, TableRow, TablePagination } from '@mui/material'
 import { EnhancedTableHead, ChecboxListItem, tableContainerCSS } from '../../tableComponents'
-import { PencilOutline } from 'mdi-material-ui'
+import { PencilOutline, SeatPassenger } from 'mdi-material-ui'
+
+// ** Utils
+import { postFetchURL } from 'src/@core/utils/fetchHelper'
+import { getFetchURL }  from 'src/@core/utils/fetchHelper'
+
+//import TablePaginationActions from '@mui/material/TablePagination/TablePaginationActions'
 
 // [POST] - editor/getEventData.do { occur_time, inse_num, equi_num }
 // [POST] - editor/updateEventData.do
@@ -106,8 +112,27 @@ const EventManagement = () => {
   // ** States
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('No');
+  const [page, setPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(20);
   const [masterCheckBoxChecked, setMasterCheckBoxChecked ] = useState(false);
   const [indeterminateMCheckbox, setIndeterminateMCheckbox] = useState(false);
+
+  const [eventsArray, setEventsArray] = useState([{}]);
+
+  const fetchEventsByLocalArea = async () => {
+    getFetchURL(
+      `${process.env.REACT_APP_APIURL}/event_history/byLocalArea/${router.query.local_area}/${page}`
+    ).then((response) => {
+      if(response){
+        setEventsArray(response);
+      }
+      console.log(response);
+    }).catch(error => { console.error('error: '+error)
+
+    }).finally(() => {
+      //setSpinner(false);
+    })
+  }
 
   const handleSelectAllClick = event => {
     console.log(event);
@@ -119,9 +144,19 @@ const EventManagement = () => {
     setOrderBy(property);
   }
 
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  }
+
+  const handleChangeRowsPerPage = event => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  }
+
   useEffect(() => {
     // ** Set Page Name and MetaData
     dispatch(rootActions.updateTitle("이벤트관리"));
+    fetchEventsByLocalArea();
   },[]);
 
   return(
@@ -151,16 +186,16 @@ const EventManagement = () => {
                 <ChecboxListItem 
                 />
               </TableCell>
-              <TableCell className={'TableCellMinimun'}>No 3/6 </TableCell>
-              <TableCell className={'TableCellMinimun'}>500</TableCell>
-              <TableCell className={'TableCellMinimun'}>담청</TableCell>
-              <TableCell className={'TableCellMinimun'}>3'600'000</TableCell>
-              <TableCell className={'TableCellMinimun'}>180'000</TableCell>
-              <TableCell className={'TableCellMinimun'}>60</TableCell>
-              <TableCell className={'TableCellMinimun'}>3</TableCell>
+              <TableCell className={'TableCellMinimun'}>No</TableCell>
               <TableCell className={'TableCellMinimun'}>-</TableCell>
-              <TableCell className={'TableCellMinimun'}>전체</TableCell>
-              <TableCell className={'TableCellMinimun'}>{3600000+180000+60+3}</TableCell>
+              <TableCell className={'TableCellMinimun'}>-</TableCell>
+              <TableCell className={'TableCellMinimun'}>-</TableCell>
+              <TableCell className={'TableCellMinimun'}>-</TableCell>
+              <TableCell className={'TableCellMinimun'}>-</TableCell>
+              <TableCell className={'TableCellMinimun'}>-</TableCell>
+              <TableCell className={'TableCellMinimun'}>-</TableCell>
+              <TableCell className={'TableCellMinimun'}>-</TableCell>
+              <TableCell className={'TableCellMinimun'}>-</TableCell>
               <TableCell className={'TableCellMinimun'}>
                 <Tooltip title={'설정'}>
                   <Button>
@@ -168,49 +203,31 @@ const EventManagement = () => {
                   </Button>
                 </Tooltip>
               </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
-                <ChecboxListItem 
-                />
-              </TableCell>
-              <TableCell className={'TableCellMinimun'}>No 1/6</TableCell>
-              <TableCell className={'TableCellMinimun'}>1000</TableCell>
-              <TableCell className={'TableCellMinimun'}>담청</TableCell>
-              <TableCell className={'TableCellMinimun'}>13'500'000</TableCell>
-              <TableCell className={'TableCellMinimun'}>1'125'000</TableCell>
-              <TableCell className={'TableCellMinimun'}>247'500</TableCell>
-              <TableCell className={'TableCellMinimun'}>45</TableCell>
-              <TableCell className={'TableCellMinimun'}>9</TableCell>
-              <TableCell className={'TableCellMinimun'}>전체</TableCell>
-              <TableCell className={'TableCellMinimun'}>{13500000+1125000+247500+45+9}</TableCell>
-              <TableCell className={'TableCellMinimun'}>
-                <Tooltip title={'설정'}>
-                  <Button>
-                    <PencilOutline />
-                  </Button>
-                </Tooltip>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
-                <ChecboxListItem 
-                />
-              </TableCell>
-              <TableCell className={'TableCellMinimun'}>No 2/12</TableCell>
-              <TableCell className={'TableCellMinimun'}>2000</TableCell>
-              <TableCell className={'TableCellMinimun'}>담청</TableCell>
-              <TableCell className={'TableCellMinimun'}>11'200'000</TableCell>
-              <TableCell className={'TableCellMinimun'}>2'800'000</TableCell>
-              <TableCell className={'TableCellMinimun'}>110'000</TableCell>
-              <TableCell className={'TableCellMinimun'}>200</TableCell>
-              <TableCell className={'TableCellMinimun'}>24</TableCell>
-              <TableCell className={'TableCellMinimun'}>8</TableCell>
-              <TableCell className={'TableCellMinimun'}>전체</TableCell>
-              <TableCell className={'TableCellMinimun'}>{11200000+2800000+110000+200+24+8}</TableCell>
             </TableRow>
           </TableBody>
+          <TableFooter>
+            <TableRow>
+            </TableRow>
+          </TableFooter>
         </Table>
+        <TablePagination
+          component={'div'}
+          rowsPerPageOptions={[5,10,25, {label: '전체', value: -1}]}
+          colSpan={3}
+          count={100}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          slotProps={{
+            select: {
+              'aria-label': 'rows per page'
+            },
+            native: true
+          }}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+
+          //ActionsComponent={TablePaginationActions}
+        />
       </TableContainer>
     </Box>
   );

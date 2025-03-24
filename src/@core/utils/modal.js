@@ -73,7 +73,8 @@ export const ModalBackground = () => {
     
     console.log('click gray BG');
   }
-  return (
+  
+return (
     <Box
       sx = {{
         display: {xs: 'block', sm: 'none'},

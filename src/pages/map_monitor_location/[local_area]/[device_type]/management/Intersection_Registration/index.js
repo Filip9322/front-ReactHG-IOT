@@ -147,7 +147,8 @@ const IntersectionRegistration = () => {
   const descendingComparator = (a, b, orderBy) => {
     if (b[orderBy] < a[orderBy]) { return -1;}
     if (b[orderBy] > a[orderBy]) { return 1;}
-    return 0;
+    
+return 0;
   }
 
   const getComparator = (order, orderBy) => {
@@ -244,7 +245,8 @@ const IntersectionRegistration = () => {
 
   const searchIntersectionType = (typeID)  => {
     const findInterType = intersectionTypes.find(interType => interType.id == typeID);
-    return (
+    
+return (
       <Tooltip title={findInterType.inter_type_name }>
         <Typography>
           {findInterType.inter_type_name}
@@ -295,6 +297,7 @@ const IntersectionRegistration = () => {
 
     let id = event.currentTarget.getAttribute('data-id');
     let copyOfRows = rowsSelected;
+
     // Find Index and clear Array  
     let index = copyOfRows.findIndex(element => element == id)
     
@@ -380,6 +383,7 @@ const IntersectionRegistration = () => {
     ).then(response => {
       if(response) {
         setIntersectionTypes(response);
+
         // ** Set Page Name and MetaData
         dispatch(rootActions.updateListInterTypes(response));
       }
@@ -554,6 +558,7 @@ const IntersectionRegistration = () => {
         </Table>
       </TableContainer>
       { 
+
         // -- LateralDetailPanel  && LateralCreateControllerPanel Component 
       }
       <LateralDetailPanel 

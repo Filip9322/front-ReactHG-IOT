@@ -24,6 +24,7 @@ const DrawerListControllers = props => {
     
   const open = Boolean(anchorEl);
   const handleClick = event => {setAnchorEl(event.currentTarget)};
+
   const handleClose = event => {
     let menuItem = event.currentTarget;
     let type  = menuItem.getAttribute('data-type');
